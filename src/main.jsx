@@ -9,7 +9,10 @@ import router from './router/index.jsx';
 import store from './redux/store.js';
 import Toast from './components/Toast.jsx';
 
-import './styles/main.scss'; // 入口 Sas
+import './assets/styles/all.scss'; // 入口 Sass
+import 'bootstrap/dist/js/bootstrap.js';
+
+// import './styles/main.scss'; // 入口 Sass => bakeday開發落後改採用六腳提供的版型
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
