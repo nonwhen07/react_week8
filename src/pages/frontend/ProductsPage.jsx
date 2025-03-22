@@ -5,6 +5,7 @@ import axios from 'axios';
 import ReactLoading from 'react-loading';
 
 import { pushMessage } from '../../redux/toastSlice';
+import { formatPrice } from '../../utils/format';
 
 export default function ProductsPage() {
   const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -403,9 +404,9 @@ export default function ProductsPage() {
                         </Link>
                       </h4>
                       <p className='card-text mb-0'>
-                        {product.origin_price}
+                        {formatPrice(product.origin_price)}
                         <span className='text-muted '>
-                          <del>{product.price}</del>
+                          <del>{formatPrice(product.origin_price)}</del>
                         </span>
                       </p>
                       <p className='text-muted mt-3'></p>

@@ -15,7 +15,7 @@ export default function Header() {
     <div className='container d-flex flex-column'>
       <nav className='navbar navbar-expand-lg navbar-light'>
         <Link to='/' className='navbar-brand header-nav-brand'>
-          <span className='header-nav-logo-text'>🍞 BakeDay • 手焙日和</span>
+          <span className='header-nav-logo-text'>Morning Bean Café</span>
         </Link>
         {/* <a className='navbar-brand' href='./index.html'>
           Navbar
