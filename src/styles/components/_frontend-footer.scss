@@ -1,0 +1,7 @@
+@use '../base/variables' as var;
+
+
+.footer {
+  background-color: var.$primary-color;
+  color: var.$light-bg-color;
+}

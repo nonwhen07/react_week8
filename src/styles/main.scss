@@ -1,0 +1,26 @@
+// // @import './base/reset';
+// @use './base/base';
+// @use './base/variables';
+// @use './base/mixin';
+
+// @use './base/bootstrap-vars';
+// @use 'bootstrap/scss/bootstrap';
+
+// @use './pages/homepage';
+// // @import './pages/productDetail';
+// // @import './pages/cart';
+// @use './components/frontend-navbar';
+// @use './components/backend-navbar';
+
+// Bootstrap 的 SCSS 讀取變數 → 只看前面載入的變數與 CSS 變數
+// @use 的順序非常重要（每一層都會獨立編譯作用域）
+// 改寫順序為下面的順序：
+@use './base/variables';        // 1. 先載入 SCSS 變數 Bootstrap 讀取用的 $變數
+@use 'bootstrap/scss/bootstrap'; // 2. 然後載入 Bootstrap SCSS 原始碼 原始碼
+@use './base/mixin';            // 3. 再載其他工具
+@use './base/base';             // 4. 全局樣式（body, h1 等）這裡使用你的變數，無需 :root
+
+@use './pages/homepage'; // 5. 頁面樣式
+@use './components/frontend-navbar';
+@use './components//frontend-footer';
+@use './components/backend-navbar';

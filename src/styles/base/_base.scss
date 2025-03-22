@@ -1,0 +1,52 @@
+@use './variables' as var;
+
+// //將 :root {} 內容搬到 _base.scss 或獨立檔並提早載入 Bootstrap CSS 變數覆寫（核心）
+// :root {
+//   --bs-body-font-family: #{var.$font-family-base};
+//   --bs-body-font-size: #{var.$font-size-base};
+//   --bs-body-color: #{var.$secondary-text-color};
+//   --bs-body-bg: #{var.$background-color};
+// }
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  line-height: 1.6;
+  // 以下屬性已透過 :root 覆寫 Bootstrap，不必重複設定
+  font-family: var.$font-family-base;
+  font-size: var.$font-size-base;
+  background-color: var.$background-color;
+  color: var.$secondary-text-color;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var.$primary-color;
+  font-weight: bold;
+}
+
+a {
+  color: var.$primary-color;
+  text-decoration: none;
+
+  &:hover {
+    color: var.$accent-color;
+  }
+}
+
+button {
+  background-color: var.$accent-color;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5em 1em;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  &:hover {
+    background-color: darken(var.$accent-color, 10%);
+  }
+}

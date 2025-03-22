@@ -1,0 +1,90 @@
+[
+  {
+    "id": 1,
+    "name": "雅婷",
+    "avatar": "https://randomuser.me/api/portraits/women/81.jpg",
+    "feedback": "老師解說清晰，烘焙新手也能輕鬆上手，推薦給大家！",
+    "rating": 5,
+    "course": "經典法式甜點入門"
+  },
+  {
+    "id": 2,
+    "name": "Evan",
+    "avatar": "https://randomuser.me/api/portraits/men/75.jpg",
+    "feedback": "課程節奏恰當，咖啡品味知識提升不少，很滿意。",
+    "rating": 4,
+    "course": "精品手沖咖啡技巧"
+  },
+  {
+    "id": 3,
+    "name": "沛柔",
+    "avatar": "https://randomuser.me/api/portraits/women/65.jpg",
+    "feedback": "成功做出人生第一個戚風蛋糕，非常有成就感！",
+    "rating": 5,
+    "course": "經典戚風蛋糕實作"
+  },
+  {
+    "id": 4,
+    "name": "小豪",
+    "avatar": "https://randomuser.me/api/portraits/men/28.jpg",
+    "feedback": "實作過程中遇到問題都有即時解答，很貼心！",
+    "rating": 5,
+    "course": "拿鐵拉花藝術課"
+  },
+  {
+    "id": 5,
+    "name": "小瑜",
+    "avatar": "https://randomuser.me/api/portraits/women/39.jpg",
+    "feedback": "咖啡拉花技巧進步了，朋友都很驚訝呢～",
+    "rating": 4,
+    "course": "拿鐵拉花藝術課"
+  },
+  {
+    "id": 6,
+    "name": "Yumi",
+    "avatar": "https://randomuser.me/api/portraits/women/47.jpg",
+    "feedback": "上課氣氛輕鬆愉快，每次都期待新課程。",
+    "rating": 5,
+    "course": "日式甜點職人養成"
+  },
+  {
+    "id": 7,
+    "name": "子涵",
+    "avatar": "https://randomuser.me/api/portraits/men/55.jpg",
+    "feedback": "課程內容很豐富，從零基礎到能獨立完成甜點。",
+    "rating": 5,
+    "course": "法式馬卡龍精緻技巧"
+  },
+  {
+    "id": 8,
+    "name": "Mina",
+    "avatar": "https://randomuser.me/api/portraits/women/92.jpg",
+    "feedback": "老師的細心指導，讓我重新喜歡上烘焙。",
+    "rating": 5,
+    "course": "歐式麵包入門實作"
+  },
+  {
+    "id": 9,
+    "name": "Sunny",
+    "avatar": "https://randomuser.me/api/portraits/women/23.jpg",
+    "feedback": "課程互動性高，邊做邊學真的很棒！",
+    "rating": 4,
+    "course": "創意手作甜點體驗"
+  },
+  {
+    "id": 10,
+    "name": "阿仁",
+    "avatar": "https://randomuser.me/api/portraits/men/63.jpg",
+    "feedback": "透過課程更懂得品嘗咖啡，實在收穫滿滿。",
+    "rating": 5,
+    "course": "精品手沖咖啡技巧"
+  },
+  {
+    "id": 11,
+    "name": "欣欣",
+    "avatar": "https://randomuser.me/api/portraits/women/56.jpg",
+    "feedback": "喜歡這裡的氛圍，真的像放假的感覺。",
+    "rating": 5,
+    "course": "手作甜點療癒課程"
+  }
+]
