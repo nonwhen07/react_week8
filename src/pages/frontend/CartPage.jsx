@@ -287,7 +287,7 @@ export default function CartPage() {
                   </p>
                 </div>
                 <Link
-                  to='/checkout'
+                  to='/checkout-form'
                   disabled={carts?.length > 0 ? false : true}
                   className='btn btn-dark w-100 mt-4'
                 >

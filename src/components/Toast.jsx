@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Toast as BSToast } from 'bootstrap'; //由於bootstrap的Toast與套件名稱衝突，所以把bootstrap的Toast取個別名為 'BSToast'
 import { removeMessage } from '../redux/toastSlice';
 
+// import '../styles/components/_toast.scss';
+
 export default function Toast() {
   // dispatch 是用來發送 actions 到 Redux store 的，讓我們可以修改 store 的狀態。
   const dispatch = useDispatch();
@@ -45,9 +47,14 @@ export default function Toast() {
             aria-live='assertive'
             aria-atomic='true'
           >
-            <div
+            {/* <div
               className={`toast-header text-white ${
                 message.status === 'success' ? 'bg-success' : 'bg-danger'
+              }`}
+            > */}
+            <div
+              className={`toast-header text-white ${
+                message.status === 'success' ? 'toast-success' : 'toast-failed'
               }`}
             >
               <strong className='me-auto'>

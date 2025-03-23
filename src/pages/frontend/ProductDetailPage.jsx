@@ -23,7 +23,7 @@ export default function ProductDetailPage() {
   const [qtySelect, setQtySelect] = useState(1);
   // 載入狀態
   const [isScreenLoading, setIsScreenLoading] = useState(false);
-  const [isLoading, setIsLoading] = useState(false); //改用下面的loadingItems，先儲存商品ID來標定loading位置
+  // const [isLoading, setIsLoading] = useState(false); //改用下面的loadingItems，先儲存商品ID來標定loading位置
   // const [loadingItems, setLoadingItems] = useState({}); // 用物件儲存各商品的 Loading 狀態
 
   useEffect(() => {
@@ -52,12 +52,14 @@ export default function ProductDetailPage() {
 
   //加入購物車
   const addCartItem = async (product_id, qty = 1) => {
+    setIsScreenLoading(true);
+    // setIsLoading(true);
     // 如果 qty 小於 1，直接返回不做任何處理
     if (qty < 1) {
       console.warn('qty 不能小於 1');
       return;
     }
-    setIsLoading(true);
+
     try {
       await axios.post(`${BASE_URL}/v2/api/${API_PATH}/cart`, {
         data: {
@@ -75,79 +77,10 @@ export default function ProductDetailPage() {
         : rawMessage || '發生錯誤，加入購物車失敗，請稍後再試';
       dispatch(pushMessage({ text: errorMessage, status: 'failed' }));
     } finally {
-      setIsLoading(false);
+      // setIsLoading(false);
+      setIsScreenLoading(false);
     }
   };
-
-  // return (
-  //   <>
-  //     <div className='container mt-5'>
-  //       <div className='row'>
-  //         <div className='col-6'>
-  //           <img
-  //             className='img-fluid'
-  //             src={product?.imageUrl}
-  //             alt={product?.title}
-  //           />
-  //         </div>
-  //         <div className='col-6'>
-  //           <div className='d-flex align-items-center gap-2'>
-  //             <h2>{product.title}</h2>
-  //             <span className='badge text-bg-success'>{product.category}</span>
-  //           </div>
-  //           <p className='mb-3'>{product.description}</p>
-  //           <p className='mb-3'>{product.content}</p>
-  //           <h5 className='mb-3'>NT$ {product.price}</h5>
-  //           <div className='input-group align-items-center w-75'>
-  //             <select
-  //               value={qtySelect}
-  //               onChange={e => setQtySelect(e.target.value)}
-  //               id='qtySelect'
-  //               className='form-select'
-  //             >
-  //               {Array.from({ length: 10 }).map((_, index) => (
-  //                 <option key={index} value={index + 1}>
-  //                   {index + 1}
-  //                 </option>
-  //               ))}
-  //             </select>
-
-  //             <button
-  //               type='button'
-  //               disabled={isLoading}
-  //               onClick={() => addCartItem(product.id, qtySelect)}
-  //               className='btn btn-primary d-flex align-items-center'
-  //             >
-  //               加入購物車
-  //               {isLoading && (
-  //                 <ReactLoading
-  //                   type='spin'
-  //                   color='#000'
-  //                   height='1.25rem'
-  //                   width='1.25rem'
-  //                 />
-  //               )}
-  //             </button>
-  //           </div>
-  //         </div>
-  //       </div>
-  //     </div>
-
-  //     {isScreenLoading && (
-  //       <div
-  //         className='d-flex justify-content-center align-items-center'
-  //         style={{
-  //           position: 'fixed',
-  //           inset: 0,
-  //           backgroundColor: 'rgba(255,255,255,0.3)',
-  //           zIndex: 999,
-  //         }}
-  //       >
-  //         <ReactLoading type='spin' color='black' width='4rem' height='4rem' />
-  //       </div>
-  //     )}
-  //   </>
-  // );
 
   return (
     <div className='container-fluid'>
@@ -269,7 +202,7 @@ export default function ProductDetailPage() {
               <div className='col-6'>
                 <button
                   type='button'
-                  disabled={isLoading}
+                  // disabled={isLoading}
                   onClick={() => addCartItem(product.id, qtySelect)}
                   href='./checkout.html'
                   className='text-nowrap btn btn-dark w-100 py-2'
@@ -288,6 +221,7 @@ export default function ProductDetailPage() {
             <p>{product.description}</p>
           </div>
         </div>
+        {/* 更多副圖輪播 */}
         {/* <h3 className='fw-bold'>Lorem ipsum dolor sit amet</h3>
         <div className='swiper-container mt-4 mb-5'>
           <div className='swiper-wrapper'>
