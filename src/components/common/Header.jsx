@@ -50,11 +50,12 @@ export default function Header() {
             </a> */}
             {routes.map(route => (
               <NavLink
+                key={route.path}
                 className='nav-item nav-link me-4'
                 aria-current='page'
                 to={route.path}
               >
-                {route.name === 'cart' ? (
+                {route.name === 'Cart' ? (
                   <i className='fas fa-shopping-cart'></i>
                 ) : (
                   route.name
