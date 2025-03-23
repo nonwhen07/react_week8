@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { useForm } from 'react-hook-form';
+// import { useForm } from 'react-hook-form';
 import ReactLoading from 'react-loading';
 import axios from 'axios';
 
@@ -8,18 +8,24 @@ import { pushMessage } from '../../redux/toastSlice';
 import { formatPrice } from '../../utils/format';
 import { Link } from 'react-router-dom';
 
+import Swiper from 'swiper';
+import { Autoplay } from 'swiper/modules';
+import 'swiper/css';
+
 export default function CartPage() {
   const BASE_URL = import.meta.env.VITE_BASE_URL;
   const API_PATH = import.meta.env.VITE_API_PATH;
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm();
+  // const {
+  //   register,
+  //   handleSubmit,
+  //   formState: { errors },
+  //   reset,
+  // } = useForm();
 
   const dispatch = useDispatch();
+
+  const swiperRef = useRef(null);
 
   const [carts, setCarts] = useState([]);
   const [isScreenLoading, setIsScreenLoading] = useState(false);
@@ -28,6 +34,23 @@ export default function CartPage() {
     setIsScreenLoading(true);
     //畫面渲染後初步載入購物車
     getCarts();
+
+    new Swiper(swiperRef.current, {
+      modules: [Autoplay],
+      loop: true,
+      autoplay: {
+        delay: 3000,
+        disableOnInteraction: false,
+      },
+      slidesPerView: 2,
+      spaceBetween: 10,
+      breakpoints: {
+        767: {
+          slidesPerView: 3,
+          spaceBetween: 30,
+        },
+      },
+    });
   }, []);
 
   //取得cart
@@ -298,9 +321,9 @@ export default function CartPage() {
           </div>
 
           {/* 副圖區輪播，未來可以用 */}
-          {/* <div className='my-5'>
+          <div className='my-5'>
             <h3 className='fw-bold'>Lorem ipsum dolor sit amet</h3>
-            <div className='swiper-container mt-4 mb-5'>
+            <div ref={swiperRef} className='swiper mt-4 mb-5'>
               <div className='swiper-wrapper'>
                 <div className='swiper-slide'>
                   <div className='card border-0 mb-4 position-relative position-relative'>
@@ -414,7 +437,7 @@ export default function CartPage() {
                 </div>
               </div>
             </div>
-          </div> */}
+          </div>
         </div>
 
         {/* ScreenLoading */}

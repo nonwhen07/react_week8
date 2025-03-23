@@ -1,0 +1,47 @@
+
+
+
+.card {
+  border: none;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  
+
+  &:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transition: all 0.3s ease;
+  }
+
+  img {
+    transition: transform 0.5s ease;
+  }
+  &:hover img {
+    transform: scale(1.05);
+  }
+
+  &-title {
+    font-weight: 700;
+  }
+
+  &-text {
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+}
+
+
+.carousel-item {
+  transition: opacity 0.8s ease;
+  .my-5 {
+    font-style: italic;
+    color: #6c757d;
+  }
+  small {
+    font-weight: 600;
+    color: #a67c52; // 咖啡主色
+  }
+  img {
+    border: 2px solid #d4c0a1; // 咖啡色邊框
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  }
+}

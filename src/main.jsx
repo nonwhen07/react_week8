@@ -9,6 +9,7 @@ import Toast from './components/Toast.jsx';
 
 import './assets/styles/all.scss'; // 入口 Sass
 import 'bootstrap/dist/js/bootstrap.js';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 // import './styles/main.scss'; // 入口 Sass => bakeday開發落後改採用六腳提供的版型
 

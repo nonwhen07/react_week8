@@ -28,18 +28,16 @@ const router = createHashRouter([
         path: 'product',
         element: <ProductsPage />,
       },
-      // {
-      //   // 產品細項，如果是多個參數寫法=> path: 'product/:product_id/:typemode'
-      //   // 要注意參數順序重要：網址的參數順序必須與路由設定一致。
-      //   path: 'product/:product_id',
-      //   element: <ProductDetailPage />,
-      // },
       {
         // 產品細項，如果是多個參數寫法=> path: 'product/:product_id/:typemode'
         // 要注意參數順序重要：網址的參數順序必須與路由設定一致。
-        path: 'detail/:product_id',
+        path: 'product/:product_id',
         element: <ProductDetailPage />,
       },
+      // { // 收藏頁面
+      //   path: 'favorite',
+      //   element: <FavoriteDetailPage />,
+      // },
       {
         path: 'cart',
         element: <CartPage />,

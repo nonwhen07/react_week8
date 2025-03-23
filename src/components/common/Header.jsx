@@ -6,7 +6,7 @@ const routes = [
   // { path: '/cart', name: '購物車' },
   { path: '/', name: 'Home' },
   { path: '/product', name: 'Product' },
-  { path: '/detail', name: 'Detail' },
+  // { path: '/detail', name: 'Detail' },
   { path: '/cart', name: 'Cart' },
 ];
 
