@@ -7,6 +7,7 @@ import ReactLoading from 'react-loading';
 import { formatPrice } from '../../utils/format';
 
 import { pushMessage } from '../../redux/toastSlice';
+import { updateCartData } from '../../redux/cartSlice';
 
 export default function ProductDetailPage() {
   const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -35,8 +36,6 @@ export default function ProductDetailPage() {
         );
         setProduct(res.data.product);
       } catch (error) {
-        // console.error(error);
-        // alert('取得產品細項失敗');
         const rawMessage = error.response?.data?.message;
         const errorMessage = Array.isArray(rawMessage)
           ? rawMessage.join('、')
@@ -46,14 +45,33 @@ export default function ProductDetailPage() {
         setIsScreenLoading(false);
       }
     };
+
     //畫面渲染後初步載入產品細項
     getProductDetail();
+    //畫面渲染後初步載入購物車並更新至store
+    getCarts();
   }, []);
+
+  //取得cart並將資訊加入至store
+  const getCarts = async () => {
+    setIsScreenLoading(true);
+    try {
+      const res = await axios.get(`${BASE_URL}/v2/api/${API_PATH}/cart`);
+      dispatch(updateCartData(res.data.data)); //將購物車資料加入至store
+    } catch (error) {
+      const rawMessage = error.response?.data?.message;
+      const errorMessage = Array.isArray(rawMessage)
+        ? rawMessage.join('、')
+        : rawMessage || '發生錯誤，取得產品細項失敗，請稍後再試';
+      dispatch(pushMessage({ text: errorMessage, status: 'failed' }));
+    } finally {
+      setIsScreenLoading(false);
+    }
+  };
 
   //加入購物車
   const addCartItem = async (product_id, qty = 1) => {
     setIsScreenLoading(true);
-    // setIsLoading(true);
     // 如果 qty 小於 1，直接返回不做任何處理
     if (qty < 1) {
       console.warn('qty 不能小於 1');
@@ -68,6 +86,9 @@ export default function ProductDetailPage() {
         },
       });
       dispatch(pushMessage({ text: '商品加入購物車成功', status: 'success' }));
+
+      //將異動過後的購物車資料加入至store
+      getCarts();
     } catch (error) {
       // console.error(error);
       // alert('加入購物車失敗');
@@ -77,7 +98,6 @@ export default function ProductDetailPage() {
         : rawMessage || '發生錯誤，加入購物車失敗，請稍後再試';
       dispatch(pushMessage({ text: errorMessage, status: 'failed' }));
     } finally {
-      // setIsLoading(false);
       setIsScreenLoading(false);
     }
   };
@@ -181,8 +201,8 @@ export default function ProductDetailPage() {
                   </div>
                   <input
                     type='text'
+                    readOnly
                     className='form-control border-0 text-center my-auto shadow-none bg-light'
-                    placeholder=''
                     aria-label='Example text with button addon'
                     aria-describedby='button-addon1'
                     value={qtySelect}

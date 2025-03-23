@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
-// import { useForm } from 'react-hook-form';
 import ReactLoading from 'react-loading';
 import axios from 'axios';
 
@@ -11,6 +10,7 @@ import { Link } from 'react-router-dom';
 import Swiper from 'swiper';
 import { Autoplay } from 'swiper/modules';
 import 'swiper/css';
+import { updateCartData } from '../../redux/cartSlice';
 
 export default function CartPage() {
   const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -59,6 +59,7 @@ export default function CartPage() {
     try {
       const res = await axios.get(`${BASE_URL}/v2/api/${API_PATH}/cart`);
       setCarts(res.data.data.carts);
+      dispatch(updateCartData(res.data.data)); //將異動過後的購物車資料加入至store
     } catch (error) {
       handleError(error, '發生錯誤，取得購物車失敗');
     } finally {
@@ -106,21 +107,21 @@ export default function CartPage() {
       setIsScreenLoading(false);
     }
   };
-  //移除全部購物車品項
-  const deleAllCart = async () => {
-    setIsScreenLoading(true);
-    try {
-      await axios.delete(`${BASE_URL}/v2/api/${API_PATH}/carts`);
-      // alert('刪除全部購物車成功');
-      dispatch(pushMessage({ text: '移除全部購物車成功', status: 'success' }));
-      //成功後刷新購物車
-      getCarts();
-    } catch (error) {
-      handleError(error, '發生錯誤，移除全部購物車失敗');
-    } finally {
-      setIsScreenLoading(false);
-    }
-  };
+  // //移除全部購物車品項
+  // const deleAllCart = async () => {
+  //   setIsScreenLoading(true);
+  //   try {
+  //     await axios.delete(`${BASE_URL}/v2/api/${API_PATH}/carts`);
+  //     // alert('刪除全部購物車成功');
+  //     dispatch(pushMessage({ text: '移除全部購物車成功', status: 'success' }));
+  //     //成功後刷新購物車
+  //     getCarts();
+  //   } catch (error) {
+  //     handleError(error, '發生錯誤，移除全部購物車失敗');
+  //   } finally {
+  //     setIsScreenLoading(false);
+  //   }
+  // };
 
   // 錯誤處理共用函式
   const handleError = (error, fallback = '操作失敗，請稍後再試') => {
@@ -202,6 +203,7 @@ export default function CartPage() {
                             </div>
                             <input
                               type='text'
+                              readOnly
                               className='form-control border-0 text-center my-auto shadow-none'
                               placeholder=''
                               aria-label='Example text with button addon'
@@ -251,7 +253,8 @@ export default function CartPage() {
                   )}
                 </tbody>
               </table>
-              <div className='input-group w-50 mb-3'>
+              {/* 優惠卷 */}
+              {/* <div className='input-group w-50 mb-3'>
                 <input
                   type='text'
                   className='form-control rounded-0 border-bottom border-top-0 border-start-0 border-end-0 shadow-none'
@@ -268,7 +271,7 @@ export default function CartPage() {
                     <i className='fas fa-paper-plane'></i>
                   </button>
                 </div>
-              </div>
+              </div> */}
             </div>
             <div className='col-md-4'>
               <div className='border p-4 mb-4'>

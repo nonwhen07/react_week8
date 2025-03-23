@@ -203,8 +203,7 @@ export default function ProductsPage() {
                     </button>
                     <div className='card-body p-0'>
                       <h4 className='mb-0 mt-3'>
-                        {/* <a href='./detail.html'>{product.title}</a> */}
-                        <Link to={`/detail/${product.id}`}>
+                        <Link to={`/product/${product.id}`}>
                           {product.title}
                         </Link>
                       </h4>
