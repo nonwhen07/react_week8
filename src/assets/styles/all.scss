@@ -1,3 +1,13 @@
+@use 'sass:math'; // 匯入 math 模組支援 math.div()
+// ⚠️ 問題本質：Sass 除法 / 被棄用
+// Dart Sass 新版（即將 2.0.0）
+// 禁止使用 / 做除法，除非在 calc() 裡。
+// 原本這樣寫會報警告甚至未來錯誤：
+// $spacer / 2
+// 正確寫法：
+// math.div($spacer, 2)
+// calc($spacer / 2)  // 若你目的是在 CSS 裡計算
+
 
 
 @import "../../../node_modules/bootstrap/scss/functions";
