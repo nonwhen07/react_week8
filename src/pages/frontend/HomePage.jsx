@@ -10,6 +10,13 @@ import { Link } from 'react-router-dom';
 export default function HomePage() {
   useEffect(() => {
     AOS.init({ duration: 800, once: true });
+    // const carouselElement = document.getElementById('storeShowcase');
+    // if (carouselElement) {
+    //   new window.bootstrap.Carousel(carouselElement, {
+    //     interval: 5000,
+    //     ride: 'carousel',
+    //   });
+    // }
   }, []);
 
   return (
@@ -112,171 +119,90 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* <div className='bg-light mt-7'>
-        <div className='container'>
-          <div
-            id='carouselExampleControls'
-            className='carousel slide'
-            data-ride='carousel'
-          >
-            <div className='carousel-inner'>
-              <div className='carousel-item active'>
-                <div className='row justify-content-center py-7'>
-                  <div className='col-md-6 text-center'>
-                    <img
-                      src='/images/avatar_小珊.png'
-                      alt='小珊'
-                      className='rounded-circle mb-3'
-                      width='80'
-                    />
-                    <h3>咖啡香香的～</h3>
-                    <p className='my-5'>“咖啡香氣迷人，早上來一杯超療癒！”</p>
-                    <p>
-                      <small>—小珊</small>
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className='carousel-item'>
-                <div className='row justify-content-center py-7'>
-                  <div className='col-md-6 text-center'>
-                    <img
-                      src='/images/avatar_小珊.png'
-                      alt='小珊'
-                      className='rounded-circle mb-3'
-                      width='80'
-                    />
-                    <h3>超推巴斯克!!</h3>
-                    <p className='my-5'>“甜點精緻不膩，超推巴斯克！”</p>
-                    <p>
-                      <small>—小珊</small>
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className='carousel-item'>
-                <div className='row justify-content-center py-7'>
-                  <div className='col-md-6 text-center'>
-                    <h3>悠閒午後</h3>
-                    <p className='my-5'>“氛圍舒適，適合慢慢度過午後。”</p>
-                    <p>
-                      <small>—小珊</small>
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <a
-              className='carousel-control-prev'
-              href='#carouselExampleControls'
-              role='button'
-              data-slide='prev'
-            >
-              <span
-                className='carousel-control-prev-icon'
-                aria-hidden='true'
-              ></span>
-              <span className='sr-only'>Previous</span>
-            </a>
-            <a
-              className='carousel-control-next'
-              href='#carouselExampleControls'
-              role='button'
-              data-slide='next'
-            >
-              <span
-                className='carousel-control-next-icon'
-                aria-hidden='true'
-              ></span>
-              <span className='sr-only'>Next</span>
-            </a>
-          </div>
-        </div>
-      </div> */}
       {/* 3 */}
-      <div className='bg-light mt-7'>
-        <div className='container'>
-          <div
-            id='carouselExampleControls'
-            className='carousel slide'
-            data-ride='carousel'
-          >
-            <div className='carousel-inner'>
-              <div className='carousel-item active'>
-                <div className='row justify-content-center py-7'>
-                  <div className='col-md-6 text-center'>
-                    <img
-                      src='/images/avatar_小珊.png'
-                      alt='小珊'
-                      className='rounded-circle mb-3'
-                      width='80'
-                    />
-                    <h3>咖啡香香的～</h3>
-                    <p className='my-5'>“咖啡香氣迷人，早上來一杯超療癒！”</p>
-                    <p>
-                      <small>—小珊</small>
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className='carousel-item'>
-                <div className='row justify-content-center py-7'>
-                  <div className='col-md-6 text-center'>
-                    <img
-                      src='/images/avatar_小珊.png'
-                      alt='小珊'
-                      className='rounded-circle mb-3'
-                      width='80'
-                    />
-                    <h3>超推巴斯克!!</h3>
-                    <p className='my-5'>“甜點精緻不膩，超推巴斯克！”</p>
-                    <p>
-                      <small>—小珊</small>
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className='carousel-item'>
-                <div className='row justify-content-center py-7'>
-                  <div className='col-md-6 text-center'>
-                    <h3>悠閒午後</h3>
-                    <p className='my-5'>“氛圍舒適，適合慢慢度過午後。”</p>
-                    <p>
-                      <small>—小珊</small>
-                    </p>
-                  </div>
-                </div>
+      <div
+        id='storeShowcase'
+        className='carousel slide carousel-fade'
+        data-bs-ride='carousel'
+        data-bs-interval='5000'
+      >
+        <div className='carousel-inner'>
+          <div className='carousel-item active'>
+            <div
+              className='store-banner'
+              style={{
+                backgroundImage: 'url(./images/homepage/cafe_interior1.webp)',
+              }}
+            >
+              <div className='overlay-text'>
+                <h2>慢享生活・咖啡香氣與溫柔日光相伴1</h2>
               </div>
             </div>
-            <a
-              className='carousel-control-prev'
-              href='#carouselExampleControls'
-              role='button'
-              data-slide='prev'
+          </div>
+          <div className='carousel-item'>
+            <div
+              className='store-banner'
+              style={{
+                backgroundImage: 'url(./images/homepage/cafe_interior2.webp)',
+              }}
             >
-              <span
-                className='carousel-control-prev-icon'
-                aria-hidden='true'
-              ></span>
-              <span className='sr-only'>Previous</span>
-            </a>
-            <a
-              className='carousel-control-next'
-              href='#carouselExampleControls'
-              role='button'
-              data-slide='next'
+              <div className='overlay-text'>
+                <h2>每個座位，都是屬於你的寧靜角落2</h2>
+              </div>
+            </div>
+          </div>
+          <div className='carousel-item'>
+            <div
+              className='store-banner'
+              style={{
+                backgroundImage: 'url(./images/homepage/cafe_interior3.webp)',
+              }}
             >
-              <span
-                className='carousel-control-next-icon'
-                aria-hidden='true'
-              ></span>
-              <span className='sr-only'>Next</span>
-            </a>
+              <div className='overlay-text'>
+                <h2>每個座位，都是屬於你的寧靜角落3</h2>
+              </div>
+            </div>
+          </div>
+          <div className='carousel-item'>
+            <div
+              className='store-banner'
+              style={{
+                backgroundImage: 'url(./images/homepage/cafe_interior4.webp)',
+              }}
+            >
+              <div className='overlay-text'>
+                <h2>每個座位，都是屬於你的寧靜角落4</h2>
+              </div>
+            </div>
           </div>
         </div>
+
+        <a
+          className='carousel-control-prev'
+          href='#storeShowcase'
+          role='button'
+          data-bs-slide='prev'
+        >
+          <span
+            className='carousel-control-prev-icon'
+            aria-hidden='true'
+          ></span>
+        </a>
+        <a
+          className='carousel-control-next'
+          href='#storeShowcase'
+          role='button'
+          data-bs-slide='next'
+        >
+          <span
+            className='carousel-control-next-icon'
+            aria-hidden='true'
+          ></span>
+        </a>
       </div>
+
       {/* 4 */}
-      <div className='container my-7'>
+      {/* <div className='container my-7'>
         <div className='row'>
           <div className='col-md-6'>
             <img
@@ -309,9 +235,20 @@ export default function HomePage() {
             </p>
           </div>
         </div>
+      </div> */}
+      <div className='container my-7 text-center'>
+        <h3>Morning Bean Café 的每一天</h3>
+        <p className='text-muted mt-3'>
+          我們每日嚴選豆種，只為帶給你晨間最香的一杯。
+          <br />
+          在這裡，享受屬於你的慢時光。
+        </p>
+        <Link to={'/about'} className='btn btn-outline-dark mt-3'>
+          了解我們
+        </Link>
       </div>
       {/* Email 訂關區 */}
-      {/* <div className='bg-light py-4'>
+      <div className='bg-light py-4'>
         <div className='container'>
           <div className='d-flex flex-column flex-md-row justify-content-between align-items-md-center align-items-start'>
             <p className='mb-0 fw-bold'>歡迎訂閱我們的電子報!</p>
@@ -333,7 +270,7 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-      </div> */}
+      </div>
     </div>
   );
 }
