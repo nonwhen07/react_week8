@@ -49,7 +49,10 @@ export default function ProductsPage() {
   }, []);
 
   // 將所有取得的category，用new Set過濾掉重複的部分，但是注意這樣會變成Set物件，所以要再轉成陣列
-  const categories = [...new Set(products.map(product => product.category))];
+  const categories = [
+    '全部',
+    ...new Set(products.map(product => product.category)),
+  ];
   // 透過產品分類來篩選產品
   const filterProducts = products.filter(product => {
     if (selectedCategory === '全部') {
@@ -57,6 +60,22 @@ export default function ProductsPage() {
     }
     return product.category === selectedCategory;
   });
+  const [wishList, setWishList] = useState(() => {
+    const initWishList = localStorage.getItem('wishList')
+      ? JSON.parse(localStorage.getItem('wishList'))
+      : {};
+
+    return initWishList;
+  });
+
+  const toggleWishListItem = product_id => {
+    const newWishList = {
+      ...wishList,
+      [product_id]: !wishList[product_id],
+    };
+    localStorage.setItem('wishList', JSON.stringify(newWishList));
+    setWishList(newWishList);
+  };
 
   //加入購物車
   // const addCartItem = async (product_id, qty = 1, source = 'table') => {
@@ -131,7 +150,7 @@ export default function ProductsPage() {
                   data-bs-target='#collapseOne'
                 >
                   <div className='d-flex justify-content-between align-items-center pe-1'>
-                    <h4 className='mb-0'>Menu</h4>
+                    <h4 className='mb-0'>餐飲分類</h4>
                     <i className='fas fa-chevron-down'></i>
                   </div>
                 </div>
@@ -143,15 +162,6 @@ export default function ProductsPage() {
                 >
                   <div className='card-body py-0'>
                     <ul className='list-unstyled'>
-                      <li>
-                        <button
-                          onClick={() => setSelectedCategory('全部')}
-                          type='button'
-                          className='btn border-none py-2 d-block text-muted'
-                        >
-                          全部
-                        </button>
-                      </li>
                       {categories.map(category => (
                         <li key={category}>
                           <button
@@ -167,35 +177,6 @@ export default function ProductsPage() {
                   </div>
                 </div>
               </div>
-              {/* <div className='card border-0'>
-                <div
-                  className='card-header px-0 py-4 bg-white border border-bottom-0 border-top border-start-0 border-end-0 rounded-0'
-                  id='headingTwo'
-                  data-bs-toggle='collapse'
-                  data-bs-target='#collapseTwo'
-                >
-                  <div className='d-flex justify-content-between align-items-center pe-1'>
-                    <h4 className='mb-0'>各式甜點</h4>
-                    <i className='fas fa-chevron-down'></i>
-                  </div>
-                </div>
-                <div
-                  id='collapseTwo'
-                  className='collapse'
-                  aria-labelledby='headingTwo'
-                  data-bs-parent='#accordionExample'
-                >
-                  <div className='card-body py-0'>
-                    <ul className='list-unstyled'>
-                      <li>
-                        <a href='#' className='py-2 d-block text-muted'>
-                          甜點區
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div> */}
             </div>
           </div>
           <div className='col-md-8'>
@@ -208,12 +189,18 @@ export default function ProductsPage() {
                       className='card-img-top rounded-0'
                       alt={product.title}
                     />
-                    <a href='#' className='text-dark'>
+                    <button
+                      onClick={() => toggleWishListItem(product.id)}
+                      type='button'
+                      className='text-dark border-none'
+                    >
                       <i
-                        className='far fa-heart position-absolute'
+                        className={`${
+                          wishList[product.id] ? 'fas' : 'far'
+                        } fa-heart position-absolute`}
                         style={{ right: '16px', top: '16px' }}
                       ></i>
-                    </a>
+                    </button>
                     <div className='card-body p-0'>
                       <h4 className='mb-0 mt-3'>
                         {/* <a href='./detail.html'>{product.title}</a> */}
