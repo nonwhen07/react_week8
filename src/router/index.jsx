@@ -6,7 +6,7 @@ import ProductsPage from '../pages/frontend/ProductsPage';
 import ProductDetailPage from '../pages/frontend/ProductDetailPage';
 import CartPage from '../pages/frontend/CartPage';
 import CheckoutFormPage from '../pages/frontend/CheckoutFormPage';
-import CheckoutPaymenPage from '../pages/frontend/CheckoutPaymenPage';
+import CheckoutPaymentPage from '../pages/frontend/CheckoutPaymentPage';
 import CheckoutSuccessPage from '../pages/frontend/CheckoutSuccessPage';
 import NotFoundPage from '../pages/NotFoundPage';
 import DashboardPage from '../pages/backend/DashboardPage';
@@ -50,7 +50,7 @@ const router = createHashRouter([
       },
       {
         path: 'checkout-payment',
-        element: <CheckoutPaymenPage />,
+        element: <CheckoutPaymentPage />,
       },
       {
         path: 'checkout-success',

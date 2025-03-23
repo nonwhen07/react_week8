@@ -92,18 +92,21 @@ export default function CheckoutFormPage() {
               Morning Bean Café
             </Link> */}
             <ul className='list-unstyled mb-0 ms-md-auto d-flex align-items-center justify-content-between justify-content-md-end w-100 mt-md-0 mt-4'>
-              <li className='me-md-6 me-3 position-relative custom-step-line'>
+              {/* <li className='me-md-6 me-3 position-relative custom-step-line'>
                 <i className='fas fa-check-circle d-md-inline d-block text-center'></i>
                 <span className='text-nowrap'>Cart</span>
-              </li>
+              </li> */}
               <li className='me-md-6 me-3 position-relative custom-step-line'>
                 <i className='fas fa-check-circle d-md-inline d-block text-center'></i>
-                {/* <span className='text-nowrap'>Checkout</span> */}
-                <span className='text-nowrap fw-bold'>Checkout</span>
+                <span className='text-nowrap fw-bold'>Checkout-Form</span>
+              </li>
+              <li className='me-md-6 me-3 position-relative custom-step-line'>
+                <i className='fas fa-dot-circle d-md-inline d-block text-center'></i>
+                <span className='text-nowrap'>Checkout-Payment</span>
               </li>
               <li>
                 <i className='fas fa-dot-circle d-md-inline d-block text-center'></i>
-                <span className='text-nowrap'>Order Complete</span>
+                <span className='text-nowrap'>Checkout-Success</span>
               </li>
             </ul>
           </nav>
@@ -270,20 +273,23 @@ export default function CheckoutFormPage() {
                 placeholder='message ... '
               ></textarea>
             </div>
-            <div className='d-flex flex-column-reverse flex-md-row mt-4 justify-content-between align-items-md-center align-items-end w-100'>
-              <Link to='/cart' className='text-dark mt-md-0 mt-3'>
-                <i className='fas fa-chevron-left me-2'></i> Return to Shopping
-                Cart
-              </Link>
-              <button
-                type='submit'
-                className='btn btn-dark py-3 px-7'
-                disabled={isScreenLoading}
-              >
-                {isScreenLoading ? '處理中...' : 'Place Order'}
-              </button>
-            </div>
           </form>
+          <div className='d-flex flex-column-reverse flex-md-row mt-4 justify-content-between align-items-md-center align-items-end w-100'>
+            <Link to='/cart' className='text-dark mt-md-0 mt-3'>
+              <i className='fas fa-chevron-left me-2'></i> Return to Shopping
+              Cart
+            </Link>
+            {/* <button
+              type='submit'
+              className='btn btn-dark py-3 px-7'
+              disabled={isScreenLoading}
+            >
+              {isScreenLoading ? '處理中...' : 'Place Order'}
+            </button> */}
+            <Link to='/checkout-payment' className='btn btn-dark py-3 px-7'>
+              Checkout-Payment
+            </Link>
+          </div>
         </div>
       </div>
 
