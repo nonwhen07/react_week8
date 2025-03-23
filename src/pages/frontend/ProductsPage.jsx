@@ -14,21 +14,27 @@ export default function ProductsPage() {
   const dispatch = useDispatch();
 
   const [products, setProducts] = useState([]);
+
+  //用來取得所有商品資料
+  // const [allProducts, setAllProducts] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState('全部');
+
   // const [tempProduct, setTempProduct] = useState([]);
   const [isScreenLoading, setIsScreenLoading] = useState(false);
   // const [isLoading, setIsLoading] = useState(false); //改用下面的loadingItems，先儲存商品ID來標定loading位置
-  const [loadingItems, setLoadingItems] = useState({}); // 用物件儲存各商品的 Loading 狀態
+  // const [loadingItems, setLoadingItems] = useState({}); // 用物件儲存各商品的 Loading 狀態
 
   useEffect(() => {
     setIsScreenLoading(true);
     const getProducts = async () => {
       try {
-        const res = await axios.get(`${BASE_URL}/v2/api/${API_PATH}/products`);
+        // const res = await axios.get(`${BASE_URL}/v2/api/${API_PATH}/products`);
+        const res = await axios.get(
+          // 取得所有商品資料，來歸類品項
+          `${BASE_URL}/v2/api/${API_PATH}/products/all`
+        );
         setProducts(res.data.products);
       } catch (error) {
-        // console.error(error);
-        // alert('取得產品失敗');
-
         const rawMessage = error.response?.data?.message;
         const errorMessage = Array.isArray(rawMessage)
           ? rawMessage.join('、')
@@ -42,140 +48,53 @@ export default function ProductsPage() {
     getProducts();
   }, []);
 
+  // 將所有取得的category，用new Set過濾掉重複的部分，但是注意這樣會變成Set物件，所以要再轉成陣列
+  const categories = [...new Set(products.map(product => product.category))];
+  // 透過產品分類來篩選產品
+  const filterProducts = products.filter(product => {
+    if (selectedCategory === '全部') {
+      return product;
+    }
+    return product.category === selectedCategory;
+  });
+
   //加入購物車
-  const addCartItem = async (product_id, qty = 1, source = 'table') => {
-    // 如果 qty 小於 1，直接返回不做任何處理
-    if (qty < 1) {
-      console.warn('qty 不能小於 1');
-      return;
-    }
+  // const addCartItem = async (product_id, qty = 1, source = 'table') => {
+  //   // 如果 qty 小於 1，直接返回不做任何處理
+  //   if (qty < 1) {
+  //     console.warn('qty 不能小於 1');
+  //     return;
+  //   }
+  //   setLoadingItems(prev => ({
+  //     ...prev,
+  //     [product_id]: { ...prev[product_id], [source]: true }, // 只改變對應的 source
+  //   }));
+  //   try {
+  //     await axios.post(`${BASE_URL}/v2/api/${API_PATH}/cart`, {
+  //       data: {
+  //         product_id,
+  //         qty: Number(qty),
+  //       },
+  //     });
+  //     //closeModal();
+  //     dispatch(pushMessage({ text: '商品加入購物車成功', status: 'success' }));
+  //   } catch (error) {
+  //     // console.error(error);
+  //     // alert('加入購物車失敗');
+  //     const rawMessage = error.response?.data?.message;
+  //     const errorMessage = Array.isArray(rawMessage)
+  //       ? rawMessage.join('、')
+  //       : rawMessage || '發生錯誤，加入購物車失敗，請稍後再試';
+  //     dispatch(pushMessage({ text: errorMessage, status: 'failed' }));
+  //   } finally {
+  //     setLoadingItems(prev => ({
+  //       ...prev,
+  //       [product_id]: { ...prev[product_id], [source]: false }, // 結束 Loading
+  //     }));
+  //   }
+  // };
 
-    setLoadingItems(prev => ({
-      ...prev,
-      [product_id]: { ...prev[product_id], [source]: true }, // 只改變對應的 source
-    }));
-
-    try {
-      await axios.post(`${BASE_URL}/v2/api/${API_PATH}/cart`, {
-        data: {
-          product_id,
-          qty: Number(qty),
-        },
-      });
-      //closeModal();
-      dispatch(pushMessage({ text: '商品加入購物車成功', status: 'success' }));
-    } catch (error) {
-      // console.error(error);
-      // alert('加入購物車失敗');
-      const rawMessage = error.response?.data?.message;
-      const errorMessage = Array.isArray(rawMessage)
-        ? rawMessage.join('、')
-        : rawMessage || '發生錯誤，加入購物車失敗，請稍後再試';
-      dispatch(pushMessage({ text: errorMessage, status: 'failed' }));
-    } finally {
-      setLoadingItems(prev => ({
-        ...prev,
-        [product_id]: { ...prev[product_id], [source]: false }, // 結束 Loading
-      }));
-    }
-  };
-
-  // return (
-  //   <>
-  //     <div className='container'>
-  //       <div className='mt-4'>
-  //         <table className='table align-middle'>
-  //           <thead>
-  //             <tr>
-  //               <th>圖片</th>
-  //               <th>商品名稱</th>
-  //               <th>價格</th>
-  //               <th
-  //                 style={{
-  //                   minWidth: '200px',
-  //                   width: 'auto',
-  //                   maxWidth: '280px',
-  //                 }}
-  //               ></th>
-  //             </tr>
-  //           </thead>
-  //           <tbody>
-  //             {products.map(product => (
-  //               <tr key={product.id}>
-  //                 <td style={{ width: '200px' }}>
-  //                   <img
-  //                     className='img-fluid'
-  //                     src={product.imageUrl}
-  //                     alt={product.title}
-  //                   />
-  //                 </td>
-  //                 <td>{product.title}</td>
-  //                 <td>
-  //                   <del className='h6'>原價 {product.origin_price} 元</del>
-  //                   <div className='h5'>特價 {product.price}元</div>
-  //                 </td>
-  //                 <td>
-  //                   <div className='btn-group btn-group-sm'>
-  //                     <Link
-  //                       to={`/product/${product.id}`}
-  //                       type='button'
-  //                       className='btn btn-outline-secondary'
-  //                     >
-  //                       查看更多
-  //                     </Link>
-  //                     <button
-  //                       disabled={loadingItems[product.id]?.table}
-  //                       onClick={() => addCartItem(product.id, 1, 'table')}
-  //                       type='button'
-  //                       className='btn btn-outline-danger d-flex align-items-center'
-  //                     >
-  //                       加到購物車
-  //                       {loadingItems[product.id]?.table && (
-  //                         // <ReactLoading className="d-flex align-items-center" type="spin" color="#000" height="1.25rem" width="1.25rem" />
-  //                         <div
-  //                           className='d-flex align-items-center'
-  //                           style={{
-  //                             width: '20px',
-  //                             height: '20px',
-  //                             display: 'flex',
-  //                             alignItems: 'center',
-  //                             justifyContent: 'center',
-  //                           }}
-  //                         >
-  //                           <ReactLoading
-  //                             type='spin'
-  //                             color='#000'
-  //                             height='1.25rem'
-  //                             width='1.25rem'
-  //                           />
-  //                         </div>
-  //                       )}
-  //                     </button>
-  //                   </div>
-  //                 </td>
-  //               </tr>
-  //             ))}
-  //           </tbody>
-  //         </table>
-  //       </div>
-  //     </div>
-  //     {isScreenLoading && (
-  //       <div
-  //         className='d-flex justify-content-center align-items-center'
-  //         style={{
-  //           position: 'fixed',
-  //           inset: 0,
-  //           backgroundColor: 'rgba(255,255,255,0.3)',
-  //           zIndex: 999,
-  //         }}
-  //       >
-  //         <ReactLoading type='spin' color='black' width='4rem' height='4rem' />
-  //       </div>
-  //     )}
-  //   </>
-  // );
-
-  // 套用六角板型
+  // 套用板型
   return (
     <div className='container-fluid'>
       <div
@@ -195,7 +114,7 @@ export default function ProductsPage() {
             opacity: 0.1,
           }}
         ></div>
-        <h2 className='fw-bold'>Lorem ipsum.</h2>
+        <h2 className='fw-bold'>Lorem ipsum- 產品葉面.</h2>
       </div>
       <div className='container mt-md-5 mt-3 mb-7'>
         <div className='row'>
@@ -212,7 +131,7 @@ export default function ProductsPage() {
                   data-bs-target='#collapseOne'
                 >
                   <div className='d-flex justify-content-between align-items-center pe-1'>
-                    <h4 className='mb-0'>Lorem ipsum</h4>
+                    <h4 className='mb-0'>Menu</h4>
                     <i className='fas fa-chevron-down'></i>
                   </div>
                 </div>
@@ -225,35 +144,30 @@ export default function ProductsPage() {
                   <div className='card-body py-0'>
                     <ul className='list-unstyled'>
                       <li>
-                        <a href='#' className='py-2 d-block text-muted'>
-                          Lorem ipsum
-                        </a>
+                        <button
+                          onClick={() => setSelectedCategory('全部')}
+                          type='button'
+                          className='btn border-none py-2 d-block text-muted'
+                        >
+                          全部
+                        </button>
                       </li>
-                      <li>
-                        <a href='#' className='py-2 d-block text-muted'>
-                          Lorem ipsum
-                        </a>
-                      </li>
-                      <li>
-                        <a href='#' className='py-2 d-block text-muted'>
-                          Lorem ipsum
-                        </a>
-                      </li>
-                      <li>
-                        <a href='#' className='py-2 d-block text-muted'>
-                          Lorem ipsum
-                        </a>
-                      </li>
-                      <li>
-                        <a href='#' className='py-2 d-block text-muted'>
-                          Lorem ipsum
-                        </a>
-                      </li>
+                      {categories.map(category => (
+                        <li key={category}>
+                          <button
+                            onClick={() => setSelectedCategory(category)}
+                            type='button'
+                            className='btn border-none py-2 d-block text-muted'
+                          >
+                            {category}
+                          </button>
+                        </li>
+                      ))}
                     </ul>
                   </div>
                 </div>
               </div>
-              <div className='card border-0'>
+              {/* <div className='card border-0'>
                 <div
                   className='card-header px-0 py-4 bg-white border border-bottom-0 border-top border-start-0 border-end-0 rounded-0'
                   id='headingTwo'
@@ -261,7 +175,7 @@ export default function ProductsPage() {
                   data-bs-target='#collapseTwo'
                 >
                   <div className='d-flex justify-content-between align-items-center pe-1'>
-                    <h4 className='mb-0'>Lorem ipsum</h4>
+                    <h4 className='mb-0'>各式甜點</h4>
                     <i className='fas fa-chevron-down'></i>
                   </div>
                 </div>
@@ -275,114 +189,18 @@ export default function ProductsPage() {
                     <ul className='list-unstyled'>
                       <li>
                         <a href='#' className='py-2 d-block text-muted'>
-                          Lorem ipsum
-                        </a>
-                      </li>
-                      <li>
-                        <a href='#' className='py-2 d-block text-muted'>
-                          Lorem ipsum
-                        </a>
-                      </li>
-                      <li>
-                        <a href='#' className='py-2 d-block text-muted'>
-                          Lorem ipsum
-                        </a>
-                      </li>
-                      <li>
-                        <a href='#' className='py-2 d-block text-muted'>
-                          Lorem ipsum
-                        </a>
-                      </li>
-                      <li>
-                        <a href='#' className='py-2 d-block text-muted'>
-                          Lorem ipsum
+                          甜點區
                         </a>
                       </li>
                     </ul>
                   </div>
                 </div>
-              </div>
-              <div className='card border-0'>
-                <div
-                  className='card-header px-0 py-4 bg-white border border-bottom-0 border-top border-start-0 border-end-0 rounded-0'
-                  id='headingThree'
-                  data-bs-toggle='collapse'
-                  data-bs-target='#collapseThree'
-                >
-                  <div className='d-flex justify-content-between align-items-center pe-1'>
-                    <h4 className='mb-0'>Lorem ipsum</h4>
-                    <i className='fas fa-chevron-down'></i>
-                  </div>
-                </div>
-                <div
-                  id='collapseThree'
-                  className='collapse'
-                  aria-labelledby='headingThree'
-                  data-bs-parent='#accordionExample'
-                >
-                  <div className='card-body py-0'>
-                    <ul className='list-unstyled'>
-                      <li>
-                        <a href='#' className='py-2 d-block text-muted'>
-                          Lorem ipsum
-                        </a>
-                      </li>
-                      <li>
-                        <a href='#' className='py-2 d-block text-muted'>
-                          Lorem ipsum
-                        </a>
-                      </li>
-                      <li>
-                        <a href='#' className='py-2 d-block text-muted'>
-                          Lorem ipsum
-                        </a>
-                      </li>
-                      <li>
-                        <a href='#' className='py-2 d-block text-muted'>
-                          Lorem ipsum
-                        </a>
-                      </li>
-                      <li>
-                        <a href='#' className='py-2 d-block text-muted'>
-                          Lorem ipsum
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
+              </div> */}
             </div>
           </div>
           <div className='col-md-8'>
             <div className='row'>
-              {/* <div className='col-md-6'>
-                <div className='card border-0 mb-4 position-relative position-relative'>
-                  <img
-                    src='https://images.unsplash.com/photo-1591843336741-9f1238f66758?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1867&q=80'
-                    className='card-img-top rounded-0'
-                    alt='...'
-                  />
-                  <a href='#' className='text-dark'>
-                    <i
-                      className='far fa-heart position-absolute'
-                      style={{ right: '16px', top: '16px' }}
-                    ></i>
-                  </a>
-                  <div className='card-body p-0'>
-                    <h4 className='mb-0 mt-3'>
-                      <a href='./detail.html'>Lorem ipsum</a>
-                    </h4>
-                    <p className='card-text mb-0'>
-                      NT$1,080
-                      <span className='text-muted '>
-                        <del>NT$1,200</del>
-                      </span>
-                    </p>
-                    <p className='text-muted mt-3'></p>
-                  </div>
-                </div>
-              </div> */}
-              {products.map(product => (
+              {filterProducts.map(product => (
                 <div key={product.id} className='col-md-6'>
                   <div className='card border-0 mb-4 position-relative position-relative'>
                     <img
@@ -415,7 +233,8 @@ export default function ProductsPage() {
                 </div>
               ))}
             </div>
-            <nav className='d-flex justify-content-center'>
+            {/* pagenation  */}
+            {/* <nav className='d-flex justify-content-center'>
               <ul className='pagination'>
                 <li className='page-item'>
                   <a className='page-link' href='#' aria-label='Previous'>
@@ -443,7 +262,7 @@ export default function ProductsPage() {
                   </a>
                 </li>
               </ul>
-            </nav>
+            </nav> */}
           </div>
         </div>
       </div>
