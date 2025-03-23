@@ -399,7 +399,7 @@ export default function ProductsPage() {
                     <div className='card-body p-0'>
                       <h4 className='mb-0 mt-3'>
                         {/* <a href='./detail.html'>{product.title}</a> */}
-                        <Link to={`/product/${product.id}`}>
+                        <Link to={`/detail/${product.id}`}>
                           {product.title}
                         </Link>
                       </h4>

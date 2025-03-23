@@ -483,7 +483,103 @@ export default function CartPage() {
                       </button>
                     </td>
                   </tr> */}
-                  {carts.map(cart => (
+                  {carts?.length > 0 ? (
+                    carts.map(cart => (
+                      <tr key={cart.id} className='border-bottom'>
+                        <th
+                          scope='row'
+                          className='border-0 px-0 font-weight-normal py-4'
+                        >
+                          <img
+                            src='https://images.unsplash.com/photo-1502743780242-f10d2ce370f3?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1916&q=80'
+                            alt=''
+                            style={{
+                              width: '72px',
+                              height: '72px',
+                              objectFit: 'cover',
+                            }}
+                          />
+                          <p className='mb-0 fw-bold ms-3 d-inline-block'>
+                            {cart.product.title}
+                          </p>
+                        </th>
+                        <td
+                          className='border-0 align-middle'
+                          style={{ maxWidth: '160px' }}
+                        >
+                          <div className='input-group pe-5'>
+                            <div className='input-group-prepend'>
+                              <button
+                                onClick={() =>
+                                  editCartItem(
+                                    cart.id,
+                                    cart.product.id,
+                                    cart.qty - 1
+                                  )
+                                }
+                                className={`btn border-0 py-2 ${
+                                  cart.qty === 1
+                                    ? 'btn-outline-secondary'
+                                    : 'btn-outline-dark'
+                                }`}
+                                disabled={cart.qty === 1} // 避免 qty 變成 0
+                                type='button'
+                                id='button-addon1'
+                              >
+                                <i className='fas fa-minus'></i>
+                              </button>
+                            </div>
+                            <input
+                              type='text'
+                              className='form-control border-0 text-center my-auto shadow-none'
+                              placeholder=''
+                              aria-label='Example text with button addon'
+                              aria-describedby='button-addon1'
+                              value={cart.qty}
+                            />
+                            <div className='input-group-append'>
+                              <button
+                                onClick={() =>
+                                  editCartItem(
+                                    cart.id,
+                                    cart.product.id,
+                                    cart.qty + 1
+                                  )
+                                }
+                                type='button'
+                                className='btn btn-outline-dark border-0 py-2'
+                                id='button-addon2'
+                              >
+                                <i className='fas fa-plus'></i>
+                              </button>
+                            </div>
+                          </div>
+                        </td>
+                        <td className='border-0 align-middle'>
+                          <p className='mb-0 ms-auto'>
+                            {formatPrice(cart.total)}
+                          </p>
+                        </td>
+                        <td className='border-0 align-middle'>
+                          <button
+                            onClick={() => deleCartItem(cart.id)}
+                            type='button'
+                            className='btn btn-outline-dark border-0 py-2'
+                          >
+                            <i className='fas fa-times'></i>
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan='4' className='text-center py-4'>
+                        購物車是空的
+                      </td>
+                    </tr>
+                  )}
+
+                  {/* {carts.map(cart => (
                     <tr key={cart.id} className='border-bottom'>
                       <th
                         scope='row'
@@ -569,7 +665,7 @@ export default function CartPage() {
                         </button>
                       </td>
                     </tr>
-                  ))}
+                  ))} */}
                 </tbody>
               </table>
               <div className='input-group w-50 mb-3'>

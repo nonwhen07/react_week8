@@ -5,6 +5,7 @@ import HomePage from '../pages/frontend/HomePage';
 import ProductsPage from '../pages/frontend/ProductsPage';
 import ProductDetailPage from '../pages/frontend/ProductDetailPage';
 import CartPage from '../pages/frontend/CartPage';
+import CheckoutPage from '../pages/frontend/CheckoutPage';
 import NotFoundPage from '../pages/NotFoundPage';
 import DashboardPage from '../pages/backend/DashboardPage';
 
@@ -22,18 +23,22 @@ const router = createHashRouter([
       },
       {
         // 產品列表
-        path: 'products',
+        path: 'product',
         element: <ProductsPage />,
       },
       {
         // 產品細項，如果是多個參數寫法=> path: 'product/:product_id/:typemode'
         // 要注意參數順序重要：網址的參數順序必須與路由設定一致。
-        path: 'product/:product_id',
+        path: 'detail/:product_id',
         element: <ProductDetailPage />,
       },
       {
         path: 'cart',
         element: <CartPage />,
+      },
+      {
+        path: 'checkout',
+        element: <CheckoutPage />,
       },
     ],
   },

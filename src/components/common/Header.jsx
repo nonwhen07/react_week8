@@ -5,8 +5,8 @@ const routes = [
   // { path: '/products', name: '產品列表' },
   // { path: '/cart', name: '購物車' },
   { path: '/', name: 'Home' },
-  { path: '/products', name: 'Product' },
-  { path: '/products', name: 'Detail' },
+  { path: '/product', name: 'Product' },
+  { path: '/detail', name: 'Detail' },
   { path: '/cart', name: 'Cart' },
 ];
 
