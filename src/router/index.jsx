@@ -2,6 +2,7 @@ import { createHashRouter } from 'react-router-dom';
 
 import LoginPage from '../pages/LoginPage';
 import HomePage from '../pages/frontend/HomePage';
+import AboutPage from '../pages/frontend/AboutPage';
 import ProductsPage from '../pages/frontend/ProductsPage';
 import ProductDetailPage from '../pages/frontend/ProductDetailPage';
 import CartPage from '../pages/frontend/CartPage';
@@ -22,6 +23,11 @@ const router = createHashRouter([
       {
         path: '',
         element: <HomePage />,
+      },
+      {
+        // 產品列表
+        path: 'about',
+        element: <AboutPage />,
       },
       {
         // 產品列表

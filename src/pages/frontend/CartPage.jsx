@@ -323,8 +323,8 @@ export default function CartPage() {
             </div>
           </div>
 
-          {/* 副圖區輪播，未來可以用 */}
-          <div className='my-5'>
+          {/* 副圖區/精選商品 輪播，未來可以用 */}
+          {/* <div className='my-5'>
             <h3 className='fw-bold'>Lorem ipsum dolor sit amet</h3>
             <div ref={swiperRef} className='swiper mt-4 mb-5'>
               <div className='swiper-wrapper'>
@@ -440,7 +440,7 @@ export default function CartPage() {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* ScreenLoading */}

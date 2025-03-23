@@ -90,8 +90,6 @@ export default function ProductDetailPage() {
       //將異動過後的購物車資料加入至store
       getCarts();
     } catch (error) {
-      // console.error(error);
-      // alert('加入購物車失敗');
       const rawMessage = error.response?.data?.message;
       const errorMessage = Array.isArray(rawMessage)
         ? rawMessage.join('、')
@@ -171,7 +169,7 @@ export default function ProductDetailPage() {
                   </Link>
                 </li>
                 <li className='breadcrumb-item'>
-                  <Link className='text-muted' to='/products'>
+                  <Link className='text-muted' to='/product'>
                     Product
                   </Link>
                 </li>
@@ -242,7 +240,7 @@ export default function ProductDetailPage() {
           </div>
         </div>
         {/* 更多副圖輪播 */}
-        {/* <h3 className='fw-bold'>Lorem ipsum dolor sit amet</h3>
+        <h3 className='fw-bold'>Lorem ipsum dolor sit amet</h3>
         <div className='swiper-container mt-4 mb-5'>
           <div className='swiper-wrapper'>
             <div className='swiper-slide'>
@@ -356,7 +354,7 @@ export default function ProductDetailPage() {
               </div>
             </div>
           </div>
-        </div> */}
+        </div>
       </div>
 
       {isScreenLoading && (

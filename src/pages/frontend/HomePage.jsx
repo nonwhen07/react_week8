@@ -5,6 +5,7 @@ import cakeImg2 from '../../assets/product/手工可麗露.png';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 export default function HomePage() {
   useEffect(() => {
@@ -37,10 +38,10 @@ export default function HomePage() {
             <h2>讓每日咖啡，成為晨間儀式.</h2>
             <p className='text-muted mb-0'>現磨手沖・手作甜點・舒適空間.</p>
             <div className='d-flex justify-content-center'>
-              <button className='btn btn-dark rounded-0 mt-6'>
-                馬上預約座位.
-              </button>
-              <button className='btn btn-dark rounded-0 mt-6'>查看菜單.</button>
+              <Link className='btn btn-dark rounded-0 mt-6' to='/product'>
+                查看菜單.
+              </Link>
+              {/* <button className='btn btn-dark rounded-0 mt-6'>查看菜單.</button> */}
             </div>
           </div>
         </div>
@@ -110,7 +111,89 @@ export default function HomePage() {
           </div>
         </div>
       </div>
-      {/* 顧客回饋區 */}
+
+      {/* <div className='bg-light mt-7'>
+        <div className='container'>
+          <div
+            id='carouselExampleControls'
+            className='carousel slide'
+            data-ride='carousel'
+          >
+            <div className='carousel-inner'>
+              <div className='carousel-item active'>
+                <div className='row justify-content-center py-7'>
+                  <div className='col-md-6 text-center'>
+                    <img
+                      src='/images/avatar_小珊.png'
+                      alt='小珊'
+                      className='rounded-circle mb-3'
+                      width='80'
+                    />
+                    <h3>咖啡香香的～</h3>
+                    <p className='my-5'>“咖啡香氣迷人，早上來一杯超療癒！”</p>
+                    <p>
+                      <small>—小珊</small>
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className='carousel-item'>
+                <div className='row justify-content-center py-7'>
+                  <div className='col-md-6 text-center'>
+                    <img
+                      src='/images/avatar_小珊.png'
+                      alt='小珊'
+                      className='rounded-circle mb-3'
+                      width='80'
+                    />
+                    <h3>超推巴斯克!!</h3>
+                    <p className='my-5'>“甜點精緻不膩，超推巴斯克！”</p>
+                    <p>
+                      <small>—小珊</small>
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className='carousel-item'>
+                <div className='row justify-content-center py-7'>
+                  <div className='col-md-6 text-center'>
+                    <h3>悠閒午後</h3>
+                    <p className='my-5'>“氛圍舒適，適合慢慢度過午後。”</p>
+                    <p>
+                      <small>—小珊</small>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <a
+              className='carousel-control-prev'
+              href='#carouselExampleControls'
+              role='button'
+              data-slide='prev'
+            >
+              <span
+                className='carousel-control-prev-icon'
+                aria-hidden='true'
+              ></span>
+              <span className='sr-only'>Previous</span>
+            </a>
+            <a
+              className='carousel-control-next'
+              href='#carouselExampleControls'
+              role='button'
+              data-slide='next'
+            >
+              <span
+                className='carousel-control-next-icon'
+                aria-hidden='true'
+              ></span>
+              <span className='sr-only'>Next</span>
+            </a>
+          </div>
+        </div>
+      </div> */}
+      {/* 3 */}
       <div className='bg-light mt-7'>
         <div className='container'>
           <div
@@ -192,7 +275,7 @@ export default function HomePage() {
           </div>
         </div>
       </div>
-      {/* Email 訂關區 */}
+      {/* 4 */}
       <div className='container my-7'>
         <div className='row'>
           <div className='col-md-6'>
@@ -227,6 +310,30 @@ export default function HomePage() {
           </div>
         </div>
       </div>
+      {/* Email 訂關區 */}
+      {/* <div className='bg-light py-4'>
+        <div className='container'>
+          <div className='d-flex flex-column flex-md-row justify-content-between align-items-md-center align-items-start'>
+            <p className='mb-0 fw-bold'>歡迎訂閱我們的電子報!</p>
+            <div className='input-group w-md-50 mt-md-0 mt-3'>
+              <input
+                type='text'
+                className='form-control rounded-0'
+                placeholder=''
+              />
+              <div className='input-group-append'>
+                <button
+                  className='btn btn-dark rounded-0'
+                  type='button'
+                  id='search'
+                >
+                  Lorem ipsum
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div> */}
     </div>
   );
 }

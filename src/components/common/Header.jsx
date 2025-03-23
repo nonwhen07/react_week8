@@ -10,10 +10,11 @@ const routes = [
   // { path: '/products', name: '產品列表' },
   // { path: '/cart', name: '購物車' },
   { path: '/', name: 'Home' },
+  // { path: '/about', name: 'About' },
   { path: '/product', name: 'Product' },
   // { path: '/detail', name: 'Detail' },
   { path: '/cart', name: 'Cart' },
-  // { path: '/login', name: 'Login' },
+  { path: '/login', name: 'Login' },
 ];
 
 export default function Header() {

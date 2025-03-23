@@ -1,7 +1,9 @@
+import { Link } from 'react-router-dom';
+
 export default function Footer() {
   return (
     <>
-      <div className='bg-light py-4'>
+      {/* <div className='bg-light py-4'>
         <div className='container'>
           <div className='d-flex flex-column flex-md-row justify-content-between align-items-md-center align-items-start'>
             <p className='mb-0 fw-bold'>Lorem ipsum dolor sit amet.</p>
@@ -23,28 +25,28 @@ export default function Footer() {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
       <div className='bg-dark py-5'>
         <div className='container'>
           <div className='d-flex align-items-center justify-content-between text-white mb-md-7 mb-4'>
-            <a className='text-white h4' href='./index.html'>
-              LOGO
-            </a>
+            <Link className='text-white h4' to='/'>
+              <span className='header-nav-logo-text'>Morning Bean Café</span>
+            </Link>
             <ul className='d-flex list-unstyled mb-0 h4'>
               <li>
-                <a href='#' className='text-white mx-3'>
+                <Link href='#' className='text-white mx-3'>
                   <i className='fab fa-facebook'></i>
-                </a>
+                </Link>
               </li>
               <li>
-                <a href='#' className='text-white mx-3'>
+                <Link href='#' className='text-white mx-3'>
                   <i className='fab fa-instagram'></i>
-                </a>
+                </Link>
               </li>
               <li>
-                <a href='#' className='text-white ms-3'>
+                <Link href='#' className='text-white ms-3'>
                   <i className='fab fa-line'></i>
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -53,7 +55,10 @@ export default function Footer() {
               <p className='mb-0'>02-3456-7890</p>
               <p className='mb-0'>service@mail.com</p>
             </div>
-            <p className='mb-0'>© 2020 LOGO All Rights Reserved.</p>
+            <p className='mb-0'>
+              本網站僅供作品使用，無包含任何商業用途
+              <br /> © 2025 Morning Bean Café All Rights Reserved.
+            </p>
           </div>
         </div>
       </div>
