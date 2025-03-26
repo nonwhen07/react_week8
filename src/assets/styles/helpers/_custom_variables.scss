@@ -1,0 +1,21 @@
+//  自訂變數 - 配色變數
+$primary-color: #5B3E35;          // 咖啡摩卡
+$background-color: #E7DDCF;       // 奶油米白
+$accent-color: #D4A373;           // 焦糖色
+$secondary-text-color: #333333;   // 深灰色
+$light-bg-color: #F5F1EB;         // 淺米色
+
+$font-family-chinese: 'Noto Sans TC', 'Zen Maru Gothic', sans-serif;
+$font-family-english: 'Poppins', 'Montserrat', sans-serif;
+$font-family-base: $font-family-chinese, $font-family-english;
+
+$font-size-base: 16px;
+$font-size-heading: 24px;
+
+//  Bootstrap SCSS 主題色覆寫（選用）
+$theme-colors: (
+  "primary": $primary-color,
+  "secondary": $accent-color,
+  "light": $light-bg-color,
+  "dark": $secondary-text-color
+);

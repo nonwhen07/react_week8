@@ -15,8 +15,52 @@ export default function ProductsPage() {
 
   const [products, setProducts] = useState([]);
 
+  // 用來設定頁面標題文案的狀態，預設是"全部"
+  const [pageTitle, setPageTitle] = useState({
+    main: '精選咖啡與甜點，陪你度過每一日',
+    sub: '探索每一款手作飲品與療癒甜點，選擇屬於你的滋味。',
+  });
+
+  // 產品分類來更換標題的文案顯示
+  const titleMap = {
+    全部: {
+      main: '精選咖啡與甜點，陪你度過每一日',
+      sub: '探索每一款手作飲品與療癒甜點，選擇屬於你的滋味。',
+    },
+    經典咖啡: {
+      main: '手沖香氣四溢，簡單卻不平凡',
+      sub: '單品豆現磨，手沖展現咖啡層次，香氣馥郁。',
+    },
+    冷萃咖啡: {
+      main: '冷冽滑順，回甘悠長的冷萃風味',
+      sub: '慢滴萃取的冰涼滋味，夏日必備清爽首選。',
+    },
+    風味茶飲: {
+      main: '茶香交織奶香，溫潤順口的日常風味',
+      sub: '焙茶與抹茶現調，風味深沉回甘，香氣四溢。',
+    },
+    經典甜點: {
+      main: '經典手作，甜而不膩的療癒滋味',
+      sub: '每日手工現烤，甜點與咖啡的完美搭配。',
+    },
+    季節限定: {
+      main: '當季限定，品味四季風味的變化',
+      sub: '嚴選當季食材，帶來期間限定的驚喜滋味。',
+    },
+    常溫點心: {
+      main: '隨時享用的小確幸',
+      sub: '手工餅乾與可麗露，陪你療癒每個片刻。',
+    },
+    店內輕食: {
+      main: '輕盈不膩的早午選擇味',
+      sub: '可頌三明治與鹹派，輕食中也藏滿層次滋味。',
+    },
+    // 其他分類...
+  };
+
   //用來取得所有商品資料
   // const [allProducts, setAllProducts] = useState([]);
+  //用來取得所有商品資料 - 產品分類版，預設是"全部"
   const [selectedCategory, setSelectedCategory] = useState('全部');
 
   // const [tempProduct, setTempProduct] = useState([]);
@@ -113,6 +157,13 @@ export default function ProductsPage() {
   //   }
   // };
 
+  const handleCategoryClick = category => {
+    // 先選擇產品分類
+    setSelectedCategory(category);
+    // 再依照產品分類來設定頁面標題
+    setPageTitle(titleMap[category] || titleMap['全部']);
+  };
+
   // 套用板型
   return (
     <div className='container-fluid'>
@@ -133,7 +184,16 @@ export default function ProductsPage() {
             opacity: 0.1,
           }}
         ></div>
-        <h2 className='fw-bold'>Lorem ipsum- 產品葉面.</h2>
+        <div className='text-center'>
+          {/* <h2 className='fw-bold'>精選咖啡與甜點，陪你度過每一日</h2>
+          <br />
+          <p className='text-muted'>
+            探索每一款手作飲品與療癒甜點，選擇屬於你的滋味。
+          </p> */}
+          <h2 className='fw-bold text-center mt-5'>{pageTitle.main}</h2>
+          <br />
+          <p className='text-muted text-center'>{pageTitle.sub}</p>
+        </div>
       </div>
       <div className='container mt-md-5 mt-3 mb-7'>
         <div className='row'>
@@ -150,7 +210,7 @@ export default function ProductsPage() {
                   data-bs-target='#collapseOne'
                 >
                   <div className='d-flex justify-content-between align-items-center pe-1'>
-                    <h4 className='mb-0'>餐飲分類</h4>
+                    <h4 className='mb-0'>Menu</h4>
                     <i className='fas fa-chevron-down'></i>
                   </div>
                 </div>
@@ -164,13 +224,19 @@ export default function ProductsPage() {
                     <ul className='list-unstyled'>
                       {categories.map(category => (
                         <li key={category}>
-                          <button
-                            onClick={() => setSelectedCategory(category)}
-                            type='button'
-                            className='btn border-none py-2 d-block text-muted'
-                          >
-                            {category}
-                          </button>
+                          <div className='menu_list'>
+                            <button
+                              // onClick={() => setSelectedCategory(category)}
+                              onClick={() => handleCategoryClick(category)}
+                              type='button'
+                              className='btn menu_list-btn border-0 py-2 d-block text-muted'
+                            >
+                              {category}
+                            </button>
+                            <span className='menu_list-title'>
+                              {titleMap[category]?.main}
+                            </span>
+                          </div>
                         </li>
                       ))}
                     </ul>
@@ -208,7 +274,7 @@ export default function ProductsPage() {
                         </Link>
                       </h4>
                       <p className='card-text mb-0'>
-                        {formatPrice(product.origin_price)}
+                        {formatPrice(product.price)}
                         <span className='text-muted '>
                           <del>{formatPrice(product.origin_price)}</del>
                         </span>

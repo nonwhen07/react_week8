@@ -240,7 +240,7 @@ export default function ProductDetailPage() {
           </div>
         </div>
         {/* 更多副圖輪播 */}
-        <h3 className='fw-bold'>Lorem ipsum dolor sit amet</h3>
+        {/* <h3 className='fw-bold'>Lorem ipsum dolor sit amet</h3>
         <div className='swiper-container mt-4 mb-5'>
           <div className='swiper-wrapper'>
             <div className='swiper-slide'>
@@ -354,7 +354,7 @@ export default function ProductDetailPage() {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
 
       {isScreenLoading && (

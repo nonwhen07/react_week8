@@ -1,0 +1,148 @@
+@use './../helpers/custom_variables' as var;
+
+.menu_list {
+  display: flex;
+  align-items: center;
+  position: relative; // 給 ::after 定位基準
+  overflow: hidden; // 避免動畫溢出
+
+  // 背景動畫元素
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0;
+    background-color: var.$accent-color; // 或使用 background-image
+    transition: width 0.3s ease-in-out; 
+    // transition: width 0.3s ease-in-out, right 0.3s ease-in-out;
+    z-index: 0; // 放在最底層
+  }
+
+  // hover 狀態讓背景展開
+  &:hover::after {
+    width: 100%;
+  }
+
+  // hover 效果（含背景、顏色、底線動畫觸發）
+  &:hover {
+    color: $light-bg-color;
+
+    //錯誤寫法
+    // &-btn {
+    //   color: $light-bg-color;
+    // }
+    // &-title {
+    //   display: inline-block;
+    // }
+    // 動態選擇器（如 :hover）下，上面的段落會變成 .menu_list:hover-btn { ... } 和  .menu_list:hover-title { ... }
+    // 正確寫法 直接使用子元素名稱
+    .menu_list-btn {
+      color: $light-bg-color !important;
+    }
+
+    .menu_list-title {
+      // 使用 visibility: hidden 取代 display: none 可避免 Reflow（只重繪）
+      visibility: visible;
+      color: $light-bg-color;
+    }
+    // ::after 假元素
+    .menu_list-title::after {
+      width: 100%;
+      left: 0%; // 從左側展開的狀態
+    }
+  }
+
+
+  // 靜態選擇器下，以下 2者寫法都可以
+  // .menu_list-title {
+  //   display: none;
+  //   margin-bottom: 0;
+  // }
+  &-title {
+    // 元素本體保持在上層
+    position: relative;
+    z-index: 1;
+
+    // 使用 visibility: hidden 取代 display: none 可避免 Reflow（只重繪）
+    // display: none;
+    visibility: hidden;
+    margin-bottom: 0;
+    // 若有動畫需求調整：
+    display: inline-block;
+    color: var.$accent-color;
+    position: relative;
+    
+
+    // 🔽 底線動畫設定
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 100%; // 從左側收回初始狀態
+      width: 0;
+      height: 2px;
+      background-color: currentColor;
+      transition: width 0.3s ease-in-out, right 0.3s ease-in-out;
+    }
+  }
+
+  &-btn {
+    // 元素本體保持在上層
+    position: relative;
+    z-index: 1;
+
+    color: var.$primary-color !important;   
+    font-weight: 700;
+  }
+}
+
+// .menu_list {
+//   display: flex;
+//   align-items: center;
+
+//   // hover 效果（含背景、顏色、底線動畫觸發）
+//   &:hover {
+//     background-color: var.$accent-color;
+//     color: $light-bg-color;
+
+//     .menu_list-btn {
+//       color: $light-bg-color !important;
+//     }
+
+//     .menu_list-title {
+//       visibility: visible;
+//       color: $light-bg-color;
+//     }
+
+//     .menu_list-title::after {
+//       width: 100%;
+//       left: 0;
+//     }
+//   }
+
+//   &-btn {
+//     color: var.$light-bg-color;
+//   }
+
+//   &-title {
+//     visibility: hidden;
+//     display: inline-block;
+//     margin-bottom: 0;
+//     color: var.$accent-color;
+//     position: relative;
+
+//     // 🔽 底線動畫設定
+//     &::after {
+//       content: '';
+//       position: absolute;
+//       bottom: 0;
+//       left: 100%; // 從右側收回初始狀態
+//       width: 0;
+//       height: 2px;
+//       background-color: currentColor;
+//       transition: width 0.3s ease-in-out, left 0.3s ease-in-out;
+//     }
+//   }
+// }
