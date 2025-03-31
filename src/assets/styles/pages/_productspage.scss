@@ -1,7 +1,13 @@
 @use './../helpers/custom_variables' as var;
 
+.menu_title {
+  color: var.$primary-color;
+  font-weight: bold;
+}
+
 .menu_list {
   display: flex;
+  justify-content: space-between;
   align-items: center;
   position: relative; // 給 ::after 定位基準
   overflow: hidden; // 避免動畫溢出
@@ -16,18 +22,27 @@
     width: 0;
     background-color: var.$accent-color; // 或使用 background-image
     transition: width 0.3s ease-in-out; 
-    // transition: width 0.3s ease-in-out, right 0.3s ease-in-out;
     z-index: 0; // 放在最底層
   }
-
-  // hover 狀態讓背景展開
-  &:hover::after {
+  
+  // hover + .active 狀態讓背景展開
+  &:hover::after,
+  &.active::after {
     width: 100%;
   }
-
+  
   // hover 效果（含背景、顏色、底線動畫觸發）
-  &:hover {
+  &:hover,
+  &.active {
     color: $light-bg-color;
+    // hover 狀態讓背景展開，可以把
+    // &:hover::after {
+    //   width: 100%;
+    // }
+    // 改寫成下面這段，放進 &:hover中
+    // &::after {
+    //   width: 100%;
+    // }
 
     //錯誤寫法
     // &-btn {
@@ -64,7 +79,6 @@
     // 元素本體保持在上層
     position: relative;
     z-index: 1;
-
     // 使用 visibility: hidden 取代 display: none 可避免 Reflow（只重繪）
     // display: none;
     visibility: hidden;
@@ -80,11 +94,12 @@
       content: '';
       position: absolute;
       bottom: 0;
-      left: 100%; // 從左側收回初始狀態
+      left: 0; // 從左側收回初始狀態
       width: 0;
       height: 2px;
-      background-color: currentColor;
-      transition: width 0.3s ease-in-out, right 0.3s ease-in-out;
+      background-color: $light-bg-color;
+      // transition: width 0.3s ease-in-out, right 0.3s ease-in-out;
+      transition: width 0.3s ease-in-out;
     }
   }
 
@@ -92,57 +107,7 @@
     // 元素本體保持在上層
     position: relative;
     z-index: 1;
-
     color: var.$primary-color !important;   
     font-weight: 700;
   }
 }
-
-// .menu_list {
-//   display: flex;
-//   align-items: center;
-
-//   // hover 效果（含背景、顏色、底線動畫觸發）
-//   &:hover {
-//     background-color: var.$accent-color;
-//     color: $light-bg-color;
-
-//     .menu_list-btn {
-//       color: $light-bg-color !important;
-//     }
-
-//     .menu_list-title {
-//       visibility: visible;
-//       color: $light-bg-color;
-//     }
-
-//     .menu_list-title::after {
-//       width: 100%;
-//       left: 0;
-//     }
-//   }
-
-//   &-btn {
-//     color: var.$light-bg-color;
-//   }
-
-//   &-title {
-//     visibility: hidden;
-//     display: inline-block;
-//     margin-bottom: 0;
-//     color: var.$accent-color;
-//     position: relative;
-
-//     // 🔽 底線動畫設定
-//     &::after {
-//       content: '';
-//       position: absolute;
-//       bottom: 0;
-//       left: 100%; // 從右側收回初始狀態
-//       width: 0;
-//       height: 2px;
-//       background-color: currentColor;
-//       transition: width 0.3s ease-in-out, left 0.3s ease-in-out;
-//     }
-//   }
-// }

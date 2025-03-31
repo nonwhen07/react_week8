@@ -10,7 +10,9 @@ import CheckoutFormPage from '../pages/frontend/CheckoutFormPage';
 import CheckoutPaymentPage from '../pages/frontend/CheckoutPaymentPage';
 import CheckoutSuccessPage from '../pages/frontend/CheckoutSuccessPage';
 import NotFoundPage from '../pages/NotFoundPage';
+
 import DashboardPage from '../pages/backend/DashboardPage';
+import ProductListPage from '../pages/backend/ProductListPage';
 
 import FonterLayout from '../layouts/FrontLayout';
 import BackLayout from '../layouts/BackLayout';
@@ -78,6 +80,11 @@ const router = createHashRouter([
         //Dashboard頁面
         path: '',
         element: <DashboardPage />,
+      },
+      {
+        //Dashboard頁面
+        path: '/productlist',
+        element: <ProductListPage />,
       },
     ],
   },

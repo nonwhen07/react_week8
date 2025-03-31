@@ -210,7 +210,7 @@ export default function ProductsPage() {
                   data-bs-target='#collapseOne'
                 >
                   <div className='d-flex justify-content-between align-items-center pe-1'>
-                    <h4 className='mb-0'>Menu</h4>
+                    <h4 className='menu_title mb-0 ps-3'>Menu</h4>
                     <i className='fas fa-chevron-down'></i>
                   </div>
                 </div>
@@ -223,7 +223,12 @@ export default function ProductsPage() {
                   <div className='card-body py-0'>
                     <ul className='list-unstyled'>
                       {categories.map(category => (
-                        <li key={category}>
+                        <li
+                          key={category}
+                          className={`menu_list ${
+                            selectedCategory === category ? 'active' : ''
+                          }`}
+                        >
                           <div className='menu_list'>
                             <button
                               // onClick={() => setSelectedCategory(category)}
