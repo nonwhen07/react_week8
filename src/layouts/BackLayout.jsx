@@ -1,5 +1,5 @@
 import { Outlet } from 'react-router-dom';
-import NavBar from '../components/backend/BackendNavBar';
+import NavBar from '../components/backend/BackendHeader';
 
 export default function BackLayout() {
   return (

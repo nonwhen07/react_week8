@@ -18,29 +18,11 @@ export default function DashboardPage() {
   const baseURL = import.meta.env.VITE_BASE_URL;
   const apiPath = import.meta.env.VITE_API_PATH;
 
-  //Modal 資料狀態的預設值
-  const defaultModalState = {
-    imageUrl: '',
-    title: '',
-    category: '',
-    unit: '',
-    origin_price: '',
-    price: '',
-    description: '',
-    content: '',
-    is_enabled: 0,
-    imagesUrl: [''],
-  };
-
   // 狀態管理 (State)
-  const [products, setProducts] = useState([]);
-  const [pageInfo, setPageInfo] = useState({});
-  const [tempProduct, setTempProduct] = useState(defaultModalState);
-  const [modalMode, setModalMode] = useState(null);
-
-  // 管理Modal元件開關
-  const [isProductModalOpen, setIsProductModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  // const [products, setProducts] = useState([]);
+  // const [pageInfo, setPageInfo] = useState({});
+  // const [tempProduct, setTempProduct] = useState(defaultModalState);
+  // const [modalMode, setModalMode] = useState(null);
 
   // 螢幕Loading遮罩
   const [isScreenLoading, setIsScreenLoading] = useState(false);
@@ -61,7 +43,7 @@ export default function DashboardPage() {
     axios
       .post(`${baseURL}/v2/api/user/check`)
       .then(() => {
-        getProducts();
+        // getProducts();
       })
       .catch(error => {
         const rawMessage = error.response?.data?.message;
@@ -76,56 +58,14 @@ export default function DashboardPage() {
         setIsScreenLoading(false);
       });
   };
-  // 取得產品列表
-  const getProducts = async page => {
-    setIsScreenLoading(true);
-    try {
-      const res = await axios.get(
-        `${baseURL}/v2/api/${apiPath}/admin/products?page=${page}`
-      );
-      setProducts(res.data.products);
-      setPageInfo(res.data.pagination);
-    } catch (error) {
-      const rawMessage = error.response?.data?.message;
-      const errorMessage = Array.isArray(rawMessage)
-        ? rawMessage.join('、')
-        : rawMessage || '取得產品列表失敗';
-      dispatch(pushMessage({ text: errorMessage, status: 'failed' }));
-    } finally {
-      setIsScreenLoading(false);
-    }
-  };
-  // 產品列表分頁
-  const handlePageChange = (page = 1) => {
-    getProducts(page);
-  };
-
-  // Modal 開關控制
-  // ProductModal
-  const handleOpenProductModal = (mode, product = defaultModalState) => {
-    setModalMode(mode);
-    setTempProduct(
-      Object.keys(product).length > 0 ? product : defaultModalState // 避免 api 回傳 product 為空物件時，無法正確設定tempProduct更保險
-    );
-    // 由於元件化了所以直接setIsProductModalOpen(true)，通知 ProductModal 打開
-    setIsProductModalOpen(true);
-  };
-  // DeleteModal
-  const handleOpenDeleteModal = (product = defaultModalState) => {
-    setTempProduct(
-      // 避免 api 回傳 product 為空物件時，無法正確設定tempProduct更保險
-      product && Object.keys(product).length > 0 ? product : defaultModalState
-    );
-    // Modal.getInstance(deleteModalRef.current).show();
-    setIsDeleteModalOpen(true);
-  };
 
   return (
     <>
       <div className='container py-5'>
         <div className='d-flex justify-content-between'>
-          <h2>產品列表</h2>
-          <button
+          {/* 標題區塊 */}
+          <h1 className='text-2xl font-bold'>後台總覽 Dashboard</h1>
+          {/* <button
             type='button'
             onClick={() => {
               handleOpenProductModal('create');
@@ -133,68 +73,66 @@ export default function DashboardPage() {
             className='btn btn-primary'
           >
             新增產品
-          </button>
+          </button> */}
         </div>
-        <table className='table mt-4'>
-          <thead>
-            <tr>
-              <th scope='col-4'>產品名稱</th>
-              <th scope='col-2'>原價</th>
-              <th scope='col-2'>售價</th>
-              <th scope='col-2'>是否啟用</th>
-              <th scope='col-2'></th>
-            </tr>
-          </thead>
-          <tbody>
-            {products.map(product => (
-              <tr key={product.id}>
-                <th scope='row'>{product.title}</th>
-                <td>{product.origin_price}</td>
-                <td>{product.price}</td>
-                <td>
-                  {product.is_enabled ? (
-                    <span className='text-success'>啟用</span>
-                  ) : (
-                    <span>未啟用</span>
-                  )}
-                </td>
-                <td>
-                  <button
-                    onClick={() => handleOpenProductModal('edit', product)}
-                    className='btn btn-sm btn-outline-primary'
-                    type='button'
-                  >
-                    編輯
-                  </button>
-                  <button
-                    onClick={() => handleOpenDeleteModal(product)}
-                    className='btn btn-sm btn-outline-danger'
-                    type='button'
-                  >
-                    刪除
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <Pagination pageInfo={pageInfo} handlePageChange={handlePageChange} />
+
+        {/* 上方統計卡片區塊 */}
+        <div className='row g-3'>
+          <div className='col-12 col-md-6'>
+            <div className='shadow p-4 rounded'>
+              <p className='text-muted small'>今日訂單</p>
+              <p className='fs-5 fw-semibold'>32 筆</p>
+            </div>
+          </div>
+          <div className='col-12 col-md-6'>
+            <div className='shadow p-4 rounded'>
+              <p className='text-muted small'>本月營收</p>
+              <p className='fs-5 fw-semibold'>NT$ 85,400</p>
+            </div>
+          </div>
+          <div className='col-12 col-md-6'>
+            <div className='shadow p-4 rounded'>
+              <p className='text-muted small'>待出貨訂單</p>
+              <p className='fs-5 fw-semibold'>7 筆</p>
+            </div>
+          </div>
+          <div className='col-12 col-md-6'>
+            <div className='shadow p-4 rounded'>
+              <p className='text-muted small'>新註冊用戶</p>
+              <p className='fs-5 fw-semibold'>5 人</p>
+            </div>
+          </div>
+        </div>
+
+        {/* 最新消息或系統通知 */}
+        <div className='shadow p-4 rounded my-4'>
+          <h2 className='fs-5 fw-bold mb-2'>最新消息</h2>
+          <ul className='small text-muted ps-3'>
+            <li>3/25 優惠卷活動上線</li>
+            <li>3/26 商品分類異動</li>
+            <li>3/27 系統將於凌晨 3 點維護</li>
+          </ul>
+        </div>
+
+        {/* 快捷入口區塊 */}
+        <div className='row g-3'>
+          <div className='col-12 col-md-4'>
+            <div className='shadow p-4 text-center rounded hover-shadow'>
+              <p className='fw-semibold'>新增商品</p>
+            </div>
+          </div>
+          <div className='col-12 col-md-4'>
+            <div className='shadow p-4 text-center rounded hover-shadow'>
+              <p className='fw-semibold'>發送優惠卷</p>
+            </div>
+          </div>
+          <div className='col-12 col-md-4'>
+            <div className='shadow p-4 text-center rounded hover-shadow'>
+              <p className='fw-semibold'>查看所有訂單</p>
+            </div>
+          </div>
+        </div>
       </div>
-
-      <ProductModal
-        modalMode={modalMode}
-        tempProduct={tempProduct}
-        getProducts={getProducts}
-        isOpen={isProductModalOpen}
-        setIsOpen={setIsProductModalOpen}
-      />
-
-      <DeleteModal
-        tempProduct={tempProduct}
-        getProducts={getProducts}
-        isOpen={isDeleteModalOpen}
-        setIsOpen={setIsDeleteModalOpen}
-      />
 
       {/* 確保以移動去main.jsx，確保 Toast 能全局監聽 Redux 狀態 */}
       {/* <Toast /> */}

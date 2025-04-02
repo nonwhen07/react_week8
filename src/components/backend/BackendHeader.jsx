@@ -5,10 +5,13 @@ import { pushMessage } from '../../redux/toastSlice';
 
 const routes = [
   { path: '/dashboard', name: '後台首頁' },
-  // { path: "/orders", name: "訂單列表" },
+  { path: '/dashboard/productlist', name: '產品列表' },
+  // { path: "/dashboard/orders", name: "訂單列表" },
+  // { path: "/dashboard/orders", name: "優惠卷列表" },
+  // { path: "/dashboard/orders", name: "最新消息" },
 ];
 
-export default function NavBar() {
+export default function BackendHeader() {
   // 環境變數
   const baseURL = import.meta.env.VITE_BASE_URL;
   // const apiPath = import.meta.env.VITE_API_PATH;
