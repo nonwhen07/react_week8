@@ -13,6 +13,7 @@ import CheckoutSuccessPage from '../pages/frontend/CheckoutSuccessPage';
 // 🟥 Backend Pages
 import DashboardPage from '../pages/backend/DashboardPage';
 import ProductListPage from '../pages/backend/ProductListPage';
+import OrderListPage from '../pages/backend/OrderListPage';
 
 // 🟨 Common Pages
 import LoginPage from '../pages/LoginPage';
@@ -57,6 +58,7 @@ const router = createHashRouter([
     children: [
       { path: '', element: <DashboardPage /> }, // /dashboard
       { path: 'productlist', element: <ProductListPage /> }, // /dashboard/productlist
+      { path: 'orderlist', element: <OrderListPage /> }, // /dashboard/productlist
     ],
   },
   // ❌ 404 頁面

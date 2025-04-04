@@ -22,7 +22,7 @@ export const formatDate = dateInput => {
 
 // 格式化日期時間（yyyy/mm/dd hh:mm）
 export const formatDateTime = dateInput => {
-  const date = new Date(dateInput);
+  const date = new Date(dateInput * 1000); // 假設 dateInput 是以秒為單位的時間戳記
   if (isNaN(date)) return '無日期時間';
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
