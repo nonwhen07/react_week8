@@ -5,8 +5,8 @@ import axios from 'axios';
 import ReactLoading from 'react-loading';
 
 import Pagination from '../../components/Pagination';
-import OrderModal from '../../components/backend/ProductModal';
-import DeleteModal from '../../components/backend/DeleteModal';
+import OrderModal from '../../components/backend/OrderModal';
+// import DeleteModal from '../../components/backend/DeleteModal';
 import { pushMessage } from '../../redux/toastSlice';
 
 import { formatDateTime } from '../../utils/format';
@@ -38,11 +38,11 @@ export default function OrderListPage() {
   const [orders, setOrders] = useState([]);
   const [pageInfo, setPageInfo] = useState({});
   const [tempOrder, setTempOrder] = useState(defaultModalState);
-  const [modalMode, setModalMode] = useState(null);
+  // const [modalMode, setModalMode] = useState(null);
 
   // 管理Modal元件開關-OrderModal、DeleteModal
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  // const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   // 螢幕Loading遮罩
   const [isScreenLoading, setIsScreenLoading] = useState(false);
@@ -67,6 +67,7 @@ export default function OrderListPage() {
         `${baseURL}/v2/api/${apiPath}/admin/orders?page=${page}`
       );
       setOrders(res.data.orders);
+      console.log('檢查orders', res.data.orders);
       setPageInfo(res.data.pagination);
     } catch (error) {
       const rawMessage = error.response?.data?.message;
@@ -85,8 +86,8 @@ export default function OrderListPage() {
 
   // Modal 開關控制
   // OrderModal
-  const handleOpenOrderModal = (mode, order = defaultModalState) => {
-    setModalMode(mode);
+  const handleOpenOrderModal = (order = defaultModalState) => {
+    // setModalMode(mode);
     setTempOrder(
       // 避免 api 回傳 order 為空物件時，無法正確設定tempOrder更保險
       Object.keys(order).length > 0 ? order : defaultModalState
@@ -94,30 +95,21 @@ export default function OrderListPage() {
     setIsOrderModalOpen(true);
   };
   // DeleteModal
-  const handleOpenDeleteModal = (order = defaultModalState) => {
-    setTempOrder(
-      // 避免 api 回傳 order 為空物件時，無法正確設定tempOrder更保險
-      order && Object.keys(order).length > 0 ? order : defaultModalState
-    );
-    setIsDeleteModalOpen(true);
-  };
+  // const handleOpenDeleteModal = (order = defaultModalState) => {
+  //   setTempOrder(
+  //     // 避免 api 回傳 order 為空物件時，無法正確設定tempOrder更保險
+  //     order && Object.keys(order).length > 0 ? order : defaultModalState
+  //   );
+  //   setIsDeleteModalOpen(true);
+  // };
 
   return (
     <>
       <div className='container py-5'>
         <div className='d-flex justify-content-between'>
           <h2>訂單列表</h2>
-          <button
-            type='button'
-            onClick={() => {
-              handleOpenOrderModal('create');
-            }}
-            className='btn btn-primary'
-          >
-            新增產品
-          </button>
         </div>
-        <table className='table mt-4'>
+        <table className='table table-hover table-bordered align-middle text-center mt-4'>
           <thead>
             <tr>
               <th scope='col-4'>訂單編號</th>
@@ -134,7 +126,7 @@ export default function OrderListPage() {
                 <td>{formatDateTime(order.create_at)}</td>
                 <td>{order.user.name}</td>
                 <td>
-                  {order.is_enabled ? (
+                  {order.is_paid ? (
                     <span className='text-success'>已付款</span>
                   ) : (
                     <span>未付款</span>
@@ -142,18 +134,11 @@ export default function OrderListPage() {
                 </td>
                 <td>
                   <button
-                    onClick={() => handleOpenOrderModal('edit', order)}
+                    onClick={() => handleOpenOrderModal(order)}
                     className='btn btn-sm btn-outline-primary'
                     type='button'
                   >
                     編輯
-                  </button>
-                  <button
-                    onClick={() => handleOpenDeleteModal(order)}
-                    className='btn btn-sm btn-outline-danger'
-                    type='button'
-                  >
-                    刪除
                   </button>
                 </td>
               </tr>
@@ -163,13 +148,12 @@ export default function OrderListPage() {
         <Pagination pageInfo={pageInfo} handlePageChange={handlePageChange} />
       </div>
 
-      {/* <OrderModal
-        modalMode={modalMode}
+      <OrderModal
         tempOrder={tempOrder}
         getOrders={getOrders}
         isOpen={isOrderModalOpen}
         setIsOpen={setIsOrderModalOpen}
-      /> */}
+      />
 
       {/* <DeleteModal
         tempOrder={tempOrder}
