@@ -22,16 +22,14 @@ export default function OrderListPage() {
 
   //Modal 資料狀態的預設值
   const defaultModalState = {
-    imageUrl: '',
-    title: '',
-    category: '',
-    unit: '',
-    origin_price: '',
-    price: '',
-    description: '',
-    content: '',
-    is_enabled: 0,
-    imagesUrl: [''],
+    is_paid: false,
+    user: {
+      name: '',
+      email: '',
+      tel: '',
+      address: '',
+    },
+    products: [],
   };
 
   // 狀態管理 (State)
@@ -67,7 +65,6 @@ export default function OrderListPage() {
         `${baseURL}/v2/api/${apiPath}/admin/orders?page=${page}`
       );
       setOrders(res.data.orders);
-      console.log('檢查orders', res.data.orders);
       setPageInfo(res.data.pagination);
     } catch (error) {
       const rawMessage = error.response?.data?.message;

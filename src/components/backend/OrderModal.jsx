@@ -4,7 +4,7 @@ import { pushMessage } from '../../redux/toastSlice';
 import { Modal } from 'bootstrap';
 import ReactLoading from 'react-loading';
 import axios from 'axios';
-// import { formatPrice } from '../../utils/format';
+import { formatPrice } from '../../utils/format';
 
 export default function OrderModal({
   tempOrder,
@@ -111,12 +111,20 @@ export default function OrderModal({
   }, [isOpen]);
 
   // 當外部 tempOrder 有異動時，更新modalData
+  // 但是 modalData.products 是一個陣列，但實際上 API 回傳的格式是：products: {
+  //   "productId-abc123": {
+  //     id: "-Nabc",
+  //   ...
+  // }
+  // 這是「物件型的集合」，不是 array！所以轉成陣列後 .map() 才能使用。
+  // 這邊的 tempOrder 是從外部傳入的 props，當它有變化時，就更新 modalData 的 products 屬性為陣列格式。
+
   useEffect(() => {
-    console.log('檢查tempOrder', tempOrder);
     setModalData({
       ...(tempOrder || {
         is_paid: false,
       }),
+      products: tempOrder?.products ? Object.values(tempOrder.products) : [],
     });
   }, [tempOrder]);
 
@@ -126,6 +134,7 @@ export default function OrderModal({
       ref={orderModalRef}
       className='modal'
       style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
+      aria-hidden={!isOpen}
     >
       <div className='modal-dialog modal-dialog-centered modal-xl'>
         <div className='modal-content border-0 shadow'>
@@ -155,7 +164,7 @@ export default function OrderModal({
                             user
                           </th>
                           <td className='text-end border-0 px-0 pt-4'>
-                            {/* {modalData.user.name} */}
+                            {modalData.user.name}
                           </td>
                         </tr>
                         <tr>
@@ -166,7 +175,7 @@ export default function OrderModal({
                             email
                           </th>
                           <td className='text-end border-0 px-0 pt-4'>
-                            {/* {tempOrder.user.email} */}
+                            {modalData.user.email}
                           </td>
                         </tr>
                         <tr>
@@ -174,10 +183,10 @@ export default function OrderModal({
                             scope='row'
                             className='border-0 px-0 pt-4 font-weight-normal'
                           >
-                            tell
+                            tel
                           </th>
                           <td className='text-end border-0 px-0 pt-4'>
-                            {/* {tempOrder.user.tell} */}
+                            {modalData.user.tel}
                           </td>
                         </tr>
                         <tr>
@@ -188,7 +197,7 @@ export default function OrderModal({
                             address
                           </th>
                           <td className='text-end border-0 px-0 pt-4'>
-                            {/* {tempOrder.user.address} */}
+                            {modalData.user.address}
                           </td>
                         </tr>
                       </tbody>
@@ -213,41 +222,42 @@ export default function OrderModal({
                     </tr>
                   </thead>
                   <tbody>
-                    {/* {modalData.products.map(product => (
-                      <tr key={product.id} className='border-bottom'>
-                        <th
-                          scope='row'
-                          className='border-0 px-0 font-weight-normal py-4'
-                        >
-                          <img
-                            src={product.imageUrl}
-                            alt={product.title}
-                            style={{
-                              width: '72px',
-                              height: '72px',
-                              objectFit: 'cover',
-                            }}
-                          />
-                          <p className='mb-0 fw-bold ms-3 d-inline-block'>
-                            {product.title}
-                          </p>
-                        </th>
-                        <td
-                          className='border-0 align-middle'
-                          style={{ maxWidth: '160px' }}
-                        >
-                          <div className='input-group pe-5'>
-                            <span>{product.qty}</span>
-                            <span>{product.unit}</span>
-                          </div>
-                        </td>
-                        <td className='border-0 align-middle'>
-                          <p className='mb-0 ms-auto'>
-                            {formatPrice(product.total)}
-                          </p>
-                        </td>
-                      </tr>
-                    ))} */}
+                    {modalData.products?.length > 0 &&
+                      modalData.products.map(product => (
+                        <tr key={product.id} className='border-bottom'>
+                          <th
+                            scope='row'
+                            className='border-0 px-0 font-weight-normal py-4'
+                          >
+                            <img
+                              src={product.imageUrl}
+                              alt={product.title}
+                              style={{
+                                width: '72px',
+                                height: '72px',
+                                objectFit: 'cover',
+                              }}
+                            />
+                            <p className='mb-0 fw-bold ms-3 d-inline-block'>
+                              {product.title}
+                            </p>
+                          </th>
+                          <td
+                            className='border-0 align-middle'
+                            style={{ maxWidth: '160px' }}
+                          >
+                            <div className='input-group pe-5'>
+                              <span>{product.qty}</span>
+                              <span>{product.unit}</span>
+                            </div>
+                          </td>
+                          <td className='border-0 align-middle'>
+                            <p className='mb-0 ms-auto'>
+                              {formatPrice(product.total)}
+                            </p>
+                          </td>
+                        </tr>
+                      ))}
                   </tbody>
                 </table>
               </div>

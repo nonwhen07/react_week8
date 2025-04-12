@@ -4,13 +4,15 @@ import { useDispatch } from 'react-redux';
 import { useEffect, useState } from 'react';
 import ReactLoading from 'react-loading';
 import axios from 'axios';
-
+import { useNavigate } from 'react-router-dom';
 import { pushMessage } from '../../redux/toastSlice';
 import { formatPrice } from '../../utils/format';
 
 export default function CheckoutFormPage() {
   const BASE_URL = import.meta.env.VITE_BASE_URL;
   const API_PATH = import.meta.env.VITE_API_PATH;
+
+  const navigate = useNavigate();
 
   const {
     register,
@@ -51,28 +53,38 @@ export default function CheckoutFormPage() {
     }
 
     const { message, ...user } = data; //data資料"解構"成message，剩下的打包一起變成user
-    const userinfo = {
-      data: {
-        user: user,
-        message: message,
-      },
+    // const userinfo = {
+    //   data: {
+    //     user: user,
+    //     message,
+    //   },
+    // };
+    // checkOut(userinfo);
+    const formData = {
+      user,
+      message,
+      carts,
     };
-    checkOut(userinfo);
+    reset(); // 提交成功後重設表單
+    // checkOut(formData);
+    // ✅ 驗證完再跳頁
+    navigate('/checkout-payment', { state: formData });
   });
-  const checkOut = async orderData => {
-    setIsScreenLoading(true);
-    try {
-      await axios.post(`${BASE_URL}/v2/api/${API_PATH}/order`, orderData);
-      //成功後刷新購物車，等待下一位客人
-      getCarts();
-      reset(); // 提交成功後重設表單
-      dispatch(pushMessage({ text: '已送出訂單', status: 'success' }));
-    } catch (error) {
-      handleError(error, '發生錯誤，已送出訂單失敗');
-    } finally {
-      setIsScreenLoading(false);
-    }
-  };
+
+  // const checkOut = async orderData => {
+  //   setIsScreenLoading(true);
+  //   try {
+  //     await axios.post(`${BASE_URL}/v2/api/${API_PATH}/order`, orderData);
+  //     //成功後刷新購物車，等待下一位客人
+  //     getCarts();
+  //     reset(); // 提交成功後重設表單
+  //     dispatch(pushMessage({ text: '已送出訂單', status: 'success' }));
+  //   } catch (error) {
+  //     handleError(error, '發生錯誤，已送出訂單失敗');
+  //   } finally {
+  //     setIsScreenLoading(false);
+  //   }
+  // };
 
   // 錯誤處理共用函式、錯誤訊息統一處理，如有多筆資訊就'、'串接
   const handleError = (error, fallback = '操作失敗，請稍後再試') => {
@@ -162,15 +174,6 @@ export default function CheckoutFormPage() {
                     )}
                   </td>
                 </tr>
-                <tr>
-                  <th
-                    scope='row'
-                    className='border-0 px-0 pt-0 pb-4 font-weight-normal'
-                  >
-                    Payment
-                  </th>
-                  <td className='text-end border-0 px-0 pt-0 pb-4'>ApplePay</td>
-                </tr>
               </tbody>
             </table>
             <div className='d-flex justify-content-between mt-4'>
@@ -209,7 +212,7 @@ export default function CheckoutFormPage() {
                 <p className='text-danger my-2'>{errors.email.message}</p>
               )}
             </div>
-            <p className='mt-4'>Shipping address</p>
+            {/* <p className='mt-4'>Shipping address</p> */}
             <div className='mb-2'>
               <label htmlFor='name' className='text-muted mb-0'>
                 Name
@@ -273,23 +276,23 @@ export default function CheckoutFormPage() {
                 placeholder='message ... '
               ></textarea>
             </div>
-          </form>
-          <div className='d-flex flex-column-reverse flex-md-row mt-4 justify-content-between align-items-md-center align-items-end w-100'>
-            <Link to='/cart' className='text-dark mt-md-0 mt-3'>
-              <i className='fas fa-chevron-left me-2'></i> Return to Shopping
-              Cart
-            </Link>
-            {/* <button
-              type='submit'
-              className='btn btn-dark py-3 px-7'
-              disabled={isScreenLoading}
-            >
-              {isScreenLoading ? '處理中...' : 'Place Order'}
-            </button> */}
-            <Link to='/checkout-payment' className='btn btn-dark py-3 px-7'>
+            <div className='d-flex flex-column-reverse flex-md-row mt-4 justify-content-between align-items-md-center align-items-end w-100'>
+              <Link to='/cart' className='text-dark mt-md-0 mt-3'>
+                <i className='fas fa-chevron-left me-2'></i> Return to Shopping
+                Cart
+              </Link>
+              <button
+                type='submit'
+                className='btn btn-dark py-3 px-7'
+                disabled={isScreenLoading}
+              >
+                {isScreenLoading ? '處理中...' : 'Checkout-Payment'}
+              </button>
+              {/* <Link to='/checkout-payment' className='btn btn-dark py-3 px-7'>
               Checkout-Payment
-            </Link>
-          </div>
+            </Link> */}
+            </div>
+          </form>
         </div>
       </div>
 

@@ -73,7 +73,7 @@ export default function LoginPage() {
             status: 'success',
           })
         );
-        // navigate('/dashboard');
+        navigate('/dashboard');
       })
       .catch(error => {
         console.error(error.response.data.message);
