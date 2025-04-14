@@ -65,12 +65,13 @@ export default function CheckoutFormPage() {
       message,
       carts,
     };
-    reset(); // 提交成功後重設表單
-    // checkOut(formData);
-    // ✅ 驗證完再跳頁
+    sessionStorage.setItem('checkoutData', JSON.stringify(formData)); //在 CheckoutFormPage 將要跳頁的資料儲存到 sessionStorage
     navigate('/checkout-payment', { state: formData });
+
+    reset(); // 提交成功後重設表單
   });
 
+  // 送出訂單的部分轉到 CheckoutPaymentPage執行
   // const checkOut = async orderData => {
   //   setIsScreenLoading(true);
   //   try {

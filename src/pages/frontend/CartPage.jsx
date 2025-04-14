@@ -291,7 +291,7 @@ export default function CartPage() {
                         )}
                       </td>
                     </tr>
-                    <tr>
+                    {/* <tr>
                       <th
                         scope='row'
                         className='border-0 px-0 pt-0 pb-4 font-weight-normal'
@@ -301,7 +301,7 @@ export default function CartPage() {
                       <td className='text-end border-0 px-0 pt-0 pb-4'>
                         ApplePay
                       </td>
-                    </tr>
+                    </tr> */}
                   </tbody>
                 </table>
                 <div className='d-flex justify-content-between mt-4'>

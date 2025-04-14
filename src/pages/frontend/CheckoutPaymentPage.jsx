@@ -1,30 +1,40 @@
-import { Link } from 'react-router-dom';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useCallback, useEffect, useState } from 'react';
+import ReactLoading from 'react-loading';
 import { useDispatch } from 'react-redux';
 import { pushMessage } from '../../redux/toastSlice';
 import { formatPrice } from '../../utils/format';
-import { useCallback, useEffect, useState } from 'react';
 
 export default function CheckoutPaymentPage() {
   const BASE_URL = import.meta.env.VITE_BASE_URL;
   const API_PATH = import.meta.env.VITE_API_PATH;
 
-  const dispatch = useDispatch();
-  const { state } = useLocation(); // 取得從上一頁帶過來的 user + message + carts
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const location = useLocation(); // 取得從上一頁帶過來的 user + message + carts
+  // const state =
+  //   location.state || JSON.parse(sessionStorage.getItem('checkoutData')); // 取得從上一頁帶過來的 user + message + carts
 
   const [payment, setPayment] = useState('現金支付');
+  const [orderState, setOrderState] = useState(null);
+
   const [isScreenLoading, setIsScreenLoading] = useState(false);
 
+  const onSubmit = e => {
+    e.preventDefault(); // 防止頁面重新整理
+    handlePlaceOrder(); // 執行原本送出訂單的函式
+  };
+  //送出訂單 + Submit事件驅動
   const handlePlaceOrder = async () => {
     setIsScreenLoading(true);
     try {
       const orderData = {
         data: {
-          user: state.user,
-          message: state.message,
-          carts: state.carts,
+          user: orderState.user,
+          message: `${orderState.message || ''}｜付款方式：${payment}`, // 避免 state.message 是空的時候出錯。
+          carts: orderState.carts,
           // API 規範不需要 payment，但你可以備註在 message 裡
         },
       };
@@ -36,8 +46,10 @@ export default function CheckoutPaymentPage() {
       handleError(error, '發生錯誤，已送出訂單失敗');
     } finally {
       setIsScreenLoading(false);
+      sessionStorage.removeItem('checkoutData'); // 清除 sessionStorage 中的資料
     }
   };
+
   // 錯誤處理共用函式、錯誤訊息統一處理，如有多筆資訊就'、'串接
   const handleError = (error, fallback = '操作失敗，請稍後再試') => {
     const rawMessage = error.response?.data?.message;
@@ -47,9 +59,6 @@ export default function CheckoutPaymentPage() {
     dispatch(pushMessage({ text: errorMessage, status: 'failed' }));
   };
 
-  // const handlePayment = payment => {
-  //   setPayment(payment);
-  // };
   // 使用 useCallback 來記住 handlePayment 函數的引用
   const handlePayment = useCallback(payment => {
     setPayment(payment);
@@ -57,121 +66,149 @@ export default function CheckoutPaymentPage() {
 
   useEffect(() => {
     setIsScreenLoading(true);
-    // console.log('🔥 useLocation state：', state);
-    setTimeout(() => {
-      setIsScreenLoading(false);
-    }, 1000);
+
+    // async IIFE（立即執行函式）來判斷是否有從上一頁帶過來的資料
+    // 如果沒有，就從 sessionStorage 取得資料
+    (async () => {
+      let recoveredState = location.state;
+
+      if (!recoveredState) {
+        try {
+          const savedData = sessionStorage.getItem('checkoutData');
+          if (savedData) {
+            recoveredState = JSON.parse(savedData);
+          }
+        } catch (err) {
+          console.error('Error parsing sessionStorage data:', err);
+          recoveredState = null;
+        }
+      }
+
+      if (!recoveredState || !recoveredState.user || !recoveredState.carts) {
+        dispatch(
+          pushMessage({
+            text: '無法取得訂單資訊，請重新操作。',
+            status: 'failed',
+          })
+        );
+        console.log('orderState:', orderState);
+        navigate('/checkout-form');
+      } else {
+        setOrderState(recoveredState);
+        console.log('orderState:', orderState);
+        console.log('recoveredState:', recoveredState);
+      }
+
+      // ✅ 不論成功或失敗都延遲關閉 loading
+      setTimeout(() => {
+        setIsScreenLoading(false);
+      }, 1000);
+    })();
   }, []);
 
-  if (!state || !state.user || !state.carts) {
-    return (
-      <div className='container text-center mt-5'>
-        <h5 className='text-danger'>
-          無法取得訂單資訊，請從結帳頁面重新操作。
-        </h5>
-        <Link to='/checkout-form' className='btn btn-dark mt-3'>
-          返回結帳頁
-        </Link>
+  if (!orderState) return null; // 或是顯示 loading 動畫
+
+  return (
+    <div className='container'>
+      <div className='row justify-content-center'>
+        <div className='col-md-10'>
+          <nav className='navbar navbar-expand-lg navbar-light px-0'>
+            <ul className='list-unstyled mb-0 ms-md-auto d-flex align-items-center justify-content-between justify-content-md-end w-100 mt-md-0 mt-4'>
+              <li className='me-md-6 me-3 position-relative custom-step-line'>
+                <i className='fas fa-check-circle d-md-inline d-block text-center'></i>
+                <span className='text-nowrap fw-bold'>Checkout-Form</span>
+              </li>
+              <li className='me-md-6 me-3 position-relative custom-step-line'>
+                <i className='fas fa-check-circle d-md-inline d-block text-center'></i>
+                <span className='text-nowrap'>Checkout-Payment</span>
+              </li>
+              <li>
+                <i className='fas fa-dot-circle d-md-inline d-block text-center'></i>
+                <span className='text-nowrap'>Checkout-Success</span>
+              </li>
+            </ul>
+          </nav>
+        </div>
       </div>
-    );
-  } else {
-    return (
-      <div className='container'>
-        <div className='row justify-content-center'>
-          <div className='col-md-10'>
-            <nav className='navbar navbar-expand-lg navbar-light px-0'>
-              <ul className='list-unstyled mb-0 ms-md-auto d-flex align-items-center justify-content-between justify-content-md-end w-100 mt-md-0 mt-4'>
-                <li className='me-md-6 me-3 position-relative custom-step-line'>
-                  <i className='fas fa-check-circle d-md-inline d-block text-center'></i>
-                  <span className='text-nowrap fw-bold'>Checkout-Form</span>
-                </li>
-                <li className='me-md-6 me-3 position-relative custom-step-line'>
-                  <i className='fas fa-check-circle d-md-inline d-block text-center'></i>
-                  <span className='text-nowrap'>Checkout-Payment</span>
-                </li>
-                <li>
-                  <i className='fas fa-dot-circle d-md-inline d-block text-center'></i>
-                  <span className='text-nowrap'>Checkout-Success</span>
-                </li>
-              </ul>
-            </nav>
-          </div>
+      <div className='row justify-content-center'>
+        <div className='col-md-10'>
+          <h3 className='fw-bold mb-4 pt-3'>Checkout-Payment</h3>
         </div>
-        <div className='row justify-content-center'>
-          <div className='col-md-10'>
-            <h3 className='fw-bold mb-4 pt-3'>Checkout-Payment</h3>
-          </div>
-        </div>
-        <div className='row flex-row-reverse justify-content-center pb-5'>
-          <div className='col-md-4'>
-            <div className='border p-4 mb-4'>
-              {state.carts?.length > 0 ? (
-                state.carts.map(cartItem => (
-                  <div key={cartItem.id} className='d-flex mt-2'>
-                    <img
-                      src={cartItem.product.imageUrl}
-                      alt={cartItem.product.title}
-                      className='me-2'
-                      style={{
-                        width: '48px',
-                        height: '48px',
-                        objectFit: 'cover',
-                      }}
-                    />
-                    <div className='w-100'>
-                      <div className='d-flex justify-content-between'>
-                        <p className='mb-0 fw-bold'>{cartItem.product.title}</p>
-                        <p className='mb-0'>{formatPrice(cartItem.total)}</p>
-                      </div>
-                      <p className='mb-0 fw-bold'>x{cartItem.qty}</p>
+      </div>
+      <div className='row flex-row-reverse justify-content-center pb-5'>
+        <div className='col-md-4'>
+          <div className='border p-4 mb-4'>
+            {orderState.carts?.length > 0 ? (
+              orderState.carts.map(cartItem => (
+                <div key={cartItem.id} className='d-flex mt-2'>
+                  <img
+                    src={cartItem.product.imageUrl}
+                    alt={cartItem.product.title}
+                    className='me-2'
+                    style={{
+                      width: '48px',
+                      height: '48px',
+                      objectFit: 'cover',
+                    }}
+                  />
+                  <div className='w-100'>
+                    <div className='d-flex justify-content-between'>
+                      <p className='mb-0 fw-bold'>{cartItem.product.title}</p>
+                      <p className='mb-0'>{formatPrice(cartItem.total)}</p>
                     </div>
+                    <p className='mb-0 fw-bold'>x{cartItem.qty}</p>
                   </div>
-                ))
-              ) : (
-                <p className='text-center text-muted'>購物車是空的</p>
-              )}
-              <table className='table mt-4 border-top border-bottom text-muted'>
-                <tbody>
-                  <tr>
-                    <th
-                      scope='row'
-                      className='border-0 px-0 pt-4 font-weight-normal'
-                    >
-                      Subtotal
-                    </th>
-                    <td className='text-end border-0 px-0 pt-4'>
-                      {formatPrice(
-                        state.carts.reduce(
-                          (total, cart) => total + cart.total,
-                          0
-                        )
-                      )}
-                    </td>
-                  </tr>
-                  <tr>
-                    <th
-                      scope='row'
-                      className='border-0 px-0 pt-0 pb-4 font-weight-normal'
-                    >
-                      Payment
-                    </th>
-                    <td className='text-end border-0 px-0 pt-0 pb-4'>
-                      {payment}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-              <div className='d-flex justify-content-between mt-4'>
-                <p className='mb-0 h4 fw-bold'>Total</p>
-                <p className='mb-0 h4 fw-bold'>
-                  {formatPrice(
-                    state.carts.reduce((total, cart) => total + cart.total, 0)
-                  )}
-                </p>
-              </div>
+                </div>
+              ))
+            ) : (
+              <p className='text-center text-muted'>購物車是空的</p>
+            )}
+            <table className='table mt-4 border-top border-bottom text-muted'>
+              <tbody>
+                <tr>
+                  <th
+                    scope='row'
+                    className='border-0 px-0 pt-4 font-weight-normal'
+                  >
+                    Subtotal
+                  </th>
+                  <td className='text-end border-0 px-0 pt-4'>
+                    {formatPrice(
+                      orderState.carts.reduce(
+                        (total, cart) => total + cart.total,
+                        0
+                      )
+                    )}
+                  </td>
+                </tr>
+                <tr>
+                  <th
+                    scope='row'
+                    className='border-0 px-0 pt-0 pb-4 font-weight-normal'
+                  >
+                    Payment
+                  </th>
+                  <td className='text-end border-0 px-0 pt-0 pb-4'>
+                    {payment}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div className='d-flex justify-content-between mt-4'>
+              <p className='mb-0 h4 fw-bold'>Total</p>
+              <p className='mb-0 h4 fw-bold'>
+                {formatPrice(
+                  orderState.carts.reduce(
+                    (total, cart) => total + cart.total,
+                    0
+                  )
+                )}
+              </p>
             </div>
           </div>
-          <div className='col-md-6'>
+        </div>
+        <div className='col-md-6'>
+          <form onSubmit={onSubmit}>
             <div className='accordion' id='accordionExample'>
               <div className='card rounded-0'>
                 <div
@@ -289,14 +326,7 @@ export default function CheckoutPaymentPage() {
                 <i className='fas fa-chevron-left me-2'></i> Return to
                 Checkout-Form
               </Link>
-              {/* <Link to='/checkout-success' className='btn btn-dark py-3 px-7'>
-                Place Order
-              </Link> */}
-              <button
-                type='submit'
-                onClick={handlePlaceOrder}
-                className='btn btn-dark py-3 px-7'
-              >
+              <button type='submit' className='btn btn-dark py-3 px-7'>
                 Place Order
               </button>
               {/* <button
@@ -307,29 +337,24 @@ export default function CheckoutPaymentPage() {
                 {isScreenLoading ? '處理中...' : 'Place Order'}
               </button> */}
             </div>
-          </div>
+          </form>
         </div>
-
-        {/* ScreenLoading */}
-        {isScreenLoading && (
-          <div
-            className='d-flex justify-content-center align-items-center'
-            style={{
-              position: 'fixed',
-              inset: 0,
-              backgroundColor: 'rgba(255,255,255,0.3)',
-              zIndex: 999,
-            }}
-          >
-            <ReactLoading
-              type='spin'
-              color='black'
-              width='4rem'
-              height='4rem'
-            />
-          </div>
-        )}
       </div>
-    );
-  }
+
+      {/* ScreenLoading */}
+      {isScreenLoading && (
+        <div
+          className='d-flex justify-content-center align-items-center'
+          style={{
+            position: 'fixed',
+            inset: 0,
+            backgroundColor: 'rgba(255,255,255,0.3)',
+            zIndex: 999,
+          }}
+        >
+          <ReactLoading type='spin' color='black' width='4rem' height='4rem' />
+        </div>
+      )}
+    </div>
+  );
 }

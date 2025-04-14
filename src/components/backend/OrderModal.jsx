@@ -222,42 +222,41 @@ export default function OrderModal({
                     </tr>
                   </thead>
                   <tbody>
-                    {modalData.products?.length > 0 &&
-                      modalData.products.map(product => (
-                        <tr key={product.id} className='border-bottom'>
-                          <th
-                            scope='row'
-                            className='border-0 px-0 font-weight-normal py-4'
-                          >
-                            <img
-                              src={product.imageUrl}
-                              alt={product.title}
-                              style={{
-                                width: '72px',
-                                height: '72px',
-                                objectFit: 'cover',
-                              }}
-                            />
-                            <p className='mb-0 fw-bold ms-3 d-inline-block'>
-                              {product.title}
-                            </p>
-                          </th>
-                          <td
-                            className='border-0 align-middle'
-                            style={{ maxWidth: '160px' }}
-                          >
-                            <div className='input-group pe-5'>
-                              <span>{product.qty}</span>
-                              <span>{product.unit}</span>
-                            </div>
-                          </td>
-                          <td className='border-0 align-middle'>
-                            <p className='mb-0 ms-auto'>
-                              {formatPrice(product.total)}
-                            </p>
-                          </td>
-                        </tr>
-                      ))}
+                    {Object.values(modalData.products || {}).map(product => (
+                      <tr key={product.id} className='border-bottom'>
+                        <th
+                          scope='row'
+                          className='border-0 px-0 font-weight-normal py-4'
+                        >
+                          <img
+                            src={product.product.imageUrl}
+                            alt={product.product.title}
+                            style={{
+                              width: '72px',
+                              height: '72px',
+                              objectFit: 'cover',
+                            }}
+                          />
+                          <p className='mb-0 fw-bold ms-3 d-inline-block'>
+                            {product.product.title}
+                          </p>
+                        </th>
+                        <td
+                          className='border-0 align-middle'
+                          style={{ maxWidth: '160px' }}
+                        >
+                          <div className='input-group pe-5'>
+                            <span>{product.qty}</span>
+                            <span>{product.product.unit}</span>
+                          </div>
+                        </td>
+                        <td className='border-0 align-middle'>
+                          <p className='mb-0 ms-auto'>
+                            {formatPrice(product.total)}
+                          </p>
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>
