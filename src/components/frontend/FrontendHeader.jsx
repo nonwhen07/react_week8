@@ -1,59 +1,25 @@
-// import { Link, NavLink } from 'react-router-dom';
-// const routes = [
-//   { path: '/', name: '首頁' },
-//   { path: '/products', name: '產品列表' },
-//   { path: '/cart', name: '購物車' },
-// ];
-// export default function FrontendHeader() {
-//   return (
-//     <>
-//       <nav className='navbar border-bottom border-body header-nav'>
-//         <div className='container'>
-//           <Link to='/' className='navbar-brand header-nav-brand'>
-//             <span className='header-nav-logo-text'>🍞 BakeDay • 手焙日和</span>
-//           </Link>
-//           <ul className='navbar-nav flex-row gap-5 fs-5'>
-//             {routes.map(route => (
-//               <li key={route.path} className='nav-item'>
-//                 <NavLink
-//                   className='nav-link header-nav-link text-bold'
-//                   aria-current='page'
-//                   to={route.path}
-//                 >
-//                   {route.name}
-//                 </NavLink>
-//               </li>
-//             ))}
-//           </ul>
-//         </div>
-//       </nav>
-//     </>
-//   );
-// }
-
 import axios from 'axios';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { updateCartData } from '../../redux/cartSlice';
+import { logout } from '../../redux/authSlice';
 import { pushMessage } from '../../redux/toastSlice';
 
 const routes = [
-  // { path: '/', name: '首頁' },
-  // { path: '/products', name: '產品列表' },
-  // { path: '/cart', name: '購物車' },
   { path: '/', name: 'Home' },
   // { path: '/about', name: 'About' },
   { path: '/product', name: 'Product' },
-  // { path: '/detail', name: 'Detail' },
+  // { path: '/favorite', name: 'Favorite' },
   { path: '/cart', name: 'Cart' },
-  { path: '/login', name: 'Login' },
 ];
 
 export default function Header() {
   const BASE_URL = import.meta.env.VITE_BASE_URL;
   const API_PATH = import.meta.env.VITE_API_PATH;
+  const navigate = useNavigate();
   const dispatch = useDispatch();
+  const isLogin = useSelector(state => state.auth.isLogin);
   const carts = useSelector(state => state.cart.carts);
 
   useEffect(() => {
@@ -75,15 +41,21 @@ export default function Header() {
     }
   };
 
+  //加入登出
+  const handleLogout = () => {
+    dispatch(logout());
+    dispatch(
+      pushMessage({ text: '已成功登出，將跳轉到前台首頁', status: 'success' })
+    );
+    navigate('/');
+  };
+
   return (
     <div className='container d-flex flex-column'>
       <nav className='navbar navbar-expand-lg navbar-light'>
         <Link to='/' className='navbar-brand header-nav-brand'>
           <span className='header-nav-logo-text'>Morning Bean Café</span>
         </Link>
-        {/* <a className='navbar-brand' href='./index.html'>
-          Navbar
-        </a> */}
         <button
           className='navbar-toggler'
           type='button'
@@ -125,6 +97,24 @@ export default function Header() {
                 )}
               </NavLink>
             ))}
+            {/* 新增登入 / 登出區塊 */}
+            {isLogin ? (
+              <>
+                <NavLink to='/dashboard' className='nav-item nav-link me-4'>
+                  後台
+                </NavLink>
+                <button
+                  onClick={handleLogout}
+                  className='btn btn-link nav-item nav-link text-danger'
+                >
+                  登出
+                </button>
+              </>
+            ) : (
+              <NavLink to='/login' className='nav-item nav-link me-4'>
+                登入
+              </NavLink>
+            )}
           </div>
         </div>
       </nav>

@@ -19,8 +19,18 @@ export default function OrderModal({
   // dispatch 是用來發送 actions 到 Redux store 的，讓我們可以修改 store 的狀態。
   const dispatch = useDispatch();
 
-  // 拷貝 tempOrder 資料來轉換成 modalData來顯示
-  const [modalData, setModalData] = useState(tempOrder);
+  // 拷貝 tempOrder 資料來轉換成 modalData來顯示，必谝tempOrder 初始值可能是 undefined
+  const [modalData, setModalData] = useState({
+    id: '',
+    is_paid: false,
+    products: [],
+    user: {
+      name: '',
+      email: '',
+      tel: '',
+      address: '',
+    },
+  });
 
   // Modal Ref 定義
   const orderModalRef = useRef(null);
@@ -120,10 +130,15 @@ export default function OrderModal({
   // 這邊的 tempOrder 是從外部傳入的 props，當它有變化時，就更新 modalData 的 products 屬性為陣列格式。
 
   useEffect(() => {
+    // setModalData({
+    //   ...(tempOrder || {
+    //     is_paid: false,
+    //   }),
+    //   products: tempOrder?.products ? Object.values(tempOrder.products) : [],
+    // });
+
     setModalData({
-      ...(tempOrder || {
-        is_paid: false,
-      }),
+      ...(tempOrder || { is_paid: false }),
       products: tempOrder?.products ? Object.values(tempOrder.products) : [],
     });
   }, [tempOrder]);
@@ -222,41 +237,50 @@ export default function OrderModal({
                     </tr>
                   </thead>
                   <tbody>
-                    {Object.values(modalData.products || {}).map(product => (
-                      <tr key={product.id} className='border-bottom'>
-                        <th
-                          scope='row'
-                          className='border-0 px-0 font-weight-normal py-4'
-                        >
-                          <img
-                            src={product.product.imageUrl}
-                            alt={product.product.title}
-                            style={{
-                              width: '72px',
-                              height: '72px',
-                              objectFit: 'cover',
-                            }}
-                          />
-                          <p className='mb-0 fw-bold ms-3 d-inline-block'>
-                            {product.product.title}
-                          </p>
-                        </th>
-                        <td
-                          className='border-0 align-middle'
-                          style={{ maxWidth: '160px' }}
-                        >
-                          <div className='input-group pe-5'>
-                            <span>{product.qty}</span>
-                            <span>{product.product.unit}</span>
-                          </div>
-                        </td>
-                        <td className='border-0 align-middle'>
-                          <p className='mb-0 ms-auto'>
-                            {formatPrice(product.total)}
-                          </p>
+                    {Array.isArray(modalData.products) &&
+                    modalData.products.length > 0 ? (
+                      modalData.products.map(product => (
+                        <tr key={product.id} className='border-bottom'>
+                          <th
+                            scope='row'
+                            className='border-0 px-0 font-weight-normal py-4'
+                          >
+                            <img
+                              src={product.product.imageUrl}
+                              alt={product.product.title}
+                              style={{
+                                width: '72px',
+                                height: '72px',
+                                objectFit: 'cover',
+                              }}
+                            />
+                            <p className='mb-0 fw-bold ms-3 d-inline-block'>
+                              {product.product.title}
+                            </p>
+                          </th>
+                          <td
+                            className='border-0 align-middle'
+                            style={{ maxWidth: '160px' }}
+                          >
+                            <div className='input-group pe-5'>
+                              <span>{product.qty}</span>
+                              <span>{product.product.unit}</span>
+                            </div>
+                          </td>
+                          <td className='border-0 align-middle'>
+                            <p className='mb-0 ms-auto'>
+                              {formatPrice(product.total)}
+                            </p>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan='3' className='text-center py-5 text-muted'>
+                          無產品資料
                         </td>
                       </tr>
-                    ))}
+                    )}
                   </tbody>
                 </table>
               </div>

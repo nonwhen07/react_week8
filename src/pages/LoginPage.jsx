@@ -1,57 +1,79 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { login, checkLogin } from '../redux/authSlice';
 import { pushMessage } from '../redux/toastSlice';
-import axios from 'axios';
 import ReactLoading from 'react-loading';
 
 export default function LoginPage() {
   // 環境變數
-  const baseURL = import.meta.env.VITE_BASE_URL;
+  // const baseURL = import.meta.env.VITE_BASE_URL;
 
   // 初始化 navigate、dispatch
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { status, error } = useSelector(state => state.auth);
 
   const [account, setAccount] = useState({
     username: 'example@test.com',
     password: 'example',
   });
 
-  const [isScreenLoading, setIsScreenLoading] = useState(false);
-
   // useEffect - 初始化 初始檢查登入狀態，如果有就轉到後台頁面
   useEffect(() => {
-    const token = document.cookie.replace(
-      /(?:(?:^|.*;\s*)hexToken4\s*=\s*([^;]*).*$)|^.*$/,
-      '$1'
-    );
-    axios.defaults.headers.common['Authorization'] = token;
-    checkLogin();
+    //authSlice.js 中的 checkLogin thunk 會自動處理 token 的設定
+    dispatch(checkLogin());
   }, []);
 
+  useEffect(() => {
+    if (status === 'failed') {
+      dispatch(
+        pushMessage({
+          text: typeof error === 'string' ? error : '登入失敗',
+          status: 'failed',
+        })
+      );
+      navigate('/login');
+      return;
+    }
+
+    if (status === 'succeeded') {
+      dispatch(
+        pushMessage({
+          text: '已確認登入，將導向後台首頁',
+          status: 'success',
+        })
+      );
+      navigate('/dashboard');
+    }
+  }, [status, error, dispatch, navigate]);
+
   // 登入表單 - 登入submit事件
+  // const handleLogin = e => {
+  //   setIsLoading(true);
+  //   e.preventDefault();
+  //   axios
+  //     .post(`${baseURL}/v2/admin/signin`, account)
+  //     .then(res => {
+  //       const { token, expired } = res.data;
+  //       document.cookie = `hexToken_week8=${token}; userLanguage=en; userPreference=darkMode; expires=${new Date(
+  //         expired
+  //       )}`; // 設定 cookie
+  //       axios.defaults.headers.common['Authorization'] = token;
+  //       dispatch(pushMessage({ text: '登入成功', status: 'success' }));
+  //       navigate('/dashboard'); // **登入成功後跳轉到 Dashboard**
+  //     })
+  //     .catch(error => {
+  //       const { message } = error.response.data;
+  //       dispatch(pushMessage({ text: message.join('、'), status: 'failed' }));
+  //     })
+  //     .finally(() => {
+  //       setIsLoading(false);
+  //     });
+  // };
   const handleLogin = e => {
-    setIsScreenLoading(true);
     e.preventDefault();
-    axios
-      .post(`${baseURL}/v2/admin/signin`, account)
-      .then(res => {
-        const { token, expired } = res.data;
-        document.cookie = `hexToken4=${token}; userLanguage=en; userPreference=darkMode; expires=${new Date(
-          expired
-        )}`; // 設定 cookie
-        axios.defaults.headers.common['Authorization'] = token;
-        dispatch(pushMessage({ text: '登入成功', status: 'success' }));
-        navigate('/dashboard'); // **登入成功後跳轉到 Dashboard**
-      })
-      .catch(error => {
-        const { message } = error.response.data;
-        dispatch(pushMessage({ text: message.join('、'), status: 'failed' }));
-      })
-      .finally(() => {
-        setIsScreenLoading(false);
-      });
+    dispatch(login(account));
   };
   // 登入表單 - Input變動
   const handleInputChange = e => {
@@ -62,26 +84,27 @@ export default function LoginPage() {
     }));
   };
 
-  const checkLogin = () => {
-    setIsScreenLoading(true);
-    axios
-      .post(`${baseURL}/v2/api/user/check`)
-      .then(() => {
-        dispatch(
-          pushMessage({
-            text: '已確認登入，將導向後台首頁(暫停)',
-            status: 'success',
-          })
-        );
-        navigate('/dashboard');
-      })
-      .catch(error => {
-        console.error(error.response.data.message);
-      })
-      .finally(() => {
-        setIsScreenLoading(false);
-      });
-  };
+  // 🚫 已改為 Redux Toolkit 的 checkLogin thunk 管理登入驗證
+  // const checkLogin = () => {
+  //   setIsLoading(true);
+  //   axios
+  //     .post(`${baseURL}/v2/api/user/check`)
+  //     .then(() => {
+  //       dispatch(
+  //         pushMessage({
+  //           text: '已確認登入，將導向後台首頁',
+  //           status: 'success',
+  //         })
+  //       );
+  //       navigate('/dashboard');
+  //     })
+  //     .catch(error => {
+  //       console.error(error.response.data.message);
+  //     })
+  //     .finally(() => {
+  //       setIsLoading(false);
+  //     });
+  // };
 
   return (
     <>
@@ -93,7 +116,7 @@ export default function LoginPage() {
               <input
                 name='username'
                 type='email'
-                value={account.username || ''}
+                value={account.username}
                 onChange={handleInputChange}
                 className='form-control'
                 id='username'
@@ -105,7 +128,7 @@ export default function LoginPage() {
               <input
                 name='password'
                 type='password'
-                value={account.password || ''}
+                value={account.password}
                 onChange={handleInputChange}
                 className='form-control'
                 id='password'
@@ -119,8 +142,8 @@ export default function LoginPage() {
           </form>
         </div>
       </div>
-      {/* ScreenLoading */}
-      {isScreenLoading && (
+
+      {status === 'loading' && (
         <div
           className='d-flex justify-content-center align-items-center'
           style={{

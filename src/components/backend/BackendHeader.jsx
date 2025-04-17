@@ -1,6 +1,7 @@
 import { NavLink, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+// import axios from 'axios';
 import { useDispatch } from 'react-redux';
+import { logout } from '../../redux/authSlice';
 import { pushMessage } from '../../redux/toastSlice';
 
 const routes = [
@@ -13,26 +14,33 @@ const routes = [
 
 export default function BackendHeader() {
   // 環境變數
-  const baseURL = import.meta.env.VITE_BASE_URL;
+  // const baseURL = import.meta.env.VITE_BASE_URL;
   // const apiPath = import.meta.env.VITE_API_PATH;
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const handleLogout = async () => {
-    try {
-      await axios.post(`${baseURL}/v2/logout`);
-      dispatch(
-        pushMessage({ text: '已成功登出，將跳轉到登入頁面', status: 'success' })
-      );
+  // const handleLogout = async () => {
+  //   try {
+  //     await axios.post(`${baseURL}/v2/logout`);
+  //     dispatch(
+  //       pushMessage({ text: '已成功登出，將跳轉到登入頁面', status: 'success' })
+  //     );
 
-      setTimeout(() => {
-        navigate('/login'); // **登入成功後跳轉到 login**
-      }, 1500);
-    } catch (error) {
-      const { message } = error.response.data;
-      dispatch(pushMessage({ text: message.join('、'), status: 'failed' }));
-    }
+  //     setTimeout(() => {
+  //       navigate('/login'); // **登入成功後跳轉到 login**
+  //     }, 1500);
+  //   } catch (error) {
+  //     const { message } = error.response.data;
+  //     dispatch(pushMessage({ text: message.join('、'), status: 'failed' }));
+  //   }
+  // };
+  const handleLogout = () => {
+    dispatch(logout());
+    dispatch(
+      pushMessage({ text: '已成功登出，將跳轉到前台首頁', status: 'success' })
+    );
+    navigate('/');
   };
 
   return (

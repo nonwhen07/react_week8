@@ -1,18 +1,20 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import ReactLoading from 'react-loading';
 
 import Pagination from '../../components/Pagination';
 import ProductModal from '../../components/backend/ProductModal';
 import DeleteModal from '../../components/backend/DeleteModal';
+import { checkLogin } from '../../redux/authSlice';
 import { pushMessage } from '../../redux/toastSlice';
 
 export default function ProductListPage() {
   // 初始化 navigate
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { status, error } = useSelector(state => state.auth);
 
   // 環境變數
   const baseURL = import.meta.env.VITE_BASE_URL;
@@ -47,35 +49,48 @@ export default function ProductListPage() {
 
   // useEffect - 初始化 初始檢查登入狀態，如果沒有就轉到登入頁面
   useEffect(() => {
-    const token = document.cookie.replace(
-      /(?:(?:^|.*;\s*)hexToken4\s*=\s*([^;]*).*$)|^.*$/,
-      '$1'
-    );
-    axios.defaults.headers.common['Authorization'] = token;
-    checkLogin();
+    // const token = document.cookie.replace(
+    //   /(?:(?:^|.*;\s*)hexToken_week8\s*=\s*([^;]*).*$)|^.*$/,
+    //   '$1'
+    // );
+    // axios.defaults.headers.common['Authorization'] = token;
+    // checkLogin();
+    dispatch(checkLogin());
   }, []);
 
-  // API & 認證相關函式
-  const checkLogin = () => {
-    setIsScreenLoading(true);
-    axios
-      .post(`${baseURL}/v2/api/user/check`)
-      .then(() => {
-        getProducts();
-      })
-      .catch(error => {
-        const rawMessage = error.response?.data?.message;
-        const errorMessage = Array.isArray(rawMessage)
-          ? rawMessage.join('、')
-          : rawMessage || '請先登入，將導向登入頁面';
-        dispatch(pushMessage({ text: errorMessage, status: 'failed' }));
+  useEffect(() => {
+    if (status === 'failed') {
+      dispatch(pushMessage({ text: error || '請重新登入', status: 'failed' }));
+      navigate('/login');
+      return;
+    }
 
-        navigate('/login'); // **確認沒有登入就跳轉到 LoginPage**
-      })
-      .finally(() => {
-        setIsScreenLoading(false);
-      });
-  };
+    if (status === 'succeeded') {
+      getProducts(); // ✅ 只有驗證通過才取得產品列表
+    }
+  }, [status]);
+
+  // API & 認證相關函式
+  // const checkLogin = () => {
+  //   setIsScreenLoading(true);
+  //   axios
+  //     .post(`${baseURL}/v2/api/user/check`)
+  //     .then(() => {
+  //       getProducts();
+  //     })
+  //     .catch(error => {
+  //       const rawMessage = error.response?.data?.message;
+  //       const errorMessage = Array.isArray(rawMessage)
+  //         ? rawMessage.join('、')
+  //         : rawMessage || '請先登入，將導向登入頁面';
+  //       dispatch(pushMessage({ text: errorMessage, status: 'failed' }));
+
+  //       navigate('/login'); // **確認沒有登入就跳轉到 LoginPage**
+  //     })
+  //     .finally(() => {
+  //       setIsScreenLoading(false);
+  //     });
+  // };
   // 取得產品列表
   const getProducts = async page => {
     setIsScreenLoading(true);

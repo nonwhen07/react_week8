@@ -38,7 +38,7 @@ const router = createHashRouter([
       { path: 'product/:product_id', element: <ProductDetailPage /> }, // /product/123
       // { // 收藏頁面
       //   path: 'favorite',
-      //   element: <FavoriteDetailPage />,
+      //   element: <FavoritePage />,
       // },
       { path: 'cart', element: <CartPage /> }, // /cart
       { path: 'checkout-form', element: <CheckoutFormPage /> }, // /checkout-form

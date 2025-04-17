@@ -263,7 +263,7 @@ export default function ProductsPage() {
                     <button
                       onClick={() => toggleWishListItem(product.id)}
                       type='button'
-                      className='text-dark border-none'
+                      className='text-dark border-0'
                     >
                       <i
                         className={`${
