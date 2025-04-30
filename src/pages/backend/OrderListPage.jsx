@@ -1,20 +1,22 @@
 import { useState, useEffect } from 'react';
-// import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import ReactLoading from 'react-loading';
 
 import Pagination from '../../components/Pagination';
 import OrderModal from '../../components/backend/OrderModal';
 // import DeleteModal from '../../components/backend/DeleteModal';
+import { checkLogin } from '../../redux/authSlice';
 import { pushMessage } from '../../redux/toastSlice';
 
 import { formatDateTime } from '../../utils/format';
 
 export default function OrderListPage() {
   // 初始化 navigate
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { status, error } = useSelector(state => state.auth);
 
   // 環境變數
   const baseURL = import.meta.env.VITE_BASE_URL;
@@ -47,15 +49,27 @@ export default function OrderListPage() {
 
   // useEffect
   useEffect(() => {
-    const token = document.cookie.replace(
-      /(?:(?:^|.*;\s*)hexToken4\s*=\s*([^;]*).*$)|^.*$/,
-      '$1'
-    );
-    axios.defaults.headers.common['Authorization'] = token;
+    // const token = document.cookie.replace(
+    //   /(?:(?:^|.*;\s*)hexToken4\s*=\s*([^;]*).*$)|^.*$/,
+    //   '$1'
+    // );
+    // axios.defaults.headers.common['Authorization'] = token;
     // 由於首頁的 useEffect 會先執行，所以這邊不需要再檢查登入狀態了
     // 直接取得訂單資訊列表
-    getOrders();
+    dispatch(checkLogin());
   }, []);
+
+  useEffect(() => {
+    if (status === 'failed') {
+      dispatch(pushMessage({ text: error || '請重新登入', status: 'failed' }));
+      navigate('/login');
+      return;
+    }
+
+    if (status === 'succeeded') {
+      getOrders(); // ✅ 只有驗證通過才取得產品列表
+    }
+  }, [status]);
 
   // 直接取得訂單資訊列表
   const getOrders = async (page = 1) => {

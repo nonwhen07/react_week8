@@ -49,12 +49,6 @@ export default function ProductListPage() {
 
   // useEffect - 初始化 初始檢查登入狀態，如果沒有就轉到登入頁面
   useEffect(() => {
-    // const token = document.cookie.replace(
-    //   /(?:(?:^|.*;\s*)hexToken_week8\s*=\s*([^;]*).*$)|^.*$/,
-    //   '$1'
-    // );
-    // axios.defaults.headers.common['Authorization'] = token;
-    // checkLogin();
     dispatch(checkLogin());
   }, []);
 
@@ -92,7 +86,7 @@ export default function ProductListPage() {
   //     });
   // };
   // 取得產品列表
-  const getProducts = async page => {
+  const getProducts = async (page = 1) => {
     setIsScreenLoading(true);
     try {
       const res = await axios.get(

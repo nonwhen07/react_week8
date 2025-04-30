@@ -27,14 +27,19 @@ export const login = createAsyncThunk(
 export const checkLogin = createAsyncThunk(
   'auth/checkLogin',
   async (_, { rejectWithValue }) => {
+    // 重新抓 cookie 裡的 token，每次都重新設定 header
     const token = document.cookie.replace(
-      /(?:(?:^|.*;\s*)${tokenKey}\s*=\s*([^;]*).*$)|^.*$/,
+      new RegExp(`(?:(?:^|.*;\\s*)${tokenKey}\\s*=\\s*([^;]*).*$)|^.*$`),
       '$1'
     );
+
+    if (!token) {
+      return rejectWithValue('尚未登入或 token 遺失');
+    }
+
     axios.defaults.headers.common['Authorization'] = token;
 
     try {
-      // await axios.post(`${import.meta.env.VITE_BASE_URL}/v2/api/user/check`);
       await axios.post(`${baseURL}/v2/api/user/check`);
       return { isLogin: true, token };
     } catch (error) {
@@ -56,14 +61,13 @@ const authSlice = createSlice({
     logout(state) {
       state.isLogin = false;
       state.token = '';
-      document.cookie = `${tokenKey}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`;
+      document.cookie = `${tokenKey}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
     },
   },
   // Redux Toolkit 中，非同步邏輯不能直接寫在 reducers 裡面，因為：
   // reducers 只能處理同步邏輯
   // 而 createAsyncThunk() 會產生三種狀態的 action（pending, fulfilled, rejected）
   // 為了處理這些額外的 action，就必須用 extraReducers。
-
   extraReducers: builder => {
     builder
       .addCase(login.pending, state => {
@@ -76,6 +80,19 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(login.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload;
+      })
+      .addCase(checkLogin.pending, state => {
+        state.status = 'loading';
+      })
+      .addCase(checkLogin.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.isLogin = true;
+        state.token = action.payload.token;
+        state.error = null;
+      })
+      .addCase(checkLogin.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload;
       });
