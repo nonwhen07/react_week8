@@ -9,6 +9,7 @@ import Footer from '../components/frontend/FrontendFooter';
 export default function FrontLayout() {
   return (
     <>
+      <div className='frontend-layout'></div>
       <Header />
       <main>
         <Outlet />

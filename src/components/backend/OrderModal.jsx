@@ -24,6 +24,7 @@ export default function OrderModal({
     id: '',
     is_paid: false,
     products: [],
+    message: '',
     user: {
       name: '',
       email: '',
@@ -42,10 +43,16 @@ export default function OrderModal({
   // 編輯訂單動點 => 調整成由 updateOrder 來顯示 dispatch 模式和訊息
   const handleUpdateOrder = async () => {
     setIsLoading(true);
-    // const apiCall = modalMode === 'create' ? createOrder : updateOrder;
-    const apiCall = updateOrder;
     try {
-      await apiCall(); // 呼叫對應的 createOrder 或 updateOrder
+      await axios.put(
+        `${baseURL}/v2/api/${apiPath}/admin/order/${modalData.id}`,
+        {
+          data: {
+            ...modalData,
+            is_paid: modalData.is_paid ? 1 : 0,
+          },
+        }
+      );
       getOrders(); // 更新完畢後，驅動外部頁面重新查詢資料
       handleCloseOrderModal();
       dispatch(
@@ -65,19 +72,6 @@ export default function OrderModal({
     }
   };
 
-  // 編輯訂單-是否已付款
-  const updateOrder = async () => {
-    await axios.put(
-      `${baseURL}/v2/api/${apiPath}/admin/order/${modalData.id}`,
-      {
-        data: {
-          ...modalData,
-          is_paid: modalData.is_paid ? 1 : 0,
-        },
-      }
-    );
-  };
-
   // Modal 開關控制
   const handleCloseOrderModal = () => {
     setIsOpen(false);
@@ -92,19 +86,13 @@ export default function OrderModal({
       });
     }
     //以下幾行處理 綁定 Modal hide 事件（當 Modal 被 ESC 關閉，或點 backdrop 關閉）
+    const refCurrent = orderModalRef.current;
     const handleHidden = () => {
-      setIsOpen(false); // 同步更新 React 狀態
-
-      // 你在關閉 orderModal 時，Bootstrap 自動加上 aria-hidden="true"，但 Modal 裡面的按鈕還有焦點。
-      // React、Bootstrap 在執行 .hide() 或切換 Modal 狀態時出現 焦點未移除，就會出現這個警告。
+      setIsOpen(false);
       document.activeElement.blur(); // 在 Modal 關閉時，把焦點移走（如移到 body），讓 ARIA 不衝突。
     };
-    const refCurrent = orderModalRef.current;
     refCurrent.addEventListener('hidden.bs.modal', handleHidden);
-    // return () => { ... } => 是當元件被卸載或頁面切換時，React 自動幫我執行的動作，這時我應該用它來清除監聽器，避免監聽器還在背後跑。
-    // useEffect 的 return 是清除副作用專用，元件卸載或更新時會自動執行，專門用來清監聽、定時器等資源。
     return () => {
-      // 清除事件監聽，避免記憶體洩漏
       refCurrent.removeEventListener('hidden.bs.modal', handleHidden);
     };
   }, []);
@@ -113,33 +101,17 @@ export default function OrderModal({
   useEffect(() => {
     const modalInstance = modalInstanceRef.current;
     if (!modalInstance) return;
-    if (isOpen) {
-      modalInstance.show();
-    } else {
-      modalInstance.hide();
-    }
+    isOpen ? modalInstance.show() : modalInstance.hide();
   }, [isOpen]);
 
-  // 當外部 tempOrder 有異動時，更新modalData
-  // 但是 modalData.products 是一個陣列，但實際上 API 回傳的格式是：products: {
-  //   "productId-abc123": {
-  //     id: "-Nabc",
-  //   ...
-  // }
-  // 這是「物件型的集合」，不是 array！所以轉成陣列後 .map() 才能使用。
-  // 這邊的 tempOrder 是從外部傳入的 props，當它有變化時，就更新 modalData 的 products 屬性為陣列格式。
-
+  // 當外部 tempOrder 有異動時，更新 modalData 狀態
+  // API 回傳的訂單結構中，products 是物件型集合（key 為訂單中商品的識別碼）
+  // 為保留每筆商品的 key，這裡不轉為陣列，而是直接保留原始物件格式
+  // 若 tempOrder 為空，則 fallback 為空物件或預設值
   useEffect(() => {
-    // setModalData({
-    //   ...(tempOrder || {
-    //     is_paid: false,
-    //   }),
-    //   products: tempOrder?.products ? Object.values(tempOrder.products) : [],
-    // });
-
     setModalData({
       ...(tempOrder || { is_paid: false }),
-      products: tempOrder?.products ? Object.values(tempOrder.products) : [],
+      products: tempOrder?.products || {},
     });
   }, [tempOrder]);
 
@@ -147,14 +119,14 @@ export default function OrderModal({
     <div
       id='orderModal'
       ref={orderModalRef}
-      className='modal'
+      className='modal backend-modal'
       style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
       aria-hidden={!isOpen}
     >
       <div className='modal-dialog modal-dialog-centered modal-xl'>
         <div className='modal-content border-0 shadow'>
-          <div className='modal-header border-bottom'>
-            <h5 className='modal-title fs-4'>{`編輯訂單編號 ${modalData.id}`}</h5>
+          <div className='modal-header border-bottom backend-modal__header'>
+            <h5 className='fw-bold 25modal-title fs-4'>{`編輯訂單編號 ${modalData.id}`}</h5>
             <button
               type='button'
               onClick={handleCloseOrderModal}
@@ -165,121 +137,102 @@ export default function OrderModal({
 
           <div className='modal-body p-4'>
             <div className='row g-4'>
-              <div className='col-md-4'>
-                <div className='mb-5'>
-                  <div className='border p-4 mb-4'>
-                    <h4 className='fw-bold mb-4'>Custom Detail</h4>
-                    <table className='table text-muted'>
-                      <tbody>
-                        <tr>
-                          <th
-                            scope='row'
-                            className='border-0 px-0 pt-4 font-weight-normal'
-                          >
-                            user
-                          </th>
-                          <td className='text-end border-0 px-0 pt-4'>
-                            {modalData.user.name}
-                          </td>
-                        </tr>
-                        <tr>
-                          <th
-                            scope='row'
-                            className='border-0 px-0 pt-4 font-weight-normal'
-                          >
-                            email
-                          </th>
-                          <td className='text-end border-0 px-0 pt-4'>
-                            {modalData.user.email}
-                          </td>
-                        </tr>
-                        <tr>
-                          <th
-                            scope='row'
-                            className='border-0 px-0 pt-4 font-weight-normal'
-                          >
-                            tel
-                          </th>
-                          <td className='text-end border-0 px-0 pt-4'>
-                            {modalData.user.tel}
-                          </td>
-                        </tr>
-                        <tr>
-                          <th
-                            scope='row'
-                            className='border-0 px-0 pt-4 font-weight-normal'
-                          >
-                            address
-                          </th>
-                          <td className='text-end border-0 px-0 pt-4'>
-                            {modalData.user.address}
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
+              {/* 左欄：客戶資訊與留言 */}
+              <div className='col-md-5'>
+                <div className='border p-4 rounded-3'>
+                  <h5 className='fw-bold mb-3'>客戶資訊</h5>
+                  <dl className='row mb-0 text-muted'>
+                    <dt className='col-5'>客戶名稱</dt>
+                    <dd className='col-7 text-end'>{modalData.user.name}</dd>
+                    <dt className='col-5'>客戶 email</dt>
+                    <dd className='col-7 text-end'>{modalData.user.email}</dd>
+                    <dt className='col-5'>客戶電話</dt>
+                    <dd className='col-7 text-end'>{modalData.user.tel}</dd>
+                    <dt className='col-5'>客戶地址</dt>
+                    <dd className='col-7 text-end'>{modalData.user.address}</dd>
+                  </dl>
+
+                  <div className='mt-4'>
+                    <label className='form-label fw-bold'>
+                      客戶留言 / 備註
+                    </label>
+                    <textarea
+                      className='form-control'
+                      value={modalData.message || ''}
+                      rows={2}
+                      readOnly
+                    ></textarea>
+                  </div>
+
+                  <div className='row align-items-center mt-3'>
+                    <div className='col-6'>
+                      <label className='fw-bold mb-0'>客戶付款資訊</label>
+                    </div>
+                    <div className='col-6 text-end'>
+                      <div className='form-check form-switch d-inline-flex align-items-center gap-2'>
+                        <input
+                          className='form-check-input'
+                          type='checkbox'
+                          checked={modalData.is_paid}
+                          onChange={() =>
+                            setModalData(prev => ({
+                              ...prev,
+                              is_paid: !prev.is_paid,
+                            }))
+                          }
+                          id='isPaidSwitch'
+                        />
+                        <label
+                          className='form-check-label mb-0'
+                          htmlFor='isPaidSwitch'
+                        >
+                          {modalData.is_paid ? '✅ 已付款' : '⌛ 尚未付款'}
+                        </label>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              <div className='col-md-8'>
-                <table className='table'>
-                  <thead>
+              {/* 右欄：商品清單 */}
+              <div className='col-md-7'>
+                <table className='table align-middle'>
+                  <thead className='table-light'>
                     <tr>
-                      <th scope='col' className='border-0 ps-0'>
-                        品名
-                      </th>
-                      <th scope='col' className='border-0'>
-                        數量/單位
-                      </th>
-                      <th scope='col' className='border-0'>
-                        單價
-                      </th>
+                      <th>品名</th>
+                      <th className='text-center'>數量 / 單位</th>
+                      <th className='text-end'>單價</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {Array.isArray(modalData.products) &&
-                    modalData.products.length > 0 ? (
-                      modalData.products.map(product => (
-                        <tr key={product.id} className='border-bottom'>
-                          <th
-                            scope='row'
-                            className='border-0 px-0 font-weight-normal py-4'
-                          >
-                            <img
-                              src={product.product.imageUrl}
-                              alt={product.product.title}
-                              style={{
-                                width: '72px',
-                                height: '72px',
-                                objectFit: 'cover',
-                              }}
-                            />
-                            <p className='mb-0 fw-bold ms-3 d-inline-block'>
-                              {product.product.title}
-                            </p>
-                          </th>
-                          <td
-                            className='border-0 align-middle'
-                            style={{ maxWidth: '160px' }}
-                          >
-                            <div className='input-group pe-5'>
-                              <span>{product.qty}</span>
-                              <span>{product.product.unit}</span>
+                    {Object.entries(modalData.products || {}).map(
+                      ([key, item]) => (
+                        <tr key={key}>
+                          <td>
+                            <div className='d-flex align-items-center gap-3'>
+                              <img
+                                src={item.product.imageUrl}
+                                alt={item.product.title}
+                                style={{
+                                  width: '60px',
+                                  height: '60px',
+                                  objectFit: 'cover',
+                                  borderRadius: '0.5rem',
+                                }}
+                              />
+                              <span className='fw-bold'>
+                                {item.product.title}
+                              </span>
                             </div>
                           </td>
-                          <td className='border-0 align-middle'>
-                            <p className='mb-0 ms-auto'>
-                              {formatPrice(product.total)}
-                            </p>
+                          <td className='text-center'>
+                            {item.qty} / {item.product.unit}
+                          </td>
+                          <td className='text-end'>
+                            {formatPrice(item.final_total)}
                           </td>
                         </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td colSpan='3' className='text-center py-5 text-muted'>
-                          無產品資料
-                        </td>
-                      </tr>
+                      )
                     )}
                   </tbody>
                 </table>
@@ -287,12 +240,12 @@ export default function OrderModal({
             </div>
           </div>
 
-          <div className='modal-footer border-top bg-light'>
+          <div className='modal-footer backend-modal__footer border-top bg-light'>
             <button
               type='button'
               onClick={handleUpdateOrder}
               className='btn btn-primary d-flex align-items-center justify-content-center'
-              style={{ lineHeight: 'normal' }} // 修正 line-height 導致的錯位
+              style={{ lineHeight: 'normal' }}
             >
               {isLoading && (
                 <ReactLoading

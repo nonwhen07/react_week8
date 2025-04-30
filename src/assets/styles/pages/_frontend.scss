@@ -1,0 +1,17 @@
+.frontend-layout {
+
+  main {
+    min-height: calc(100vh - 56px); // 假設 header 是 56px 高
+    padding: 1.5rem;
+  }
+  
+  .frontend-header {
+    background-color: $primary-color;
+    color: $light-bg-color;
+  }
+
+  .customer-modal-header {
+    background-color: $primary-color;
+    color: $light-bg-color;
+  }
+}

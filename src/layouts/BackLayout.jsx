@@ -4,10 +4,12 @@ import NavBar from '../components/backend/BackendHeader';
 export default function BackLayout() {
   return (
     <>
-      <NavBar />
-      <main>
-        <Outlet />
-      </main>
+      <div className='backend-layout'>
+        <NavBar />
+        <main>
+          <Outlet />
+        </main>
+      </div>
     </>
   );
 }

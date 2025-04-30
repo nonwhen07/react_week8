@@ -45,36 +45,35 @@ export default function BackendHeader() {
 
   return (
     <>
-      <nav
-        className='navbar bg-dark border-bottom border-body'
-        data-bs-theme='dark'
-      >
-        <div className='container d-flex justify-content-between align-items-center'>
-          <ul className='navbar-nav flex-row gap-5 fs-5'>
-            {routes.map(route => (
-              <li key={route.path} className='nav-item'>
-                <NavLink
-                  className='nav-link'
-                  aria-current='page'
-                  to={route.path}
-                >
-                  {route.name}
-                </NavLink>
-              </li>
-            ))}
-          </ul>
+      <header className='backend-header'>
+        <nav className='navbar border-bottom border-body' data-bs-theme='dark'>
+          <div className='container d-flex justify-content-between align-items-center'>
+            <ul className='navbar-nav flex-row gap-5 fs-5'>
+              {routes.map(route => (
+                <li key={route.path} className='nav-item'>
+                  <NavLink
+                    className='nav-link'
+                    aria-current='page'
+                    to={route.path}
+                  >
+                    {route.name}
+                  </NavLink>
+                </li>
+              ))}
+            </ul>
 
-          <div className='d-flex align-items-center'>
-            <button
-              onClick={handleLogout}
-              type='button'
-              className='btn btn-secondary'
-            >
-              登出
-            </button>
+            <div className='d-flex align-items-center'>
+              <button
+                onClick={handleLogout}
+                type='button'
+                className='btn btn-secondary'
+              >
+                登出
+              </button>
+            </div>
           </div>
-        </div>
-      </nav>
+        </nav>
+      </header>
     </>
   );
 }

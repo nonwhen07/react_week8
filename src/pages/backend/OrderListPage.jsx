@@ -120,14 +120,15 @@ export default function OrderListPage() {
         <div className='d-flex justify-content-between'>
           <h2>訂單列表</h2>
         </div>
-        <table className='table table-hover table-bordered align-middle text-center mt-4'>
+        <table className='table backend-table table-hover table-bordered align-middle text-center mt-4'>
           <thead>
             <tr>
               <th scope='col-4'>訂單編號</th>
               <th scope='col-2'>建立時間</th>
               <th scope='col-2'>客戶名稱</th>
-              <th scope='col-2'>已付款</th>
-              <th scope='col-2'>操作</th>
+              <th scope='col-2'>留言</th>
+              <th scope='col-1'>已付款</th>
+              <th scope='col-1'>操作</th>
             </tr>
           </thead>
           <tbody>
@@ -136,6 +137,7 @@ export default function OrderListPage() {
                 <th scope='row'>{order.id}</th>
                 <td>{formatDateTime(order.create_at)}</td>
                 <td>{order.user.name}</td>
+                <td>{order.message || '-'}</td>
                 <td>
                   {order.is_paid ? (
                     <span className='text-success'>已付款</span>
@@ -149,6 +151,7 @@ export default function OrderListPage() {
                     className='btn btn-sm btn-outline-primary'
                     type='button'
                   >
+                    <i className='bi bi-pencil-square me-1'></i>
                     編輯
                   </button>
                 </td>
