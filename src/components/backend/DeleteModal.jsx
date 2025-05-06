@@ -5,10 +5,14 @@ import axios from 'axios';
 import ReactLoading from 'react-loading';
 
 import { pushMessage } from '../../redux/toastSlice';
+import { getTitleText } from '../../utils/displayUtils';
 
 export default function DeleteModal({
-  tempProduct,
-  getProducts,
+  apiType,
+  // tempProduct,
+  modalData,
+  // getProducts,
+  onRefetch,
   isOpen,
   setIsOpen,
 }) {
@@ -30,30 +34,36 @@ export default function DeleteModal({
     setIsOpen(false);
   };
 
+  const { typeName, itemLabel } = getTitleText(apiType, modalData);
+
   // 刪除產品動點 => 調整成由 handleDeleteProduct 來顯示 dispatch 模式和訊息
-  const handleDeleteProduct = async () => {
+  const handleDeleteItem = async () => {
     setIsLoading(true);
     try {
-      await deleteProduct();
-      getProducts();
+      // await deleteProduct();
+      await deleteItem();
+      onRefetch();
       handleCloseDeleteModal();
 
-      dispatch(pushMessage({ text: '刪除商品成功', status: 'success' }));
+      dispatch(pushMessage({ text: '刪除項目成功', status: 'success' }));
     } catch (error) {
       const rawMessage = error.response?.data?.message;
       const errorMessage = Array.isArray(rawMessage)
         ? rawMessage.join('、')
         : rawMessage || '發生錯誤，請稍後再試';
       dispatch(pushMessage({ text: errorMessage, status: 'failed' }));
-      // setIsLoading(false);
     } finally {
       setIsLoading(false);
     }
   };
   // 刪除 => 調整成由 handleDeleteProduct 來顯示 dispatch 模式和訊息
-  const deleteProduct = async () => {
+  //handleDeleteItem
+  const deleteItem = async () => {
+    // await axios.delete(
+    //   `${baseURL}/v2/api/${apiPath}/admin/product/${tempProduct.id}`
+    // );
     await axios.delete(
-      `${baseURL}/v2/api/${apiPath}/admin/product/${tempProduct.id}`
+      `${baseURL}/v2/api/${apiPath}/admin/${apiType}/${modalData.id}`
     );
   };
 
@@ -105,7 +115,7 @@ export default function DeleteModal({
       <div className='modal-dialog'>
         <div className='modal-content'>
           <div className='modal-header'>
-            <h1 className='modal-title fs-5'>刪除產品</h1>
+            <h1 className='modal-title fs-5'>刪除{typeName}</h1>
             <button
               onClick={handleCloseDeleteModal}
               type='button'
@@ -116,12 +126,13 @@ export default function DeleteModal({
           </div>
           <div className='modal-body'>
             你是否要刪除
-            <span className='text-danger fw-bold'>{tempProduct.title}</span>
+            {/* <span className='text-danger fw-bold'>{modalData.title}</span> */}
+            <span className='text-danger fw-bold'>{itemLabel}</span>
           </div>
           <div className='modal-footer'>
             <button
               type='button'
-              onClick={handleDeleteProduct}
+              onClick={handleDeleteItem}
               className='btn btn-danger d-flex align-items-center justify-content-center'
               style={{ lineHeight: 'normal' }} // 修正 line-height 導致的錯位
             >

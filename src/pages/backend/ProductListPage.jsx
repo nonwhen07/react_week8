@@ -11,7 +11,7 @@ import { checkLogin } from '../../redux/authSlice';
 import { pushMessage } from '../../redux/toastSlice';
 
 export default function ProductListPage() {
-  // 初始化 navigate
+  // 初始化路由與 Redux
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { status, error } = useSelector(state => state.auth);
@@ -20,7 +20,7 @@ export default function ProductListPage() {
   const baseURL = import.meta.env.VITE_BASE_URL;
   const apiPath = import.meta.env.VITE_API_PATH;
 
-  //Modal 資料狀態的預設值
+  // Modal 預設資料結構
   const defaultModalState = {
     imageUrl: '',
     title: '',
@@ -47,7 +47,7 @@ export default function ProductListPage() {
   // 螢幕Loading遮罩
   const [isScreenLoading, setIsScreenLoading] = useState(false);
 
-  // useEffect - 初始化 初始檢查登入狀態，如果沒有就轉到登入頁面
+  // 檢查登入狀態，未登入導向 /login
   useEffect(() => {
     dispatch(checkLogin());
   }, []);
@@ -64,27 +64,6 @@ export default function ProductListPage() {
     }
   }, [status]);
 
-  // API & 認證相關函式
-  // const checkLogin = () => {
-  //   setIsScreenLoading(true);
-  //   axios
-  //     .post(`${baseURL}/v2/api/user/check`)
-  //     .then(() => {
-  //       getProducts();
-  //     })
-  //     .catch(error => {
-  //       const rawMessage = error.response?.data?.message;
-  //       const errorMessage = Array.isArray(rawMessage)
-  //         ? rawMessage.join('、')
-  //         : rawMessage || '請先登入，將導向登入頁面';
-  //       dispatch(pushMessage({ text: errorMessage, status: 'failed' }));
-
-  //       navigate('/login'); // **確認沒有登入就跳轉到 LoginPage**
-  //     })
-  //     .finally(() => {
-  //       setIsScreenLoading(false);
-  //     });
-  // };
   // 取得產品列表
   const getProducts = async (page = 1) => {
     setIsScreenLoading(true);
@@ -109,8 +88,7 @@ export default function ProductListPage() {
     getProducts(page);
   };
 
-  // Modal 開關控制
-  // ProductModal
+  // Modal 開關控制 - ProductModal/DeleteModal
   const handleOpenProductModal = (mode, product = defaultModalState) => {
     setModalMode(mode);
     setTempProduct(
@@ -119,7 +97,7 @@ export default function ProductListPage() {
     // 由於元件化了所以直接setIsProductModalOpen(true)，通知 ProductModal 打開
     setIsProductModalOpen(true);
   };
-  // DeleteModal
+
   const handleOpenDeleteModal = (product = defaultModalState) => {
     setTempProduct(
       // 避免 api 回傳 product 為空物件時，無法正確設定tempProduct更保險
@@ -199,8 +177,9 @@ export default function ProductListPage() {
       />
 
       <DeleteModal
-        tempProduct={tempProduct}
-        getProducts={getProducts}
+        apiType='product'
+        modalData={tempProduct}
+        onRefetch={getProducts}
         isOpen={isDeleteModalOpen}
         setIsOpen={setIsDeleteModalOpen}
       />

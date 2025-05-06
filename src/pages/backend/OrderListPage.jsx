@@ -6,7 +6,7 @@ import ReactLoading from 'react-loading';
 
 import Pagination from '../../components/Pagination';
 import OrderModal from '../../components/backend/OrderModal';
-// import DeleteModal from '../../components/backend/DeleteModal';
+import DeleteModal from '../../components/backend/DeleteModal';
 import { checkLogin } from '../../redux/authSlice';
 import { pushMessage } from '../../redux/toastSlice';
 
@@ -42,7 +42,7 @@ export default function OrderListPage() {
 
   // 管理Modal元件開關-OrderModal、DeleteModal
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
-  // const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   // 螢幕Loading遮罩
   const [isScreenLoading, setIsScreenLoading] = useState(false);
@@ -106,13 +106,13 @@ export default function OrderListPage() {
     setIsOrderModalOpen(true);
   };
   // DeleteModal
-  // const handleOpenDeleteModal = (order = defaultModalState) => {
-  //   setTempOrder(
-  //     // 避免 api 回傳 order 為空物件時，無法正確設定tempOrder更保險
-  //     order && Object.keys(order).length > 0 ? order : defaultModalState
-  //   );
-  //   setIsDeleteModalOpen(true);
-  // };
+  const handleOpenDeleteModal = (order = defaultModalState) => {
+    setTempOrder(
+      // 避免 api 回傳 order 為空物件時，無法正確設定tempOrder更保險
+      order && Object.keys(order).length > 0 ? order : defaultModalState
+    );
+    setIsDeleteModalOpen(true);
+  };
 
   return (
     <>
@@ -154,6 +154,13 @@ export default function OrderListPage() {
                     <i className='bi bi-pencil-square me-1'></i>
                     編輯
                   </button>
+                  <button
+                    onClick={() => handleOpenDeleteModal(order)}
+                    className='btn btn-sm btn-outline-danger'
+                    type='button'
+                  >
+                    刪除
+                  </button>
                 </td>
               </tr>
             ))}
@@ -169,12 +176,13 @@ export default function OrderListPage() {
         setIsOpen={setIsOrderModalOpen}
       />
 
-      {/* <DeleteModal
-        tempOrder={tempOrder}
-        getOrders={getOrders}
+      <DeleteModal
+        apiType='order'
+        modalData={tempOrder}
+        onRefetch={getOrders}
         isOpen={isDeleteModalOpen}
         setIsOpen={setIsDeleteModalOpen}
-      /> */}
+      />
 
       {/* 確保以移動去main.jsx，確保 Toast 能全局監聽 Redux 狀態 */}
       {/* <Toast /> */}
