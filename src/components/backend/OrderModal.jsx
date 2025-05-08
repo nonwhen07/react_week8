@@ -119,14 +119,14 @@ export default function OrderModal({
     <div
       id='orderModal'
       ref={orderModalRef}
-      className='modal backend-modal'
+      className='modal backend-modal fade'
       style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
       aria-hidden={!isOpen}
     >
       <div className='modal-dialog modal-dialog-centered modal-xl'>
         <div className='modal-content border-0 shadow'>
-          <div className='modal-header border-bottom backend-modal__header'>
-            <h5 className='fw-bold 25modal-title fs-4'>{`編輯訂單編號 ${modalData.id}`}</h5>
+          <div className='modal-header backend-modal__header border-bottom'>
+            <h5 className='fw-bold modal-title fs-4'>{`編輯訂單編號 ${modalData.id}`}</h5>
             <button
               type='button'
               onClick={handleCloseOrderModal}

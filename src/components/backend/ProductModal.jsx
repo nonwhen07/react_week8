@@ -203,13 +203,13 @@ export default function ProductModal({
     <div
       id='productModal'
       ref={productModalRef}
-      className='modal'
+      className='modal backend-modal fade'
       style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
     >
       <div className='modal-dialog modal-dialog-centered modal-xl'>
         <div className='modal-content border-0 shadow'>
-          <div className='modal-header border-bottom'>
-            <h5 className='modal-title fs-4'>
+          <div className='modal-header border-bottom backend-modal__header'>
+            <h5 className='modal-title fw-bold fs-4'>
               {modalMode === 'create'
                 ? '新增產品'
                 : '編輯 - ' + modalData.title}
@@ -437,7 +437,7 @@ export default function ProductModal({
             </div>
           </div>
 
-          <div className='modal-footer border-top bg-light'>
+          <div className='modal-footer backend-modal__footer border-top bg-light'>
             <button
               type='button'
               onClick={handleUpdateProduct}

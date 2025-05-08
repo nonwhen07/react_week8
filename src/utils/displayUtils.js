@@ -8,8 +8,10 @@ export function getTitleText(apiType, modalData) {
         return '訂單';
       case 'product':
         return '產品';
-      case 'article':
-        return '文章';
+      case 'coupon':
+        return '優惠券';
+      case 'news':
+        return '最新消息';
       default:
         return '資料';
     }

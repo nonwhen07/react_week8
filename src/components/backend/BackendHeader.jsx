@@ -8,8 +8,8 @@ const routes = [
   { path: '/dashboard', name: '後台首頁' },
   { path: '/dashboard/productlist', name: '產品列表' },
   { path: '/dashboard/orderlist', name: '訂單列表' },
-  // { path: "/dashboard/orders", name: "優惠卷列表" },
-  // { path: "/dashboard/orders", name: "最新消息" },
+  { path: '/dashboard/couponlist', name: '優惠卷列表' },
+  { path: '/dashboard/newslist', name: '最新消息' },
 ];
 
 export default function BackendHeader() {
