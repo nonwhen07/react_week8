@@ -199,7 +199,7 @@ export default function NewsModal({
           <div className='modal-footer backend-modal__footer border-top bg-light'>
             <button
               type='button'
-              className='btn btn-primary'
+              className='btn btn-primary d-flex align-items-center justify-content-center'
               onClick={handleSubmit}
             >
               {isLoading && (

@@ -114,7 +114,7 @@ export default function DeleteModal({
     >
       <div className='modal-dialog'>
         <div className='modal-content'>
-          <div className='modal-header'>
+          <div className='modal-header bg-danger text-white'>
             <h1 className='modal-title fs-5'>刪除{typeName}</h1>
             <button
               onClick={handleCloseDeleteModal}
@@ -125,9 +125,10 @@ export default function DeleteModal({
             ></button>
           </div>
           <div className='modal-body'>
-            你是否要刪除
-            {/* <span className='text-danger fw-bold'>{modalData.title}</span> */}
-            <span className='text-danger fw-bold'>{itemLabel}</span>
+            你是否要刪除這個{' '}
+            <span className='text-danger fw-bold'>
+              {`${typeName}編號： ${itemLabel}`}
+            </span>
           </div>
           <div className='modal-footer'>
             <button
@@ -149,7 +150,7 @@ export default function DeleteModal({
             <button
               type='button'
               onClick={handleCloseDeleteModal}
-              className='btn btn-secondary'
+              className='btn btn-outline-secondary'
             >
               取消
             </button>

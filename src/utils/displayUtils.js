@@ -17,7 +17,8 @@ export function getTitleText(apiType, modalData) {
     }
   })();
 
-  const itemLabel = modalData.title || modalData.user?.name || '這筆資料';
+  const itemLabel =
+    modalData.id || modalData.title || modalData.user?.name || '這筆資料';
 
   return { typeName, itemLabel };
 }

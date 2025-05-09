@@ -199,7 +199,7 @@ export default function CouponModal({
             <button
               type='button'
               onClick={handleSubmit}
-              className='btn btn-primary'
+              className='btn btn-primary d-flex align-items-center justify-content-center'
             >
               {isLoading ? (
                 <ReactLoading

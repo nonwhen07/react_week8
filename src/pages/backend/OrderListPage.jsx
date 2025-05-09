@@ -78,8 +78,9 @@ export default function OrderListPage() {
       const res = await axios.get(
         `${baseURL}/v2/api/${apiPath}/admin/orders?page=${page}`
       );
-      setOrders(res.data.orders);
-      setPageInfo(res.data.pagination);
+      const orders = res.data.orders;
+      setOrders(orders);
+      setPageInfo({ ...res.data.pagination, total: orders.length }); // 更新分頁資訊
     } catch (error) {
       const rawMessage = error.response?.data?.message;
       const errorMessage = Array.isArray(rawMessage)

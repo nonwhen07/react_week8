@@ -71,8 +71,9 @@ export default function ProductListPage() {
       const res = await axios.get(
         `${baseURL}/v2/api/${apiPath}/admin/products?page=${page}`
       );
-      setProducts(res.data.products);
-      setPageInfo(res.data.pagination);
+      const products = res.data.products;
+      setProducts(products);
+      setPageInfo({ ...res.data.pagination, total: products.length }); // 更新分頁資訊
     } catch (error) {
       const rawMessage = error.response?.data?.message;
       const errorMessage = Array.isArray(rawMessage)

@@ -63,7 +63,8 @@ export default function CouponListPage() {
       const coupons = res.data.coupons;
       setOriginalCoupons(coupons); // 儲存原始完整資料
       setFilteredCoupons(coupons); // 預設顯示全部
-      setPageInfo(res.data.pagination);
+      // setPageInfo(res.data.pagination);
+      setPageInfo({ ...res.data.pagination, total: coupons.length }); // 更新分頁資訊
     } catch (error) {
       const msg = error.response?.data?.message;
       dispatch(
@@ -105,26 +106,17 @@ export default function CouponListPage() {
 
   return (
     <>
-      <div className='d-flex justify-content-between align-items-center mb-3'>
-        <h2>優惠券列表</h2>
-        <input
-          type='text'
-          className='form-control w-25'
-          placeholder='搜尋標題 / 優惠碼'
-          value={searchText}
-          onChange={e => setSearchText(e.target.value)}
-        />
-        <button
-          type='button'
-          onClick={() => handleOpenCouponModal('create')}
-          className='btn btn-primary ms-3'
-        >
-          新增優惠券
-        </button>
-      </div>
       <div className='container py-5'>
-        <div className='d-flex justify-content-between'>
+        {/* 步驟 1：搜尋條件區塊 */}
+        <div className='d-flex justify-content-between align-items-center mb-3'>
           <h2>優惠券列表</h2>
+          <input
+            type='text'
+            className='form-control w-25'
+            placeholder='搜尋標題 / 優惠碼'
+            value={searchText}
+            onChange={e => setSearchText(e.target.value)}
+          />
           <button
             type='button'
             onClick={() => handleOpenCouponModal('create')}
@@ -133,50 +125,82 @@ export default function CouponListPage() {
             新增優惠券
           </button>
         </div>
-        <table className='table mt-4'>
-          <thead>
-            <tr>
-              <th>名稱</th>
-              <th>優惠碼</th>
-              <th>折扣 (%)</th>
-              <th>到期日</th>
-              <th>狀態</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredCoupons.map(coupon => (
-              <tr key={coupon.id}>
-                <td>{coupon.title}</td>
-                <td>{coupon.code}</td>
-                <td>{coupon.percent}</td>
-                <td>{new Date(coupon.due_date * 1000).toLocaleDateString()}</td>
-                <td>
-                  {coupon.is_enabled ? (
-                    <span className='text-success'>啟用</span>
-                  ) : (
-                    <span>未啟用</span>
-                  )}
-                </td>
-                <td>
-                  <button
-                    onClick={() => handleOpenCouponModal('edit', coupon)}
-                    className='btn btn-sm btn-outline-primary me-2'
-                  >
-                    編輯
-                  </button>
-                  <button
-                    onClick={() => handleOpenDeleteModal(coupon)}
-                    className='btn btn-sm btn-outline-danger'
-                  >
-                    刪除
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <Pagination pageInfo={pageInfo} handlePageChange={handlePageChange} />
+
+        {/* 步驟 2 + 3 ：優惠券清單與操作按鈕 + Table 、 分頁控制與每頁筆數 */}
+        <div className='col-12 mb-3'>
+          <div className='shadow p-4 rounded' style={{ minHeight: '280px' }}>
+            <table className='table mt-4'>
+              <thead>
+                <tr>
+                  <th>名稱</th>
+                  <th>優惠碼</th>
+                  <th>折扣 (%)</th>
+                  <th>到期日</th>
+                  <th>狀態</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredCoupons.map(coupon => (
+                  <tr key={coupon.id}>
+                    <td>{coupon.title}</td>
+                    <td>{coupon.code}</td>
+                    <td>{coupon.percent}</td>
+                    <td>
+                      {new Date(coupon.due_date * 1000).toLocaleDateString()}
+                    </td>
+                    <td>
+                      {coupon.is_enabled ? (
+                        <span className='text-success'>啟用</span>
+                      ) : (
+                        <span>未啟用</span>
+                      )}
+                    </td>
+                    <td>
+                      <button
+                        onClick={() => handleOpenCouponModal('edit', coupon)}
+                        className='btn btn-sm btn-outline-primary me-2'
+                      >
+                        編輯
+                      </button>
+                      <button
+                        onClick={() => handleOpenDeleteModal(coupon)}
+                        className='btn btn-sm btn-outline-danger'
+                      >
+                        刪除
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            {/* 步驟 3：分頁控制與每頁筆數 */}
+            <Pagination
+              pageInfo={pageInfo}
+              handlePageChange={handlePageChange}
+            />
+          </div>
+        </div>
+
+        {/* 步驟 4：批次操作（勾選 / 刪除 / 停用） */}
+        <div className='col-12 mb-3'>
+          <div className='shadow p-4 rounded' style={{ minHeight: '120px' }}>
+            <h5 className='fw-bold mb-3'>批次操作區塊</h5>
+            <span className='text-muted'>
+              步驟 4：可勾選多筆資料進行刪除或停用
+            </span>
+          </div>
+        </div>
+
+        {/* 步驟 5：匯入 / 匯出（選用功能） */}
+        <div className='col-12 mb-3'>
+          <div className='shadow p-4 rounded' style={{ minHeight: '120px' }}>
+            <h5 className='fw-bold mb-3'>匯入 / 匯出</h5>
+            <span className='text-muted'>
+              步驟 5：提供 CSV / JSON 格式的匯入與匯出功能
+            </span>
+          </div>
+        </div>
       </div>
 
       <CouponModal

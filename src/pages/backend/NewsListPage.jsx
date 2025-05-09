@@ -57,8 +57,9 @@ export default function NewsListPage() {
       const res = await axios.get(
         `${baseURL}/v2/api/${apiPath}/admin/articles?page=${page}`
       );
-      setNewsList(res.data.articles);
-      setPageInfo(res.data.pagination);
+      const articles = res.data.articles;
+      setNewsList(articles); // 更新文章列表
+      setPageInfo({ ...res.data.pagination, total: articles.length }); // 更新分頁資訊
     } catch (error) {
       const msg = error.response?.data?.message;
       dispatch(
