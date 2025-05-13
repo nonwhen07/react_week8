@@ -5,7 +5,7 @@ import { Provider } from 'react-redux';
 
 import router from './router/index.jsx';
 import store from './redux/store.js';
-import Toast from './components/Toast.jsx';
+import Toast from './components/shared/Toast.jsx';
 
 import './assets/styles/all.scss'; // 入口 Sass
 import 'bootstrap/dist/js/bootstrap.js';

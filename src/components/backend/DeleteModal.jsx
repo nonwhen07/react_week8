@@ -108,13 +108,13 @@ export default function DeleteModal({
     <div
       id='delProductModal'
       ref={deleteModalRef}
-      className='modal fade'
+      className='modal backend-closeModal fade'
       tabIndex='-1'
       style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
     >
       <div className='modal-dialog'>
         <div className='modal-content'>
-          <div className='modal-header bg-danger text-white'>
+          <div className='modal-header backend-closeModal__header bg-danger text-white'>
             <h1 className='modal-title fs-5'>刪除{typeName}</h1>
             <button
               onClick={handleCloseDeleteModal}

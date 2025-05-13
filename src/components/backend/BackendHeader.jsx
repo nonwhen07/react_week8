@@ -10,6 +10,7 @@ const routes = [
   { path: '/dashboard/orderlist', name: '訂單列表' },
   { path: '/dashboard/couponlist', name: '優惠卷列表' },
   { path: '/dashboard/newslist', name: '最新消息' },
+  { path: '/', name: '回到前台首頁' },
 ];
 
 export default function BackendHeader() {

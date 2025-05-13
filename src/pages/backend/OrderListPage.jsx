@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import ReactLoading from 'react-loading';
 
-import Pagination from '../../components/Pagination';
+import Pagination from '../../components/shared/Pagination';
 import OrderModal from '../../components/backend/OrderModal';
 import DeleteModal from '../../components/backend/DeleteModal';
 import { checkLogin } from '../../redux/authSlice';
