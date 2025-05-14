@@ -43,8 +43,14 @@ export const formatDateInputValue = timestamp => {
 };
 
 // 將 date 格式的字串 → 轉為 Unix timestamp，若無效則回傳 null（yyyy/mm/dd hh:mm 2025/05/03 hh:mm => 1555459200）
-export const toTimestamp = dateInput => {
+// export const toTimestamp = dateInput => {
+//   const time = new Date(dateInput).getTime();
+//   if (isNaN(time)) return null; // ✅ 改為 null，API 可以判斷
+//   return time / 1000;
+// };
+
+export const toTimestamp = (dateInput, toSeconds = false) => {
   const time = new Date(dateInput).getTime();
-  if (isNaN(time)) return null; // ✅ 改為 null，API 可以判斷
-  return time / 1000;
+  if (isNaN(time)) return null;
+  return toSeconds ? time : Math.floor(time / 1000);
 };

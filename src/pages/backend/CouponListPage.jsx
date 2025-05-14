@@ -11,6 +11,7 @@ import ConfirmModal from '../../components/shared/ConfirmModal';
 import DeleteModal from '../../components/backend/DeleteModal';
 import { checkLogin } from '../../redux/authSlice';
 import { pushMessage } from '../../redux/toastSlice';
+import { toTimestamp } from '../../utils/format';
 
 export default function CouponListPage() {
   const navigate = useNavigate();
@@ -121,20 +122,28 @@ export default function CouponListPage() {
     setIsLoading(true);
     try {
       for (const id of selectedCouponIds) {
+        const fullCoupon = originalCoupons.find(c => c.id === id);
+        if (!fullCoupon) continue;
+
+        console.log('fullCoupon', fullCoupon);
         await axios.put(`${baseURL}/v2/api/${apiPath}/admin/coupon/${id}`, {
           data: {
+            ...fullCoupon,
             is_enabled: enableType === 'enabled' ? 1 : 0,
+            percent: Number(fullCoupon.percent), // 保險轉型
+            due_date: toTimestamp(fullCoupon.due_date, false), // 若不是 timestamp
           },
         });
       }
-      getCoupons(); // 重新取得資料
+
+      getCoupons();
       dispatch(
         pushMessage({
           text: `批次${enableType === 'enabled' ? '啟用' : '停用'}優惠券成功`,
           status: 'success',
         })
       );
-      setSelectedCouponIds([]); // 清除已勾選
+      setSelectedCouponIds([]);
     } catch (error) {
       const msg = error.response?.data?.message;
       dispatch(
