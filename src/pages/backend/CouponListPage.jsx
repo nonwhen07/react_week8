@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
@@ -12,6 +12,8 @@ import DeleteModal from '../../components/backend/DeleteModal';
 import { checkLogin } from '../../redux/authSlice';
 import { pushMessage } from '../../redux/toastSlice';
 import { toTimestamp } from '../../utils/format';
+
+import Papa from 'papaparse';
 
 export default function CouponListPage() {
   const navigate = useNavigate();
@@ -82,6 +84,26 @@ export default function CouponListPage() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // 由於api沒有堤共分頁的資料，所以需要自己撰寫一個函式來取得所有優惠券資料
+  const getAllCoupons = async () => {
+    const firstPage = await axios.get(
+      `${baseURL}/v2/api/${apiPath}/admin/coupons?page=1`
+    );
+    const { coupons: firstCoupons, pagination } = firstPage.data;
+
+    const pageRequests = [];
+    for (let i = 2; i <= pagination.total_pages; i++) {
+      pageRequests.push(
+        axios.get(`${baseURL}/v2/api/${apiPath}/admin/coupons?page=${i}`)
+      );
+    }
+
+    const restResponses = await Promise.all(pageRequests);
+    const restCoupons = restResponses.flatMap(res => res.data.coupons);
+
+    return [...firstCoupons, ...restCoupons];
   };
 
   const handlePageChange = (page = 1) => {
@@ -199,6 +221,56 @@ export default function CouponListPage() {
   // 開啟確認刪除 Modal
   const handleOpenConfirmModal = () => {
     setIsConfirmModalOpen(true);
+  };
+
+  const fileInputRef = useRef(null);
+  const [exportFormat, setExportFormat] = useState('csv'); // 預設 CSV
+
+  //✅ handleExport（將資料匯出為 CSV）
+  const handleExport = async () => {
+    const allCoupons = await getAllCoupons();
+
+    let content = '';
+    let mimeType = '';
+    let extension = '';
+
+    if (exportFormat === 'csv') {
+      content = Papa.unparse(allCoupons);
+      mimeType = 'text/csv;charset=utf-8;';
+      extension = 'csv';
+    } else {
+      content = JSON.stringify(allCoupons, null, 2);
+      mimeType = 'application/json';
+      extension = 'json';
+    }
+
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `coupons_export.${extension}`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  //✅ handleImport（處理上傳的 CSV 檔案）
+  const handleImport = e => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    Papa.parse(file, {
+      header: true,
+      skipEmptyLines: true,
+      complete: function (results) {
+        const importedData = results.data;
+        console.log('匯入資料內容:', importedData);
+        // 👉 你可在這裡依需求進行後續處理
+      },
+    });
+
+    // 清除選取狀態，避免無法再次上傳相同檔案
+    e.target.value = '';
   };
 
   // 搜尋欄位變動時觸發過濾
@@ -323,18 +395,106 @@ export default function CouponListPage() {
               pageInfo={pageInfo}
               handlePageChange={handlePageChange}
             />
+
+            {/* 步驟 5：匯入 / 匯出（選用功能） */}
+            {/* <div className='card mt-4'>
+              <div className='card-header bg-light d-flex justify-content-between align-items-center'>
+                <h5 className='mb-0'>📁 匯入 / 匯出優惠券資料</h5>
+                <div>
+                  <button
+                    className='btn btn-outline-primary btn-sm me-2'
+                    onClick={handleExport}
+                  >
+                    匯出資料（CSV）
+                  </button>
+                  <button
+                    className='btn btn-outline-success btn-sm'
+                    onClick={() => fileInputRef.current.click()}
+                  >
+                    匯入資料（CSV）
+                  </button>
+                  <input
+                    type='file'
+                    accept='.csv'
+                    className='d-none'
+                    ref={fileInputRef}
+                    onChange={handleImport}
+                  />
+                </div>
+              </div>
+              <div className='card-body text-muted small'>
+                <ul className='mb-0'>
+                  <li>可下載目前優惠券資料（.csv 格式）</li>
+                  <li>請使用匯出的資料格式進行編輯後再匯入</li>
+                  <li>匯入時會逐筆新增資料，請避免重複</li>
+                  <li>單次匯入建議不超過 100 筆</li>
+                </ul>
+              </div>
+            </div> */}
+
+            <div className='card mt-4'>
+              <div className='card-header bg-light d-flex justify-content-between align-items-center'>
+                <h5 className='mb-0'>📁 匯入 / 匯出優惠券資料</h5>
+                <div className='d-flex align-items-center'>
+                  <label htmlFor='exportFormat' className='me-2 mb-0'>
+                    匯入 / 匯出格式：
+                  </label>
+                  <select
+                    id='exportFormat'
+                    className='form-select form-select-sm me-2 text-center'
+                    style={{ width: '120px' }}
+                    value={exportFormat}
+                    onChange={e => setExportFormat(e.target.value)}
+                  >
+                    <option value='csv'>CSV</option>
+                    <option value='json'>JSON</option>
+                  </select>
+
+                  <button
+                    className='btn btn-outline-primary btn-sm me-2'
+                    onClick={handleExport}
+                  >
+                    匯出資料
+                  </button>
+
+                  <button
+                    className='btn btn-outline-success btn-sm'
+                    onClick={() => fileInputRef.current.click()}
+                  >
+                    匯入資料
+                  </button>
+
+                  <input
+                    type='file'
+                    accept='.csv'
+                    className='d-none'
+                    ref={fileInputRef}
+                    onChange={handleImport}
+                  />
+                </div>
+              </div>
+
+              <div className='card-body text-muted small'>
+                <ul className='mb-0'>
+                  <li>📤 匯出：可選擇 CSV（表格）或 JSON（結構）格式</li>
+                  <li>📥 匯入：請使用系統提供的 CSV 格式上傳資料</li>
+                  <li>上傳資料將逐筆新增優惠券，請勿重複</li>
+                  <li>建議單次匯入不超過 100 筆，避免錯誤與延遲</li>
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
 
         {/* 步驟 5：匯入 / 匯出（選用功能） */}
-        <div className='col-12 mb-3'>
+        {/* <div className='col-12 mb-3'>
           <div className='shadow p-4 rounded' style={{ minHeight: '120px' }}>
             <h5 className='fw-bold mb-3'>匯入 / 匯出</h5>
             <span className='text-muted'>
               步驟 5：提供 CSV / JSON 格式的匯入與匯出功能
             </span>
           </div>
-        </div>
+        </div> */}
       </div>
 
       <CouponModal
