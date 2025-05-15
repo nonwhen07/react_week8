@@ -2,27 +2,31 @@ import { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
+import Papa from 'papaparse';
 import ReactLoading from 'react-loading';
 
+// Redux 與工具
+import { checkLogin } from '../../redux/authSlice';
+import { pushMessage } from '../../redux/toastSlice';
+import { toTimestamp } from '../../utils/format';
+
+// 自訂元件
 import Pagination from '../../components/shared/Pagination';
 import BulkActionBar from '../../components/shared/BulkActionBar';
 import CouponModal from '../../components/backend/CouponModal';
 import ConfirmModal from '../../components/shared/ConfirmModal';
 import DeleteModal from '../../components/backend/DeleteModal';
-import { checkLogin } from '../../redux/authSlice';
-import { pushMessage } from '../../redux/toastSlice';
-import { toTimestamp } from '../../utils/format';
-
-import Papa from 'papaparse';
 
 export default function CouponListPage() {
+  //🟦 使用者與 API 狀態管理
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { status, error } = useSelector(state => state.auth);
-
+  //🟨 請求與環境設定
   const baseURL = import.meta.env.VITE_BASE_URL;
   const apiPath = import.meta.env.VITE_API_PATH;
 
+  //🟪 表單與 Modal 狀態
   const defaultCoupon = {
     title: '',
     code: '',
@@ -30,23 +34,25 @@ export default function CouponListPage() {
     due_date: '',
     is_enabled: 0,
   };
-
-  // const [coupons, setCoupons] = useState([]);
-  const [pageInfo, setPageInfo] = useState({});
   const [tempCoupon, setTempCoupon] = useState(defaultCoupon);
   const [modalMode, setModalMode] = useState(null);
   const [isCouponModalOpen, setIsCouponModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
-  // state 增加 searchText / 原始資料 / 篩選結果
-  const [searchText, setSearchText] = useState('');
+  //🟧 頁面與資料
+  // const [coupons, setCoupons] = useState([]);
   const [originalCoupons, setOriginalCoupons] = useState([]);
   const [filteredCoupons, setFilteredCoupons] = useState([]);
+  const [pageInfo, setPageInfo] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+  // state 增加 searchText / 原始資料 / 篩選結果
+  const [searchText, setSearchText] = useState('');
 
-  // 批次處理資訊
+  //🟩 批次選取與格式控制
   const [selectedCouponIds, setSelectedCouponIds] = useState([]);
-  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [fileFormat, setFileFormat] = useState('csv'); //如有需要可在拆分export/import
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     dispatch(checkLogin());
@@ -62,6 +68,17 @@ export default function CouponListPage() {
       getCoupons();
     }
   }, [status]);
+
+  // 搜尋欄位變動時觸發過濾
+  useEffect(() => {
+    const keyword = searchText.toLowerCase();
+    const result = originalCoupons.filter(
+      coupon =>
+        coupon.title.toLowerCase().includes(keyword) ||
+        coupon.code.toLowerCase().includes(keyword)
+    );
+    setFilteredCoupons(result);
+  }, [searchText, originalCoupons]);
 
   const getCoupons = async (page = 1) => {
     setIsLoading(true);
@@ -130,6 +147,7 @@ export default function CouponListPage() {
       setSelectedCouponIds([]);
     }
   };
+
   // 勾選批次優惠券時，更新 selectedCouponIds
   const handleCheckboxChange = (id, checked) => {
     if (checked) {
@@ -223,9 +241,6 @@ export default function CouponListPage() {
     setIsConfirmModalOpen(true);
   };
 
-  const fileInputRef = useRef(null);
-  const [exportFormat, setExportFormat] = useState('csv'); // 預設 CSV
-
   //✅ handleExport（將資料匯出為 CSV）
   const handleExport = async () => {
     const allCoupons = await getAllCoupons();
@@ -234,7 +249,7 @@ export default function CouponListPage() {
     let mimeType = '';
     let extension = '';
 
-    if (exportFormat === 'csv') {
+    if (fileFormat === 'csv') {
       content = Papa.unparse(allCoupons);
       mimeType = 'text/csv;charset=utf-8;';
       extension = 'csv';
@@ -255,34 +270,73 @@ export default function CouponListPage() {
   };
 
   //✅ handleImport（處理上傳的 CSV 檔案）
+  // const handleImport = e => {
+  //   const file = e.target.files[0];
+  //   if (!file) return;
+
+  //   Papa.parse(file, {
+  //     header: true,
+  //     skipEmptyLines: true,
+  //     complete: function (results) {
+  //       const importedData = results.data;
+  //       console.log('匯入資料內容:', importedData);
+  //       // 👉 你可在這裡依需求進行後續處理
+  //     },
+  //   });
+
+  //   // 清除選取狀態，避免無法再次上傳相同檔案
+  //   e.target.value = '';
+  // };
   const handleImport = e => {
     const file = e.target.files[0];
     if (!file) return;
 
-    Papa.parse(file, {
-      header: true,
-      skipEmptyLines: true,
-      complete: function (results) {
-        const importedData = results.data;
-        console.log('匯入資料內容:', importedData);
-        // 👉 你可在這裡依需求進行後續處理
-      },
-    });
+    const reader = new FileReader();
 
-    // 清除選取狀態，避免無法再次上傳相同檔案
-    e.target.value = '';
+    reader.onload = async event => {
+      let importedData = [];
+
+      if (fileFormat === 'csv') {
+        const result = Papa.parse(event.target.result, {
+          header: true,
+          skipEmptyLines: true,
+        });
+        importedData = result.data;
+      } else {
+        try {
+          importedData = JSON.parse(event.target.result);
+        } catch (err) {
+          console.error('匯入失敗：', err);
+          alert('JSON 格式錯誤，無法解析');
+          return;
+        }
+      }
+      // 🔁 處理每一筆資料（後續可加入欄位驗證與 POST）
+      for (const row of importedData) {
+        const payload = {
+          title: row.title,
+          code: row.code,
+          percent: Number(row.percent),
+          due_date: toTimestamp(row.due_date),
+          is_enabled: 1,
+        };
+        try {
+          await axios.post(`${baseURL}/v2/api/${apiPath}/admin/coupon`, {
+            data: payload,
+          });
+        } catch (err) {
+          console.error('匯入失敗：', err);
+          console.warn('匯入失敗筆數：', row.code);
+        }
+      }
+
+      alert(`匯入 ${importedData.length} 筆資料完成`);
+      getCoupons();
+    };
+
+    reader.readAsText(file);
+    e.target.value = ''; // 重設 input
   };
-
-  // 搜尋欄位變動時觸發過濾
-  useEffect(() => {
-    const keyword = searchText.toLowerCase();
-    const result = originalCoupons.filter(
-      coupon =>
-        coupon.title.toLowerCase().includes(keyword) ||
-        coupon.code.toLowerCase().includes(keyword)
-    );
-    setFilteredCoupons(result);
-  }, [searchText, originalCoupons]);
 
   return (
     <>
@@ -397,6 +451,14 @@ export default function CouponListPage() {
             />
 
             {/* 步驟 5：匯入 / 匯出（選用功能） */}
+            {/* <div className='col-12 mb-3'>
+          <div className='shadow p-4 rounded' style={{ minHeight: '120px' }}>
+            <h5 className='fw-bold mb-3'>匯入 / 匯出</h5>
+            <span className='text-muted'>
+              步驟 5：提供 CSV / JSON 格式的匯入與匯出功能
+            </span>
+          </div>
+        </div> */}
             {/* <div className='card mt-4'>
               <div className='card-header bg-light d-flex justify-content-between align-items-center'>
                 <h5 className='mb-0'>📁 匯入 / 匯出優惠券資料</h5>
@@ -436,15 +498,15 @@ export default function CouponListPage() {
               <div className='card-header bg-light d-flex justify-content-between align-items-center'>
                 <h5 className='mb-0'>📁 匯入 / 匯出優惠券資料</h5>
                 <div className='d-flex align-items-center'>
-                  <label htmlFor='exportFormat' className='me-2 mb-0'>
+                  <label htmlFor='fileFormat' className='me-2 mb-0'>
                     匯入 / 匯出格式：
                   </label>
                   <select
-                    id='exportFormat'
-                    className='form-select form-select-sm me-2 text-center'
-                    style={{ width: '120px' }}
-                    value={exportFormat}
-                    onChange={e => setExportFormat(e.target.value)}
+                    id='fileFormat'
+                    className='form-select form-select-sm me-2'
+                    style={{ width: '100px' }}
+                    value={fileFormat}
+                    onChange={e => setFileFormat(e.target.value)}
                   >
                     <option value='csv'>CSV</option>
                     <option value='json'>JSON</option>
@@ -456,17 +518,15 @@ export default function CouponListPage() {
                   >
                     匯出資料
                   </button>
-
                   <button
                     className='btn btn-outline-success btn-sm'
                     onClick={() => fileInputRef.current.click()}
                   >
                     匯入資料
                   </button>
-
                   <input
                     type='file'
-                    accept='.csv'
+                    accept={fileFormat === 'csv' ? '.csv' : '.json'}
                     className='d-none'
                     ref={fileInputRef}
                     onChange={handleImport}
@@ -477,7 +537,7 @@ export default function CouponListPage() {
               <div className='card-body text-muted small'>
                 <ul className='mb-0'>
                   <li>📤 匯出：可選擇 CSV（表格）或 JSON（結構）格式</li>
-                  <li>📥 匯入：請使用系統提供的 CSV 格式上傳資料</li>
+                  <li>📥 匯入：請使用對應格式（CSV / JSON）上傳資料</li>
                   <li>上傳資料將逐筆新增優惠券，請勿重複</li>
                   <li>建議單次匯入不超過 100 筆，避免錯誤與延遲</li>
                 </ul>
@@ -485,16 +545,6 @@ export default function CouponListPage() {
             </div>
           </div>
         </div>
-
-        {/* 步驟 5：匯入 / 匯出（選用功能） */}
-        {/* <div className='col-12 mb-3'>
-          <div className='shadow p-4 rounded' style={{ minHeight: '120px' }}>
-            <h5 className='fw-bold mb-3'>匯入 / 匯出</h5>
-            <span className='text-muted'>
-              步驟 5：提供 CSV / JSON 格式的匯入與匯出功能
-            </span>
-          </div>
-        </div> */}
       </div>
 
       <CouponModal
