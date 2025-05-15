@@ -1,0 +1,15 @@
+.hero-banner {
+  background: url('/images/hero-banner.jpg') center center / cover no-repeat;
+  height: 60vh;
+  position: relative;
+}
+
+.hero-content {
+  background-color: rgba(0, 0, 0, 0.55);
+  padding: 2rem;
+  border-radius: 10px;
+}
+
+.cta-section {
+  background: linear-gradient(90deg, #5c3d2e, #8e5a3b);
+}

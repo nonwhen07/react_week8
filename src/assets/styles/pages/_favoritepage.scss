@@ -1,0 +1,77 @@
+.favorite-page {
+  padding: 3rem 1rem;
+
+  h2 {
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+
+  .subtitle {
+    text-align: center;
+    color: #6c757d;
+    margin-bottom: 2.5rem;
+  }
+
+  .empty-message {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #999;
+
+    a {
+      margin-top: 1rem;
+    }
+  }
+
+  .card {
+    border: none;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    position: relative;
+
+    .card-img-top {
+      border-radius: 0;
+      height: 240px;
+      object-fit: cover;
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: bold;
+    }
+
+    .card-text {
+      font-size: 0.95rem;
+
+      del {
+        font-size: 0.85rem;
+        margin-left: 0.5rem;
+        color: #aaa;
+      }
+    }
+
+    .cancel-fav-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      border: none;
+      background: none;
+      color: #dc3545;
+      font-size: 1.2rem;
+
+      &:hover {
+        color: #a71d2a;
+      }
+    }
+  }
+
+  // loading overlay
+  .loading-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(255, 255, 255, 0.3);
+    z-index: 999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
