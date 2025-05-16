@@ -9,6 +9,7 @@ import ReactLoading from 'react-loading';
 import { checkLogin } from '../../redux/authSlice';
 import { pushMessage } from '../../redux/toastSlice';
 import { toTimestamp } from '../../utils/format';
+import { exportData, importData } from '../../utils/useImportExport';
 
 // 自訂元件
 import Pagination from '../../components/shared/Pagination';
@@ -127,15 +128,21 @@ export default function CouponListPage() {
     getCoupons(page);
   };
 
+  // 開啟 CouponModal
   const handleOpenCouponModal = (mode, coupon = defaultCoupon) => {
     setModalMode(mode);
     setTempCoupon(Object.keys(coupon).length > 0 ? coupon : defaultCoupon);
     setIsCouponModalOpen(true);
   };
-
+  // 開啟共用 DeleteModal
   const handleOpenDeleteModal = (coupon = defaultCoupon) => {
     setTempCoupon(Object.keys(coupon).length > 0 ? coupon : defaultCoupon);
     setIsDeleteModalOpen(true);
+  };
+
+  // 開啟批次刪除確認 ConfirmModal
+  const handleOpenConfirmModal = () => {
+    setIsConfirmModalOpen(true);
   };
 
   // 勾選AllChange批次優惠券時，更新 selectedCouponIds
@@ -236,12 +243,7 @@ export default function CouponListPage() {
     }
   };
 
-  // 開啟確認刪除 Modal
-  const handleOpenConfirmModal = () => {
-    setIsConfirmModalOpen(true);
-  };
-
-  //✅ handleExport（將資料匯出為 CSV）
+  // ✅批次資料匯出(將資料匯出為 CSV/JSON） handleExport
   const handleExport = async () => {
     const allCoupons = await getAllCoupons();
 
@@ -269,24 +271,7 @@ export default function CouponListPage() {
     document.body.removeChild(link);
   };
 
-  //✅ handleImport（處理上傳的 CSV 檔案）
-  // const handleImport = e => {
-  //   const file = e.target.files[0];
-  //   if (!file) return;
-
-  //   Papa.parse(file, {
-  //     header: true,
-  //     skipEmptyLines: true,
-  //     complete: function (results) {
-  //       const importedData = results.data;
-  //       console.log('匯入資料內容:', importedData);
-  //       // 👉 你可在這裡依需求進行後續處理
-  //     },
-  //   });
-
-  //   // 清除選取狀態，避免無法再次上傳相同檔案
-  //   e.target.value = '';
-  // };
+  // ✅批次資料上傳(將資料上傳為 CSV/JSON） handleImport
   const handleImport = e => {
     const file = e.target.files[0];
     if (!file) return;
@@ -297,11 +282,24 @@ export default function CouponListPage() {
       let importedData = [];
 
       if (fileFormat === 'csv') {
-        const result = Papa.parse(event.target.result, {
-          header: true,
-          skipEmptyLines: true,
-        });
-        importedData = result.data;
+        try {
+          const result = Papa.parse(event.target.result, {
+            header: true,
+            skipEmptyLines: true,
+          });
+
+          if (result.errors.length > 0) {
+            console.error('CSV 匯入錯誤：', result.errors);
+            alert(`CSV 格式錯誤，請檢查第 ${result.errors[0].row + 1} 列`);
+            return;
+          }
+
+          importedData = result.data;
+        } catch (err) {
+          console.error('CSV 處理失敗：', err);
+          alert('無法解析 CSV 檔案，請確認格式與欄位名稱');
+          return;
+        }
       } else {
         try {
           importedData = JSON.parse(event.target.result);
