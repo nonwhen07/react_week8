@@ -54,3 +54,30 @@ export const toTimestamp = (dateInput, toSeconds = false) => {
   if (isNaN(time)) return null;
   return toSeconds ? time : Math.floor(time / 1000);
 };
+
+/**
+ * 驗證單筆優惠券欄位是否符合基本格式，並回傳詳細錯誤
+ * @param {Object} row - 單筆優惠券資料
+ * @returns {{ valid: boolean, error?: string }}
+ */
+export const validateCoupon = row => {
+  if (!row.title || !row.title.trim()) {
+    return { valid: false, error: '缺少標題 (title)' };
+  }
+  if (!row.code || !row.code.trim()) {
+    return { valid: false, error: '缺少優惠碼 (code)' };
+  }
+  if (isNaN(Number(row.percent))) {
+    return { valid: false, error: '折扣百分比 (percent) 非數字' };
+  }
+  if (!row.due_date) {
+    return { valid: false, error: '缺少到期日 (due_date)' };
+  }
+  const isValidDate =
+    !isNaN(Date.parse(row.due_date)) || !isNaN(Number(row.due_date));
+  if (!isValidDate) {
+    return { valid: false, error: '到期日格式錯誤 (due_date)' };
+  }
+
+  return { valid: true };
+};

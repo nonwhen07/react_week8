@@ -8,9 +8,9 @@ import { pushMessage } from '../../redux/toastSlice';
 
 const routes = [
   { path: '/', name: 'Home' },
-  // { path: '/about', name: 'About' },
+  { path: '/about', name: 'About' },
   { path: '/product', name: 'Product' },
-  // { path: '/favorite', name: 'Favorite' },
+  { path: '/favorite', name: 'Favorite' },
   { path: '/cart', name: 'Cart' },
 ];
 

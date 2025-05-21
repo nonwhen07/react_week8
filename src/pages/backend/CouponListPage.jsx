@@ -2,7 +2,7 @@ import { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
-import Papa from 'papaparse';
+// import Papa from 'papaparse';
 import ReactLoading from 'react-loading';
 
 // Redux 與工具
@@ -10,6 +10,7 @@ import { checkLogin } from '../../redux/authSlice';
 import { pushMessage } from '../../redux/toastSlice';
 import { toTimestamp } from '../../utils/format';
 import { exportData, importData } from '../../utils/useImportExport';
+import { validateCoupon } from '../../utils/format';
 
 // 自訂元件
 import Pagination from '../../components/shared/Pagination';
@@ -246,71 +247,50 @@ export default function CouponListPage() {
   // ✅批次資料匯出(將資料匯出為 CSV/JSON） handleExport
   const handleExport = async () => {
     const allCoupons = await getAllCoupons();
-
-    let content = '';
-    let mimeType = '';
-    let extension = '';
-
-    if (fileFormat === 'csv') {
-      content = Papa.unparse(allCoupons);
-      mimeType = 'text/csv;charset=utf-8;';
-      extension = 'csv';
-    } else {
-      content = JSON.stringify(allCoupons, null, 2);
-      mimeType = 'application/json';
-      extension = 'json';
+    try {
+      setIsLoading(true);
+      const today = new Date().toISOString().split('T')[0];
+      exportData(allCoupons, fileFormat, `${today}_CouponsExport`);
+      dispatch(
+        pushMessage({
+          text: `匯出成功，請檢視附件 "${today}_CouponsExport" 。 `,
+          status: 'success',
+        })
+      );
+    } catch (error) {
+      dispatch(
+        pushMessage({
+          text: `匯出失敗： ${error.message} `,
+          status: 'failed',
+        })
+      );
+    } finally {
+      setIsLoading(false);
     }
-
-    const blob = new Blob([content], { type: mimeType });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', `coupons_export.${extension}`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
   };
 
   // ✅批次資料上傳(將資料上傳為 CSV/JSON） handleImport
-  const handleImport = e => {
+  const handleImport = async e => {
     const file = e.target.files[0];
     if (!file) return;
 
-    const reader = new FileReader();
+    try {
+      setIsLoading(true);
+      const importedData = await importData(file, fileFormat);
 
-    reader.onload = async event => {
-      let importedData = [];
+      let successCount = 0;
+      let failCount = 0;
 
-      if (fileFormat === 'csv') {
-        try {
-          const result = Papa.parse(event.target.result, {
-            header: true,
-            skipEmptyLines: true,
-          });
-
-          if (result.errors.length > 0) {
-            console.error('CSV 匯入錯誤：', result.errors);
-            alert(`CSV 格式錯誤，請檢查第 ${result.errors[0].row + 1} 列`);
-            return;
-          }
-
-          importedData = result.data;
-        } catch (err) {
-          console.error('CSV 處理失敗：', err);
-          alert('無法解析 CSV 檔案，請確認格式與欄位名稱');
-          return;
-        }
-      } else {
-        try {
-          importedData = JSON.parse(event.target.result);
-        } catch (err) {
-          console.error('匯入失敗：', err);
-          alert('JSON 格式錯誤，無法解析');
-          return;
-        }
-      }
-      // 🔁 處理每一筆資料（後續可加入欄位驗證與 POST）
       for (const row of importedData) {
+        const result = validateCoupon(row);
+        if (!result.valid) {
+          console.warn(`驗證失敗：${result.error}`, row);
+
+          // 🔧（未來可記錄錯誤訊息與失敗列索引）
+          failCount++;
+          continue;
+        }
+
         const payload = {
           title: row.title,
           code: row.code,
@@ -318,58 +298,79 @@ export default function CouponListPage() {
           due_date: toTimestamp(row.due_date),
           is_enabled: 1,
         };
+
         try {
           await axios.post(`${baseURL}/v2/api/${apiPath}/admin/coupon`, {
             data: payload,
           });
+          successCount++;
         } catch (err) {
           console.error('匯入失敗：', err);
-          console.warn('匯入失敗筆數：', row.code);
+
+          // 🔧 未來優化建議：
+          // - 可根據錯誤訊息分類（如重複、欄位錯誤）
+          // - 可將錯誤結果記錄起來顯示於 Modal / Alert
+          failCount++;
         }
       }
 
-      alert(`匯入 ${importedData.length} 筆資料完成`);
-      getCoupons();
-    };
+      dispatch(
+        pushMessage({
+          text: `成功匯入 ${successCount} 筆，失敗 ${failCount} 筆`,
+          status: failCount === 0 ? 'success' : 'warning',
+        })
+      );
 
-    reader.readAsText(file);
-    e.target.value = ''; // 重設 input
+      getCoupons();
+    } catch (err) {
+      dispatch(
+        pushMessage({
+          text: `匯入失敗： ${err.message}`,
+          status: 'failed',
+        })
+      );
+    } finally {
+      setIsLoading(false);
+      e.target.value = '';
+    }
   };
 
   return (
     <>
       <div className='container py-5'>
         {/* 步驟 1：搜尋條件區塊 */}
-        <div className='d-flex justify-content-between align-items-center mb-3'>
-          <h2>優惠券列表</h2>
-          <input
-            type='text'
-            className='form-control w-25'
-            placeholder='搜尋標題 / 優惠碼'
-            value={searchText}
-            onChange={e => setSearchText(e.target.value)}
-          />
-          <button
-            type='button'
-            onClick={() => handleOpenCouponModal('create')}
-            className='btn btn-primary'
-          >
-            新增優惠券
-          </button>
-        </div>
+        <section aria-labelledby='coupon-search-bar' className='mb-3'>
+          <div className='d-flex justify-content-between align-items-center mb-3'>
+            <h2>優惠券列表</h2>
+            <input
+              type='text'
+              className='form-control w-25'
+              placeholder='搜尋標題 / 優惠碼'
+              value={searchText}
+              onChange={e => setSearchText(e.target.value)}
+            />
+            <button
+              type='button'
+              onClick={() => handleOpenCouponModal('create')}
+              className='btn btn-primary'
+            >
+              新增優惠券
+            </button>
+          </div>
+        </section>
+
+        {/* 
+        📝 步驟 6： 未來優化功能清單（註解提取版，每個頁面各自所需功能皆不同，這邊先規劃優惠卷可能所需的調整） ：
+          1	顯示欄位錯誤原因	✍️ validateCoupon() 驗證強化	目前只回傳 true/false，未來可回傳錯誤原因（例如：{ valid: false, error: "缺少 code" }）
+          2	記錄錯誤清單陣列	📊 匯入失敗筆數統計邏輯擴充	將錯誤資料推入陣列 failedRows[]，最後集中顯示於錯誤彈窗或 Console
+          3	匯入前預覽失敗筆數	🔁 handleImport() 流程前置	在真正匯入 API 前先跑一輪驗證，顯示「共有 8 筆格式錯誤，是否仍要繼續？」
+          4	將 API 錯誤分類顯示	🔁 匯入流程中 try/catch 的補強	例：優惠碼重複 vs 欄位格式錯誤 vs 權限問題等，顯示具體錯誤給管理員
+          5	成功 / 失敗 log 匯出	📁 匯入模組的附加功能	若導入超過 100 筆，可能需要 log 失敗記錄供日後追查（例如產出 import-failed.csv）*/}
 
         {/* 步驟 2 + 3 ：優惠券清單與操作按鈕 + Table 、 分頁控制與每頁筆數 */}
-        <div className='col-12 mb-3'>
+        <section aria-labelledby='coupon-table-section' className='mb-3'>
           <div className='shadow p-4 rounded' style={{ minHeight: '280px' }}>
-            {/* 步驟 4：批次操作（勾選 / 刪除 / 停用） */}
-            {/* <div className='col-12 mb-3'>
-              <div className='shadow p-4 rounded' style={{ minHeight: '120px' }}>
-                <h5 className='fw-bold mb-3'>批次操作區塊</h5>
-                <span className='text-muted'>
-                  步驟 4：可勾選多筆資料進行刪除或停用
-                </span>
-              </div>
-            </div> */}
+            {/* 步驟 4：批次操作（勾選 / 刪除 / 停用）元件 */}
             <BulkActionBar
               selectedIds={selectedCouponIds}
               onDelete={handleOpenConfirmModal}
@@ -447,102 +448,61 @@ export default function CouponListPage() {
               pageInfo={pageInfo}
               handlePageChange={handlePageChange}
             />
-
-            {/* 步驟 5：匯入 / 匯出（選用功能） */}
-            {/* <div className='col-12 mb-3'>
-          <div className='shadow p-4 rounded' style={{ minHeight: '120px' }}>
-            <h5 className='fw-bold mb-3'>匯入 / 匯出</h5>
-            <span className='text-muted'>
-              步驟 5：提供 CSV / JSON 格式的匯入與匯出功能
-            </span>
           </div>
-        </div> */}
-            {/* <div className='card mt-4'>
-              <div className='card-header bg-light d-flex justify-content-between align-items-center'>
-                <h5 className='mb-0'>📁 匯入 / 匯出優惠券資料</h5>
-                <div>
-                  <button
-                    className='btn btn-outline-primary btn-sm me-2'
-                    onClick={handleExport}
-                  >
-                    匯出資料（CSV）
-                  </button>
-                  <button
-                    className='btn btn-outline-success btn-sm'
-                    onClick={() => fileInputRef.current.click()}
-                  >
-                    匯入資料（CSV）
-                  </button>
-                  <input
-                    type='file'
-                    accept='.csv'
-                    className='d-none'
-                    ref={fileInputRef}
-                    onChange={handleImport}
-                  />
-                </div>
-              </div>
-              <div className='card-body text-muted small'>
-                <ul className='mb-0'>
-                  <li>可下載目前優惠券資料（.csv 格式）</li>
-                  <li>請使用匯出的資料格式進行編輯後再匯入</li>
-                  <li>匯入時會逐筆新增資料，請避免重複</li>
-                  <li>單次匯入建議不超過 100 筆</li>
-                </ul>
-              </div>
-            </div> */}
+        </section>
 
-            <div className='card mt-4'>
-              <div className='card-header bg-light d-flex justify-content-between align-items-center'>
-                <h5 className='mb-0'>📁 匯入 / 匯出優惠券資料</h5>
-                <div className='d-flex align-items-center'>
-                  <label htmlFor='fileFormat' className='me-2 mb-0'>
-                    匯入 / 匯出格式：
-                  </label>
-                  <select
-                    id='fileFormat'
-                    className='form-select form-select-sm me-2'
-                    style={{ width: '100px' }}
-                    value={fileFormat}
-                    onChange={e => setFileFormat(e.target.value)}
-                  >
-                    <option value='csv'>CSV</option>
-                    <option value='json'>JSON</option>
-                  </select>
+        {/* 步驟 5：匯入 / 匯出（選用功能）， 未來需要元件化/hook化 */}
+        <section aria-labelledby='coupon-import-export' className='mt-4'>
+          <div className='card mt-4'>
+            <div className='card-header bg-light d-flex justify-content-between align-items-center'>
+              <h5 className='mb-0'>📁 匯入 / 匯出優惠券資料</h5>
+              <div className='d-flex align-items-center'>
+                <label htmlFor='fileFormat' className='me-2 mb-0'>
+                  匯入 / 匯出格式：
+                </label>
+                <select
+                  id='fileFormat'
+                  className='form-select form-select-sm me-2'
+                  style={{ width: '100px' }}
+                  value={fileFormat}
+                  onChange={e => setFileFormat(e.target.value)}
+                >
+                  <option value='csv'>CSV</option>
+                  <option value='json'>JSON</option>
+                </select>
 
-                  <button
-                    className='btn btn-outline-primary btn-sm me-2'
-                    onClick={handleExport}
-                  >
-                    匯出資料
-                  </button>
-                  <button
-                    className='btn btn-outline-success btn-sm'
-                    onClick={() => fileInputRef.current.click()}
-                  >
-                    匯入資料
-                  </button>
-                  <input
-                    type='file'
-                    accept={fileFormat === 'csv' ? '.csv' : '.json'}
-                    className='d-none'
-                    ref={fileInputRef}
-                    onChange={handleImport}
-                  />
-                </div>
-              </div>
-
-              <div className='card-body text-muted small'>
-                <ul className='mb-0'>
-                  <li>📤 匯出：可選擇 CSV（表格）或 JSON（結構）格式</li>
-                  <li>📥 匯入：請使用對應格式（CSV / JSON）上傳資料</li>
-                  <li>上傳資料將逐筆新增優惠券，請勿重複</li>
-                  <li>建議單次匯入不超過 100 筆，避免錯誤與延遲</li>
-                </ul>
+                <button
+                  className='btn btn-outline-primary btn-sm me-2'
+                  onClick={handleExport}
+                >
+                  匯出資料
+                </button>
+                <button
+                  className='btn btn-outline-success btn-sm'
+                  onClick={() => fileInputRef.current.click()}
+                >
+                  匯入資料
+                </button>
+                <input
+                  type='file'
+                  accept={fileFormat === 'csv' ? '.csv' : '.json'}
+                  className='d-none'
+                  ref={fileInputRef}
+                  onChange={handleImport}
+                />
               </div>
             </div>
+
+            <div className='card-body text-muted small'>
+              <ul className='mb-0'>
+                <li>📤 匯出：可選擇 CSV（表格）或 JSON（結構）格式</li>
+                <li>📥 匯入：請使用對應格式（CSV / JSON）上傳資料</li>
+                <li>上傳資料將逐筆新增優惠券，請勿重複</li>
+                <li>建議單次匯入不超過 100 筆，避免錯誤與延遲</li>
+              </ul>
+            </div>
           </div>
-        </div>
+        </section>
       </div>
 
       <CouponModal

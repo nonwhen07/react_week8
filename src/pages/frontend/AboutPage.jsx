@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 export default function AboutPage() {
   return (
@@ -74,9 +75,9 @@ export default function AboutPage() {
         {/* 呼籲區 CTA */}
         <section className='cta-section text-center py-5 bg-dark text-white'>
           <h3 className='mb-4'>準備好感受一天的溫柔節奏了嗎？</h3>
-          <a href='/products' className='btn btn-outline-light btn-lg'>
+          <Link to='/product' className='btn btn-outline-light btn-lg'>
             逛逛我們的精選商品
-          </a>
+          </Link>
         </section>
       </div>
     </>
