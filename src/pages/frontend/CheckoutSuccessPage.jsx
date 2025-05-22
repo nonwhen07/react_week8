@@ -1,6 +1,20 @@
-import { Link } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 
 export default function CheckoutSuccessPage() {
+  const location = useLocation();
+  const order = location.state?.order;
+
+  if (!order) {
+    return (
+      <div className='text-center mt-5'>
+        <h2>找不到訂單資料</h2>
+        <Link to='/' className='btn btn-outline-dark mt-3'>
+          回首頁
+        </Link>
+      </div>
+    );
+  }
+
   return (
     <div className='container-fluid'>
       <div className='position-relative d-flex'>
@@ -8,11 +22,6 @@ export default function CheckoutSuccessPage() {
           className='container d-flex flex-column'
           style={{ minHeight: '100vh' }}
         >
-          {/* <nav className='navbar navbar-expand-lg navbar-light px-0'>
-            <a className='navbar-brand' href='./index.html'>
-              Navbar
-            </a>
-          </nav> */}
           {/* <nav className='navbar navbar-expand-lg navbar-light px-0'>
             <ul className='list-unstyled mb-0 ms-md-auto d-flex align-items-center justify-content-between justify-content-md-start w-100 mt-md-0 mt-4'>
               <li className='me-md-6 me-3 position-relative custom-step-line'>
@@ -33,7 +42,7 @@ export default function CheckoutSuccessPage() {
           <div className='row my-auto pb-7'>
             <div className='col-md-4 d-flex flex-column'>
               <div className='my-auto'>
-                <h2>訂單完成，感謝您的支持！</h2>
+                {/* <h2>訂單完成，感謝您的支持！</h2>
                 <p>
                   我們已收到您的訂單，將盡快為您安排處理。
                   <br />
@@ -41,7 +50,30 @@ export default function CheckoutSuccessPage() {
                 </p>
                 <Link to={'/'} className='btn btn-dark mt-4 px-5'>
                   Back To Home
-                </Link>
+                </Link> */}
+                <h2 className='fw-bold text-center'>付款成功！</h2>
+                <div className='mx-auto mt-4' style={{ maxWidth: '600px' }}>
+                  <p>
+                    <strong>訂單編號：</strong>
+                    {order.id}
+                  </p>
+                  <p>
+                    <strong>顧客姓名：</strong>
+                    {order.user.name}
+                  </p>
+                  <p>
+                    <strong>總金額：</strong>NT${order.total}
+                  </p>
+                  <p>
+                    <strong>下單時間：</strong>
+                    {order.createdAt}
+                  </p>
+                </div>
+                <div className='text-center mt-4'>
+                  <Link to='/orders' className='btn btn-outline-dark'>
+                    查看歷史訂單
+                  </Link>
+                </div>
               </div>
             </div>
           </div>

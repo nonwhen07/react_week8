@@ -35,11 +35,38 @@ export default function CheckoutPaymentPage() {
           user: orderState.user,
           message: `${orderState.message || ''}｜付款方式：${payment}`, // 避免 state.message 是空的時候出錯。
           carts: orderState.carts,
-          // API 規範不需要 payment，但你可以備註在 message 裡
+          // API 規範目前不需要 payment，所以備註在 message 裡，等之後API有支援再改
         },
       };
 
-      await axios.post(`${BASE_URL}/v2/api/${API_PATH}/order`, orderData);
+      // await axios.post(`${BASE_URL}/v2/api/${API_PATH}/order`, orderData);
+      const res = await axios.post(
+        `${BASE_URL}/v2/api/${API_PATH}/order`,
+        orderData
+      );
+      const orderId = res.data.orderId;
+
+      //這邊有點小問題應該讓使用者去選擇當下是否要付款
+      const payRes = await axios.post(
+        `${BASE_URL}/v2/api/${API_PATH}/pay/${orderId}`
+      );
+      const paidOrder = payRes.data.order; // ⬅️ 這才是完成後的訂單內容
+
+      const orderList = JSON.parse(localStorage.getItem('orderList')) || [];
+
+      const newOrder = {
+        id: paidOrder.id,
+        user: paidOrder.user,
+        total: paidOrder.total,
+        products: paidOrder.products,
+        createdAt: new Date().toLocaleString('zh-TW', { hour12: false }),
+      };
+
+      localStorage.setItem(
+        'orderList',
+        JSON.stringify([newOrder, ...orderList])
+      );
+
       dispatch(pushMessage({ text: '已送出訂單', status: 'success' }));
       navigate('/checkout-success');
     } catch (error) {

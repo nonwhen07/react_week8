@@ -10,6 +10,7 @@ import CartPage from '../pages/frontend/CartPage';
 import CheckoutFormPage from '../pages/frontend/CheckoutFormPage';
 import CheckoutPaymentPage from '../pages/frontend/CheckoutPaymentPage';
 import CheckoutSuccessPage from '../pages/frontend/CheckoutSuccessPage';
+import MyOrdersPage from '../pages/frontend/MyOrdersPage';
 
 // 🟥 Backend Pages
 import DashboardPage from '../pages/backend/DashboardPage';
@@ -50,6 +51,7 @@ const router = createHashRouter([
       { path: 'checkout-form', element: <CheckoutFormPage /> }, //  ~/checkout-form
       { path: 'checkout-payment', element: <CheckoutPaymentPage /> }, //  ~/checkout-payment
       { path: 'checkout-success', element: <CheckoutSuccessPage /> }, //  ~/checkout-success
+      { path: 'orders', element: <MyOrdersPage /> },
     ],
   },
   // 🟨 登入頁面
