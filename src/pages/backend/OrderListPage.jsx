@@ -4,21 +4,23 @@ import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import ReactLoading from 'react-loading';
 
+// Redux 與工具
+import { checkLogin } from '../../redux/authSlice';
+import { pushMessage } from '../../redux/toastSlice';
+import { formatDateTime } from '../../utils/format';
+
+// 自訂元件
 import Pagination from '../../components/shared/Pagination';
 import OrderModal from '../../components/backend/OrderModal';
 import DeleteModal from '../../components/backend/DeleteModal';
-import { checkLogin } from '../../redux/authSlice';
-import { pushMessage } from '../../redux/toastSlice';
-
-import { formatDateTime } from '../../utils/format';
+// import DataTransferPanel from '../../components/shared/DataTransferPanel';
 
 export default function OrderListPage() {
-  // 初始化 navigate
+  //🟦 使用者與 API 狀態管理
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { status, error } = useSelector(state => state.auth);
-
-  // 環境變數
+  //🟨 請求與環境設定
   const baseURL = import.meta.env.VITE_BASE_URL;
   const apiPath = import.meta.env.VITE_API_PATH;
 
@@ -118,56 +120,81 @@ export default function OrderListPage() {
   return (
     <>
       <div className='container py-5'>
-        <div className='d-flex justify-content-between'>
-          <h2>訂單列表</h2>
-        </div>
-        <table className='table backend-table table-hover table-bordered align-middle text-center mt-4'>
-          <thead>
-            <tr>
-              <th scope='col-4'>訂單編號</th>
-              <th scope='col-2'>建立時間</th>
-              <th scope='col-2'>客戶名稱</th>
-              <th scope='col-2'>留言</th>
-              <th scope='col-1'>已付款</th>
-              <th scope='col-1'>操作</th>
-            </tr>
-          </thead>
-          <tbody>
-            {orders.map(order => (
-              <tr key={order.id}>
-                <th scope='row'>{order.id}</th>
-                <td>{formatDateTime(order.create_at)}</td>
-                <td>{order.user.name}</td>
-                <td>{order.message || '-'}</td>
-                <td>
-                  {order.is_paid ? (
-                    <span className='text-success'>已付款</span>
-                  ) : (
-                    <span>未付款</span>
-                  )}
-                </td>
-                <td>
-                  <button
-                    onClick={() => handleOpenOrderModal(order)}
-                    className='btn btn-sm btn-outline-primary'
-                    type='button'
-                  >
-                    <i className='bi bi-pencil-square me-1'></i>
-                    編輯
-                  </button>
-                  <button
-                    onClick={() => handleOpenDeleteModal(order)}
-                    className='btn btn-sm btn-outline-danger'
-                    type='button'
-                  >
-                    刪除
-                  </button>
-                </td>
+        <section aria-labelledby='order-search-bar' className='mb-3'>
+          <div className='d-flex justify-content-between'>
+            <h2>訂單列表</h2>
+            {/* <input
+              type='text'
+              className='form-control w-25'
+              placeholder='搜尋標題 / 優惠碼'
+              value={searchText}
+              onChange={e => setSearchText(e.target.value)}
+            /> */}
+          </div>
+        </section>
+        <section aria-labelledby='order-table-section' className='mb-3'>
+          {/* <BulkActionBar
+            selectedIds={selectedCouponIds}
+            onDelete={handleOpenConfirmModal}
+            onEnable={() => handleBatchUpdate('enabled')}
+            onDisable={() => handleBatchUpdate('disabled')}
+          /> */}
+          <table className='table backend-table table-hover table-bordered align-middle text-center mt-4'>
+            <thead>
+              <tr>
+                <th scope='col-4'>訂單編號</th>
+                <th scope='col-2'>建立時間</th>
+                <th scope='col-2'>客戶名稱</th>
+                <th scope='col-2'>留言</th>
+                <th scope='col-1'>已付款</th>
+                <th scope='col-1'>操作</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-        <Pagination pageInfo={pageInfo} handlePageChange={handlePageChange} />
+            </thead>
+            <tbody>
+              {orders.map(order => (
+                <tr key={order.id}>
+                  <th scope='row'>{order.id}</th>
+                  <td>{formatDateTime(order.create_at)}</td>
+                  <td>{order.user.name}</td>
+                  <td>{order.message || '-'}</td>
+                  <td>
+                    {order.is_paid ? (
+                      <span className='text-success'>已付款</span>
+                    ) : (
+                      <span>未付款</span>
+                    )}
+                  </td>
+                  <td>
+                    <button
+                      onClick={() => handleOpenOrderModal(order)}
+                      className='btn btn-sm btn-outline-primary'
+                      type='button'
+                    >
+                      <i className='bi bi-pencil-square me-1'></i>
+                      編輯
+                    </button>
+                    <button
+                      onClick={() => handleOpenDeleteModal(order)}
+                      className='btn btn-sm btn-outline-danger'
+                      type='button'
+                    >
+                      刪除
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <Pagination pageInfo={pageInfo} handlePageChange={handlePageChange} />
+        </section>
+        <section aria-labelledby='order-transfer-section' className='mt-4'>
+          {/* <DataTransferPanel
+            typeMode={'coupon'}
+            fileFormat={fileFormat}
+            setFileFormat={setFileFormat}
+            onExport={handleExport}
+          /> */}
+        </section>
       </div>
 
       <OrderModal
@@ -184,6 +211,13 @@ export default function OrderListPage() {
         isOpen={isDeleteModalOpen}
         setIsOpen={setIsDeleteModalOpen}
       />
+
+      {/* <ConfirmModal
+        title='確定要刪除這些優惠券嗎？'
+        onConfirm={handleBatchDelete}
+        isOpen={isConfirmModalOpen}
+        setIsOpen={setIsConfirmModalOpen}
+      /> */}
 
       {/* 確保以移動去main.jsx，確保 Toast 能全局監聽 Redux 狀態 */}
       {/* <Toast /> */}

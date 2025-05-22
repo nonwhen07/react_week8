@@ -1,8 +1,7 @@
-import { useRef, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
-// import Papa from 'papaparse';
 import ReactLoading from 'react-loading';
 
 // Redux 與工具
@@ -15,6 +14,7 @@ import { validateCoupon } from '../../utils/format';
 // 自訂元件
 import Pagination from '../../components/shared/Pagination';
 import BulkActionBar from '../../components/shared/BulkActionBar';
+import DataTransferPanel from '../../components/shared/DataTransferPanel';
 import CouponModal from '../../components/backend/CouponModal';
 import ConfirmModal from '../../components/shared/ConfirmModal';
 import DeleteModal from '../../components/backend/DeleteModal';
@@ -54,7 +54,7 @@ export default function CouponListPage() {
   //🟩 批次選取與格式控制
   const [selectedCouponIds, setSelectedCouponIds] = useState([]);
   const [fileFormat, setFileFormat] = useState('csv'); //如有需要可在拆分export/import
-  const fileInputRef = useRef(null);
+  // const fileInputRef = useRef(null);
 
   useEffect(() => {
     dispatch(checkLogin());
@@ -452,56 +452,15 @@ export default function CouponListPage() {
         </section>
 
         {/* 步驟 5：匯入 / 匯出（選用功能）， 未來需要元件化/hook化 */}
-        <section aria-labelledby='coupon-import-export' className='mt-4'>
-          <div className='card mt-4'>
-            <div className='card-header bg-light d-flex justify-content-between align-items-center'>
-              <h5 className='mb-0'>📁 匯入 / 匯出優惠券資料</h5>
-              <div className='d-flex align-items-center'>
-                <label htmlFor='fileFormat' className='me-2 mb-0'>
-                  匯入 / 匯出格式：
-                </label>
-                <select
-                  id='fileFormat'
-                  className='form-select form-select-sm me-2'
-                  style={{ width: '100px' }}
-                  value={fileFormat}
-                  onChange={e => setFileFormat(e.target.value)}
-                >
-                  <option value='csv'>CSV</option>
-                  <option value='json'>JSON</option>
-                </select>
-
-                <button
-                  className='btn btn-outline-primary btn-sm me-2'
-                  onClick={handleExport}
-                >
-                  匯出資料
-                </button>
-                <button
-                  className='btn btn-outline-success btn-sm'
-                  onClick={() => fileInputRef.current.click()}
-                >
-                  匯入資料
-                </button>
-                <input
-                  type='file'
-                  accept={fileFormat === 'csv' ? '.csv' : '.json'}
-                  className='d-none'
-                  ref={fileInputRef}
-                  onChange={handleImport}
-                />
-              </div>
-            </div>
-
-            <div className='card-body text-muted small'>
-              <ul className='mb-0'>
-                <li>📤 匯出：可選擇 CSV（表格）或 JSON（結構）格式</li>
-                <li>📥 匯入：請使用對應格式（CSV / JSON）上傳資料</li>
-                <li>上傳資料將逐筆新增優惠券，請勿重複</li>
-                <li>建議單次匯入不超過 100 筆，避免錯誤與延遲</li>
-              </ul>
-            </div>
-          </div>
+        {/*如果日後有權限設定(假設為userPermission)可以這樣寫 {userPermission?.canExport && (<ImportExportBox ... /> )} */}
+        <section aria-labelledby='coupon-transfer-section' className='mt-4'>
+          <DataTransferPanel
+            typeMode={'coupon'}
+            fileFormat={fileFormat}
+            setFileFormat={setFileFormat}
+            onExport={handleExport}
+            onImport={handleImport}
+          />
         </section>
       </div>
 
