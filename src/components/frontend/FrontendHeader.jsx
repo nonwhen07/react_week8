@@ -11,6 +11,7 @@ const routes = [
   { path: '/about', name: 'About' },
   { path: '/product', name: 'Product' },
   { path: '/favorite', name: 'Favorite' },
+  { path: '/orders', name: 'Orders' },
   { path: '/cart', name: 'Cart' },
 ];
 

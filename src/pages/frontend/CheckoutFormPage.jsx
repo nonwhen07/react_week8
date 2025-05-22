@@ -10,7 +10,8 @@ import { formatPrice } from '../../utils/format';
 
 export default function CheckoutFormPage() {
   const BASE_URL = import.meta.env.VITE_BASE_URL;
-  const API_PATH = import.meta.env.VITE_API_PATH;
+  // const API_PATH = import.meta.env.VITE_API_PATH;
+  const API_PATH = encodeURIComponent(import.meta.env.VITE_API_PATH);
 
   const navigate = useNavigate();
 
@@ -63,7 +64,7 @@ export default function CheckoutFormPage() {
     const formData = {
       user,
       message,
-      carts,
+      // carts,
     };
     sessionStorage.setItem('checkoutData', JSON.stringify(formData)); //在 CheckoutFormPage 將要跳頁的資料儲存到 sessionStorage
     navigate('/checkout-payment', { state: formData });
