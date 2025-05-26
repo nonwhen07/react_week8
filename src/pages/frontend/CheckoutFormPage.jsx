@@ -75,11 +75,23 @@ export default function CheckoutFormPage() {
     //   },
     // };
     // checkOut(userinfo);
-    const formData = {
-      user,
-      message,
-      // carts,
-    };
+
+    // const formData = {
+    //   user,
+    //   message,
+    //   // carts,
+    // };
+
+    const total = carts.reduce((sum, c) => sum + c.total, 0);
+    const products = carts.map(c => ({
+      id: c.id,
+      title: c.product.title,
+      imageUrl: c.product.imageUrl,
+      qty: c.qty,
+      total: c.total,
+    }));
+    const formData = { user, message, products, total };
+    //將 products（購物車內容）和計算好的 total 一併存進 sessionStorage，讓後續付款頁能直接讀到。
     sessionStorage.setItem('checkoutData', JSON.stringify(formData)); //在 CheckoutFormPage 將要跳頁的資料儲存到 sessionStorage
     navigate('/checkout-payment', { state: formData });
 

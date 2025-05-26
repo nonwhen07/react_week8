@@ -1,9 +1,9 @@
 import { useLocation, Link } from 'react-router-dom';
 
 export default function CheckoutSuccessPage() {
-  const location = useLocation();
-  const order = location.state?.order;
-
+  // const location = useLocation();
+  // const order = location.state?.order;
+  const { order } = useLocation().state || {};
   if (!order) {
     return (
       <div className='text-center mt-5'>
@@ -42,16 +42,9 @@ export default function CheckoutSuccessPage() {
           <div className='row my-auto pb-7'>
             <div className='col-md-4 d-flex flex-column'>
               <div className='my-auto'>
-                {/* <h2>訂單完成，感謝您的支持！</h2>
-                <p>
-                  我們已收到您的訂單，將盡快為您安排處理。
-                  <br />
-                  期待為您送上溫暖香氣的咖啡與甜點。
-                </p>
-                <Link to={'/'} className='btn btn-dark mt-4 px-5'>
-                  Back To Home
-                </Link> */}
-                <h2 className='fw-bold text-center'>付款成功！</h2>
+                <h2 className='fw-bold text-center'>
+                  訂單完成，感謝您的支持！
+                </h2>
                 <div className='mx-auto mt-4' style={{ maxWidth: '600px' }}>
                   <p>
                     <strong>訂單編號：</strong>

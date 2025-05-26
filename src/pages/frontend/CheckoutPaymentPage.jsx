@@ -92,6 +92,7 @@ export default function CheckoutPaymentPage() {
   const handlePlaceOrder = async () => {
     setIsScreenLoading(true);
     try {
+      // 1. 建單
       const res = await axios.post(`${BASE_URL}/v2/api/${API_PATH}/order`, {
         data: {
           user: orderState.user,
@@ -100,23 +101,20 @@ export default function CheckoutPaymentPage() {
       });
       const orderId = res.data.orderId;
 
+      // 2. 付款
       const payRes = await axios.post(
         `${BASE_URL}/v2/api/${API_PATH}/pay/${orderId}`
       );
       // dispatch(pushMessage({ text: '訂單已完成', status: 'success' }));
       dispatch(pushMessage({ text: payRes.data.message, status: 'success' }));
 
-      // const payRes = await axios.post(
-      //   `${BASE_URL}/v2/api/${API_PATH}/pay/${orderId}`
-      // );
-      // console.log('payRes', payRes);
-      // const paidOrder = payRes.data.order;
-      // const orderList = JSON.parse(localStorage.getItem('orderList')) || [];
+      // 儲存order資訊提供給 CheckoutSuccessPage 使用
+      // const orderList = JSON.parse(localStorage.getItem(carts)) || [];
       // const newOrder = {
-      //   id: paidOrder.id,
-      //   user: paidOrder.user,
-      //   total: paidOrder.total,
-      //   products: paidOrder.products,
+      //   // id: orderState.id,
+      //   user: orderState.user.user,
+      //   total: orderState.total,
+      //   products: orderState.products,
       //   createdAt: new Date().toLocaleString('zh-TW', { hour12: false }),
       // };
       // localStorage.setItem(
@@ -124,8 +122,25 @@ export default function CheckoutPaymentPage() {
       //   JSON.stringify([newOrder, ...orderList])
       // );
 
+      // 3. 組出 newOrder
+      const fallback = JSON.parse(localStorage.getItem('orderList') || '[]');
+      const newOrder = {
+        id: orderId,
+        user: orderState.user,
+        products: orderState.products, // 從 sessionStorage 讀到的 products
+        total: orderState.total,
+        is_paid: true,
+        createdAt: new Date().toLocaleString('zh-TW', { hour12: false }),
+      };
+      localStorage.setItem(
+        'orderList',
+        JSON.stringify([newOrder, ...fallback])
+      );
+
+      // 4. 清掉暫存 & 導向成功頁（帶 order 資料）
       sessionStorage.removeItem('checkoutData');
-      navigate('/checkout-success');
+      // navigate('/checkout-success');
+      navigate('/checkout-success', { state: { order: newOrder } });
     } catch (error) {
       const msg = error.response?.data?.message || '送出訂單或付款失敗';
       dispatch(pushMessage({ text: msg, status: 'failed' }));

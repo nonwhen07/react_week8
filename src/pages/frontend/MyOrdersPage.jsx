@@ -17,23 +17,31 @@ export default function MyOrdersPage() {
     setIsScreenLoading(true);
     const fetchOrders = async () => {
       try {
-        const res = await axios.get(
-          `${BASE_URL}/v2/api/${encodeURIComponent(API_PATH)}/orders`
-        );
+        const res = await axios.get(`${BASE_URL}/v2/api/${API_PATH}/orders`);
         setOrders(res.data.orders);
       } catch (error) {
+        // 後端取不到就 fallback localStorage
         console.error('取得訂單失敗:', error);
-        // fallback 回 localStorage
-        const fallbackOrders =
-          JSON.parse(localStorage.getItem('orderList')) || [];
-        if (fallbackOrders.length > 0) {
+        const fallback = JSON.parse(localStorage.getItem('orderList') || '[]');
+        if (fallback.length) {
           dispatch(
-            pushMessage({ text: '從本地紀錄載入訂單', status: 'warning' })
+            pushMessage({ text: '從本地記錄載入訂單', status: 'warning' })
           );
-          setOrders(fallbackOrders);
+          setOrders(fallback);
         } else {
           dispatch(pushMessage({ text: '無法取得訂單紀錄', status: 'failed' }));
         }
+        // fallback 回 localStorage
+        // const fallbackOrders =
+        //   JSON.parse(localStorage.getItem('orderList')) || [];
+        // if (fallbackOrders.length > 0) {
+        //   dispatch(
+        //     pushMessage({ text: '從本地紀錄載入訂單', status: 'warning' })
+        //   );
+        //   setOrders(fallbackOrders);
+        // } else {
+        //   dispatch(pushMessage({ text: '無法取得訂單紀錄', status: 'failed' }));
+        // }
       } finally {
         setIsScreenLoading(false);
       }
