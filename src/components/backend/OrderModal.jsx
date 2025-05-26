@@ -49,7 +49,7 @@ export default function OrderModal({
         {
           data: {
             ...modalData,
-            is_paid: modalData.is_paid ? 1 : 0,
+            is_paid: modalData.is_paid ? true : false, // 確保 is_paid 是布林值
           },
         }
       );

@@ -22,7 +22,7 @@ export default function CheckoutSuccessPage() {
           className='container d-flex flex-column'
           style={{ minHeight: '100vh' }}
         >
-          {/* <nav className='navbar navbar-expand-lg navbar-light px-0'>
+          <nav className='navbar navbar-expand-lg navbar-light px-0'>
             <ul className='list-unstyled mb-0 ms-md-auto d-flex align-items-center justify-content-between justify-content-md-start w-100 mt-md-0 mt-4'>
               <li className='me-md-6 me-3 position-relative custom-step-line'>
                 <i className='fas fa-check-circle d-md-inline d-block text-center'></i>
@@ -37,7 +37,7 @@ export default function CheckoutSuccessPage() {
                 <span className='text-nowrap'>Checkout-Success</span>
               </li>
             </ul>
-          </nav> */}
+          </nav>
 
           <div className='row my-auto pb-7'>
             <div className='col-md-4 d-flex flex-column'>

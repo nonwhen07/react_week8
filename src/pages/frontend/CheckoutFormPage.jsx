@@ -27,8 +27,22 @@ export default function CheckoutFormPage() {
   const [carts, setCarts] = useState([]);
   const [isScreenLoading, setIsScreenLoading] = useState(false);
 
+  // 在 mount 時，如果 sessionStorage 有上次填的資料，就把欄位帶回來
   useEffect(() => {
-    setIsScreenLoading(true);
+    const saved = sessionStorage.getItem('checkoutData');
+    if (saved) {
+      try {
+        const { user, message } = JSON.parse(saved);
+        // reset() 第二參數要 { keepErrors: true } 可省略
+        reset({ ...user, message });
+      } catch {
+        // JSON parse 錯誤就忽略
+      }
+    }
+  }, [reset]);
+
+  useEffect(() => {
+    // setIsScreenLoading(true);
     //畫面渲染後初步載入購物車
     getCarts();
   }, []);
@@ -69,7 +83,7 @@ export default function CheckoutFormPage() {
     sessionStorage.setItem('checkoutData', JSON.stringify(formData)); //在 CheckoutFormPage 將要跳頁的資料儲存到 sessionStorage
     navigate('/checkout-payment', { state: formData });
 
-    reset(); // 提交成功後重設表單
+    // reset(); // 提交成功後重設表單
   });
 
   // 送出訂單的部分轉到 CheckoutPaymentPage執行

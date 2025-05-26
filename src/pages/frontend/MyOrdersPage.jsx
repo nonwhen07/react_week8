@@ -22,6 +22,7 @@ export default function MyOrdersPage() {
         );
         setOrders(res.data.orders);
       } catch (error) {
+        console.error('取得訂單失敗:', error);
         // fallback 回 localStorage
         const fallbackOrders =
           JSON.parse(localStorage.getItem('orderList')) || [];
@@ -43,19 +44,17 @@ export default function MyOrdersPage() {
 
   const handlePay = async orderId => {
     try {
-      const res = await axios.post(
-        `${BASE_URL}/v2/api/${encodeURIComponent(API_PATH)}/pay/${orderId}`
-      );
-      const paidOrder = res.data.order;
-
-      const updatedOrders = orders.map(order =>
-        order.id === paidOrder.id ? { ...order, is_paid: true } : order
+      await axios.post(`${BASE_URL}/v2/api/${API_PATH}/pay/${orderId}`);
+      // 不再從 res.data 拿 order，直接用 orderId 去更新本地 state
+      const updatedOrders = orders.map(o =>
+        o.id === orderId ? { ...o, is_paid: true } : o
       );
       setOrders(updatedOrders);
       localStorage.setItem('orderList', JSON.stringify(updatedOrders));
 
       dispatch(pushMessage({ text: '付款成功！', status: 'success' }));
     } catch (error) {
+      console.error('取得訂單失敗:', error);
       dispatch(
         pushMessage({
           text: error.response?.data?.message || '付款失敗，請稍後再試',
