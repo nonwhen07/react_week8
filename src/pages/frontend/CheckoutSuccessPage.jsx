@@ -39,7 +39,7 @@ export default function CheckoutSuccessPage() {
             </ul>
           </nav>
 
-          <div className='row my-auto pb-7'>
+          <div className='row mt-6 pb-2'>
             <div className='col-md-4 d-flex flex-column'>
               <div className='my-auto'>
                 <h2 className='fw-bold text-center'>

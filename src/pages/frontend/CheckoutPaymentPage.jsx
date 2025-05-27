@@ -39,11 +39,6 @@ export default function CheckoutPaymentPage() {
     }));
   };
 
-  // const handlePayment = useCallback(
-  //   paymentMethod => setPayment(paymentMethod),
-  //   []
-  // );
-
   useEffect(() => {
     let recoveredState = location.state;
 
@@ -129,6 +124,8 @@ export default function CheckoutPaymentPage() {
         user: orderState.user,
         products: orderState.products, // 從 sessionStorage 讀到的 products
         total: orderState.total,
+        payment,
+        ...formValues,
         is_paid: true,
         createdAt: new Date().toLocaleString('zh-TW', { hour12: false }),
       };
@@ -204,18 +201,29 @@ export default function CheckoutPaymentPage() {
             )}
             <table className='table mt-4 border-top border-bottom text-muted'>
               <tbody>
+                {/* 小計 */}
                 <tr>
                   <th className='border-0 px-0 pt-4'>Subtotal</th>
                   <td className='text-end border-0 px-0 pt-4'>
                     {formatPrice(carts.reduce((t, i) => t + i.total, 0))}
                   </td>
                 </tr>
+                {/* 付款方式 */}
                 <tr>
                   <th className='border-0 px-0 pt-0 pb-4'>Payment</th>
                   <td className='text-end border-0 px-0 pt-0 pb-4'>
                     {payment}
                   </td>
                 </tr>
+                {/* extraFields */}
+                {current.extraFields.map(field => (
+                  <tr key={field.name}>
+                    <th className='border-0 px-0 pt-0 pb-4'>{field.label}</th>
+                    <td className='text-end border-0 px-0 pt-0 pb-4'>
+                      {formValues[field.name] || '--'}
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
             <div className='d-flex justify-content-between mt-4'>

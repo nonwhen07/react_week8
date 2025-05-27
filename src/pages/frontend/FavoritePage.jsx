@@ -54,11 +54,13 @@ export default function FavoritePage() {
           {favoriteProducts.map(product => (
             <div className='col-md-4 mb-4' key={product.id}>
               <div className='card border-0 shadow-sm position-relative'>
-                <img
-                  src={product.imageUrl}
-                  alt={product.title}
-                  className='card-img-top rounded-0'
-                />
+                <Link to={`/product/${product.id}`} className='text-dark'>
+                  <img
+                    src={product.imageUrl}
+                    alt={product.title}
+                    className='card-img-top rounded-0'
+                  />
+                </Link>
                 <div className='card-body'>
                   <h5 className='card-title'>
                     <Link to={`/product/${product.id}`} className='text-dark'>

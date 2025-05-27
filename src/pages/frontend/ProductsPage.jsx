@@ -255,11 +255,13 @@ export default function ProductsPage() {
               {filterProducts.map(product => (
                 <div key={product.id} className='col-md-6'>
                   <div className='card border-0 mb-4 position-relative position-relative'>
-                    <img
-                      src={product.imageUrl}
-                      className='card-img-top rounded-0'
-                      alt={product.title}
-                    />
+                    <Link to={`/product/${product.id}`}>
+                      <img
+                        src={product.imageUrl}
+                        className='card-img-top rounded-0'
+                        alt={product.title}
+                      />
+                    </Link>
                     <button
                       onClick={() => toggleWishListItem(product.id)}
                       type='button'
