@@ -9,12 +9,21 @@ import Footer from '../components/frontend/FrontendFooter';
 export default function FrontLayout() {
   return (
     <>
-      <div className='frontend-layout'></div>
-      <Header />
-      <main>
-        <Outlet />
-      </main>
-      <Footer />
+      {/* <div className='frontend-layout'>
+        <Header />
+        <main>
+          <Outlet />
+        </main>
+        <Footer />
+      </div> */}
+      <div className='frontend-layout'>
+        <Header />
+        {/* 用 Bootstrap container 把寬度鎖起來，並加上上下 padding */}
+        <main className='container py-4'>
+          <Outlet />
+        </main>
+        <Footer />
+      </div>
     </>
   );
 }

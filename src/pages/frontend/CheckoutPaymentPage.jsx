@@ -1,131 +1,111 @@
-// 統一版 CheckoutPaymentPage，結合 OldCheckoutPaymentPage 的版面與 CheckoutFormPage 的一致性邏輯
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { pushMessage } from '@/redux/toastSlice';
-import { formatPrice } from '@/utils/format';
-import { PaymentSelector } from '@/components/frontend/PaymentSelector';
-import { paymentOptions } from '@/utils/paymentOptions';
 import ReactLoading from 'react-loading';
+import { formatPrice } from '@/utils/format';
+import { paymentOptions } from '@/utils/paymentOptions';
 
 export default function CheckoutPaymentPage() {
   const BASE_URL = import.meta.env.VITE_BASE_URL;
   const API_PATH = encodeURIComponent(import.meta.env.VITE_API_PATH);
-
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
 
+  // 2.2 state：orderState／carts／loading
   const [orderState, setOrderState] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const subtotal = (orderState?.products ?? []).reduce(
+    (s, p) => s + p.total,
+    0
+  );
 
-  const [carts, setCarts] = useState([]);
-
-  // 預設付款方式
-  const [payment, setPayment] = useState('現金支付');
-  // 儲存預設付款方式-額外欄位的輸入值
-  const [formValues, setFormValues] = useState({});
-
-  const [isScreenLoading, setIsScreenLoading] = useState(false);
-
-  // 找到選中的那筆設定
+  // 2.3 form：react-hook-form 初始化 & 監聽
+  const savedData = JSON.parse(sessionStorage.getItem('checkoutData') || '{}');
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      payment: savedData.payment || '現金支付',
+      // 只把 extraFields 動態注入 default
+      ...paymentOptions
+        .find(o => o.value === (savedData.payment || '現金支付'))
+        .extraFields.reduce(
+          (acc, f) => ({
+            ...acc,
+            [f.name]: savedData[f.name] || '',
+          }),
+          {}
+        ),
+    },
+  });
+  const allValues = watch();
+  const payment = allValues.payment;
   const current = paymentOptions.find(o => o.value === payment);
 
-  // 額外欄位輸入
-  const handleFieldChange = e => {
-    setFormValues(prev => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
-  };
-
+  // 2.4 effects:
+  //   2.4.1 讀取 orderState
   useEffect(() => {
-    let recoveredState = location.state;
-
-    if (!recoveredState) {
-      try {
-        const saved = sessionStorage.getItem('checkoutData');
-        if (saved) recoveredState = JSON.parse(saved);
-      } catch (err) {
-        console.err('err', err);
-        recoveredState = null;
-      }
-    }
-    if (!recoveredState || !recoveredState.user) {
-      dispatch(
-        pushMessage({ text: '找不到結帳資訊，請重新操作', status: 'failed' })
-      );
+    const data = location.state || savedData;
+    if (!data?.user) {
+      dispatch(pushMessage({ text: '找不到結帳資訊', status: 'failed' }));
       navigate('/checkout-form');
-    } else {
-      setOrderState(recoveredState);
+      return;
     }
-  }, []);
+    setOrderState(data);
+  }, [location.state, dispatch, navigate]);
 
-  useEffect(() => {
-    // setIsScreenLoading(true);
-    //畫面渲染後初步載入購物車
-    getCarts();
-  }, []);
-
-  //取得cart
-  const getCarts = async () => {
-    setIsScreenLoading(true);
+  // 2.5 handler: onSubmit
+  const onSubmit = async data => {
+    setIsLoading(true);
     try {
-      const res = await axios.get(`${BASE_URL}/v2/api/${API_PATH}/cart`);
-      setCarts(res.data.data.carts);
-    } catch (error) {
-      const rawMessage = error.response?.data?.message;
-      const errorMessage = Array.isArray(rawMessage)
-        ? rawMessage.join('、')
-        : rawMessage || '操作失敗，請稍後再試';
-      dispatch(pushMessage({ text: errorMessage, status: 'failed' }));
-    } finally {
-      setIsScreenLoading(false);
-    }
-  };
+      // 準備額外訊息
+      let extraInfo = '';
+      if (data.payment === 'Apple Pay') {
+        extraInfo =
+          `｜卡號：${data.cardNumber}` +
+          `｜有效期限：${data.expiry}` +
+          `｜CVC：${data.cvc}`;
+      } else if (data.payment === 'Line Pay') {
+        extraInfo = `｜Line Pay 電話：${data.linePhone}`;
+      }
+      // 組訊息
+      const message =
+        `${orderState.message || ''}` +
+        `｜付款方式：${data.payment}` +
+        extraInfo;
 
-  const handlePlaceOrder = async () => {
-    setIsScreenLoading(true);
-    try {
-      // 1. 建單
-      const res = await axios.post(`${BASE_URL}/v2/api/${API_PATH}/order`, {
-        data: {
-          user: orderState.user,
-          message: `${orderState.message || ''}｜付款方式：${payment}`,
-        },
-      });
-      const orderId = res.data.orderId;
+      // 建單
+      const { orderId } = (
+        await axios.post(`${BASE_URL}/v2/api/${API_PATH}/order`, {
+          data: {
+            user: orderState.user,
+            // message: `${orderState.message || ''}｜付款方式：${data.payment}`,
+            message,
+          },
+        })
+      ).data;
 
-      // 2. 付款
+      // 付款
       const payRes = await axios.post(
         `${BASE_URL}/v2/api/${API_PATH}/pay/${orderId}`
       );
-      // dispatch(pushMessage({ text: '訂單已完成', status: 'success' }));
       dispatch(pushMessage({ text: payRes.data.message, status: 'success' }));
 
-      // 儲存order資訊提供給 CheckoutSuccessPage 使用
-      // const orderList = JSON.parse(localStorage.getItem(carts)) || [];
-      // const newOrder = {
-      //   // id: orderState.id,
-      //   user: orderState.user.user,
-      //   total: orderState.total,
-      //   products: orderState.products,
-      //   createdAt: new Date().toLocaleString('zh-TW', { hour12: false }),
-      // };
-      // localStorage.setItem(
-      //   'orderList',
-      //   JSON.stringify([newOrder, ...orderList])
-      // );
-
-      // 3. 組出 newOrder
+      // 組 newOrder 並存 localStorage
       const fallback = JSON.parse(localStorage.getItem('orderList') || '[]');
       const newOrder = {
         id: orderId,
         user: orderState.user,
-        products: orderState.products, // 從 sessionStorage 讀到的 products
+        products: orderState.products,
         total: orderState.total,
-        payment,
-        ...formValues,
+        ...data, // payment + extraFields
         is_paid: true,
         createdAt: new Date().toLocaleString('zh-TW', { hour12: false }),
       };
@@ -134,15 +114,18 @@ export default function CheckoutPaymentPage() {
         JSON.stringify([newOrder, ...fallback])
       );
 
-      // 4. 清掉暫存 & 導向成功頁（帶 order 資料）
+      // 清掉 sessionStorage & 導向成功頁
       sessionStorage.removeItem('checkoutData');
-      // navigate('/checkout-success');
       navigate('/checkout-success', { state: { order: newOrder } });
-    } catch (error) {
-      const msg = error.response?.data?.message || '送出訂單或付款失敗';
-      dispatch(pushMessage({ text: msg, status: 'failed' }));
+    } catch (e) {
+      dispatch(
+        pushMessage({
+          text: e.response?.data?.message || '送出訂單或付款失敗',
+          status: 'failed',
+        })
+      );
     } finally {
-      setIsScreenLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -174,63 +157,56 @@ export default function CheckoutPaymentPage() {
         <div className='col-md-4'>
           <div className=' border border-secondary border-2 rounded-3 p-3 mb-4'>
             <h4 className='fw-bold mb-3'>Order Detail</h4>
-            {carts?.length > 0 ? (
-              carts.map(item => (
+            {(orderState?.products ?? []).length > 0 ? (
+              orderState.products.map(item => (
                 <div key={item.id} className='d-flex mt-2'>
                   <img
-                    src={item.product.imageUrl}
-                    alt={item.product.title}
+                    src={item.imageUrl}
+                    alt={item.title}
                     className='me-2'
-                    style={{
-                      width: '48px',
-                      height: '48px',
-                      objectFit: 'cover',
-                    }}
+                    style={{ width: 48, height: 48, objectFit: 'cover' }}
                   />
                   <div className='w-100'>
                     <div className='d-flex justify-content-between'>
-                      <p className='mb-0 fw-bold'>{item.product.title}</p>
+                      <p className='mb-0 fw-bold'>{item.title}</p>
                       <p className='mb-0'>{formatPrice(item.total)}</p>
                     </div>
-                    <p className='mb-0 fw-bold'>x{item.qty}</p>
+                    <p className='mb-0 text-muted'>x{item.qty}</p>
                   </div>
                 </div>
               ))
             ) : (
-              <p className='text-muted text-center'>購物車是空的</p>
+              <p>沒有商品，請先到購物車。</p>
             )}
+
             <table className='table mt-4 border-top border-bottom text-muted'>
               <tbody>
-                {/* 小計 */}
                 <tr>
                   <th className='border-0 px-0 pt-4'>Subtotal</th>
                   <td className='text-end border-0 px-0 pt-4'>
-                    {formatPrice(carts.reduce((t, i) => t + i.total, 0))}
+                    {formatPrice(subtotal)}
                   </td>
                 </tr>
-                {/* 付款方式 */}
                 <tr>
                   <th className='border-0 px-0 pt-0 pb-4'>Payment</th>
                   <td className='text-end border-0 px-0 pt-0 pb-4'>
                     {payment}
                   </td>
                 </tr>
-                {/* extraFields */}
                 {current.extraFields.map(field => (
                   <tr key={field.name}>
                     <th className='border-0 px-0 pt-0 pb-4'>{field.label}</th>
                     <td className='text-end border-0 px-0 pt-0 pb-4'>
-                      {formValues[field.name] || '--'}
+                      {allValues[field.name] ?? '--'}
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
+
             <div className='d-flex justify-content-between mt-4'>
               <p className='mb-0 h4 fw-bold'>Total</p>
-              <p className='mb-0 h4 fw-bold'>
-                {formatPrice(carts.reduce((t, i) => t + i.total, 0))}
-              </p>
+              <p className='mb-0 h4 fw-bold'>{formatPrice(subtotal)}</p>
             </div>
           </div>
         </div>
@@ -258,83 +234,83 @@ export default function CheckoutPaymentPage() {
               {orderState.message || '無'}
             </p>
           </div>
-          <form
-            onSubmit={e => {
-              e.preventDefault();
-              handlePlaceOrder();
-            }}
-          >
+          <form onSubmit={handleSubmit(onSubmit)}>
             <div className='mx-auto mb-4 border border-secondary border-2 rounded-3 p-3'>
-              {/* 1. 動態渲染 radio list */}
-              <PaymentSelector
+              {/* Radio List */}
+              {/* <PaymentSelector
                 options={paymentOptions}
-                selected={payment}
-                onChange={setPayment}
-              />
+                register={register}
+                error={errors.payment}
+              /> */}
 
-              {/* 2. 動態渲染附加欄位 */}
-              {current.extraFields.map(f => (
-                <div key={f.name} className='mb-3 ps-4'>
-                  <label htmlFor={f.name} className='form-label'>
-                    {f.label}
+              {/* Radio List */}
+              <fieldset className='mb-4'>
+                {paymentOptions.map(opt => (
+                  <div key={opt.value} className='form-check mb-2'>
+                    <input
+                      {...register('payment', {
+                        required: '請選擇付款方式',
+                      })}
+                      className='form-check-input'
+                      type='radio'
+                      id={`payment-${opt.value}`}
+                      value={opt.value}
+                    />
+                    <label
+                      className='form-check-label'
+                      htmlFor={`payment-${opt.value}`}
+                    >
+                      {opt.label}
+                    </label>
+                  </div>
+                ))}
+                {errors.payment && (
+                  <p className='text-danger'>{errors.payment.message}</p>
+                )}
+              </fieldset>
+
+              {/* 動態 extraFields */}
+              {current.extraFields.map(field => (
+                <div key={field.name} className='mb-3 ps-4'>
+                  <label htmlFor={field.name} className='form-label'>
+                    {field.label}
                   </label>
                   <input
-                    id={f.name}
-                    name={f.name}
-                    type={f.type}
-                    placeholder={f.placeholder}
-                    required={f.required}
-                    value={formValues[f.name] || ''}
-                    onChange={handleFieldChange}
-                    className='form-control'
+                    {...register(field.name, field.validation)}
+                    id={field.name}
+                    type={field.type}
+                    placeholder={field.placeholder}
+                    className={`form-control ${
+                      errors[field.name] ? 'is-invalid' : ''
+                    }`}
                   />
+                  {errors[field.name] && (
+                    <div className='invalid-feedback'>
+                      {errors[field.name].message}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
 
-            {/* 舊版accordion */}
-            {/* <div className='accordion' id='accordionExample'>
-              {['現金支付', 'Apple Pay', 'Line Pay'].map((method, i) => (
-                <div className='card rounded-0' key={method}>
-                  <div
-                    onClick={() => handlePayment(method)}
-                    className='card-header bg-white border-0 py-3'
-                    data-bs-toggle='collapse'
-                    data-bs-target={`#collapse${i}`}
-                    aria-expanded='true'
-                    aria-controls={`collapse${i}`}
-                  >
-                    <p className='mb-0 position-relative custom-checkout-label'>
-                      {method}
-                    </p>
-                  </div>
-                  <div
-                    id={`collapse${i}`}
-                    className={`collapse${i === 0 ? ' show' : ''}`}
-                    data-bs-parent='#accordionExample'
-                  ></div>
-                </div>
-              ))}
-            </div> */}
-
             {/* 3. 按鈕區 */}
             <div className='d-flex flex-column-reverse flex-md-row mt-4 justify-content-between align-items-md-center align-items-end w-100'>
               <Link to='/checkout-form' className='text-dark mt-md-0 mt-3'>
-                <i className='fas fa-chevron-left me-2'></i> 回到填寫表單
+                <i className='fas fa-chevron-left me-2'></i> ← 回到填寫表單
               </Link>
               <button
                 type='submit'
-                className='btn btn-dark py-3 px-7'
-                disabled={isScreenLoading}
+                className='btn btn-dark py-3 px-5'
+                disabled={isLoading}
               >
-                {isScreenLoading ? '處理中...' : '送出訂單並付款'}
+                {isLoading ? '處理中...' : '送出訂單並付款'}
               </button>
             </div>
           </form>
         </div>
       </div>
 
-      {isScreenLoading && (
+      {isLoading && (
         <div
           className='d-flex justify-content-center align-items-center'
           style={{

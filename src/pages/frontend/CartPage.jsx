@@ -1,37 +1,33 @@
 import { useEffect, useRef, useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import ReactLoading from 'react-loading';
 import axios from 'axios';
 
 import { pushMessage } from '../../redux/toastSlice';
 import { formatPrice } from '../../utils/format';
-import { Link } from 'react-router-dom';
 
 import Swiper from 'swiper';
-import { Autoplay } from 'swiper/modules';
 import 'swiper/css';
+import { Autoplay } from 'swiper/modules';
 import { updateCartData } from '../../redux/cartSlice';
 
 export default function CartPage() {
   const BASE_URL = import.meta.env.VITE_BASE_URL;
   const API_PATH = import.meta.env.VITE_API_PATH;
-
-  // const {
-  //   register,
-  //   handleSubmit,
-  //   formState: { errors },
-  //   reset,
-  // } = useForm();
-
+  const navigate = useNavigate();
   const dispatch = useDispatch();
-
   const swiperRef = useRef(null);
 
+  // state：carts + loading
   const [carts, setCarts] = useState([]);
-  const [isScreenLoading, setIsScreenLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // ───────── render ─────────
+  const subtotal = carts.reduce((s, c) => s + c.total, 0);
 
   useEffect(() => {
-    setIsScreenLoading(true);
+    setIsLoading(true);
     //畫面渲染後初步載入購物車
     getCarts();
 
@@ -55,7 +51,7 @@ export default function CartPage() {
 
   //取得cart
   const getCarts = async () => {
-    setIsScreenLoading(true);
+    setIsLoading(true);
     try {
       const res = await axios.get(`${BASE_URL}/v2/api/${API_PATH}/cart`);
       setCarts(res.data.data.carts);
@@ -63,12 +59,12 @@ export default function CartPage() {
     } catch (error) {
       handleError(error, '發生錯誤，取得購物車失敗');
     } finally {
-      setIsScreenLoading(false);
+      setIsLoading(false);
     }
   };
   //調整購物車品項
   const editCartItem = async (cart_id, product_id, qty = 1) => {
-    setIsScreenLoading(true);
+    setIsLoading(true);
     // 如果 qty 小於 1，直接返回不做任何處理 作法A
     // if (qty < 1) { // 當 qty 小於 1 時，自動刪除該項目，但是可能造成使用者不理解品像突然消失，故不適用 作法B
     //   return deleCartItem(cart_id);
@@ -90,12 +86,12 @@ export default function CartPage() {
     } catch (error) {
       handleError(error, '發生錯誤，調整購物車數量失敗');
     } finally {
-      setIsScreenLoading(false);
+      setIsLoading(false);
     }
   };
   //刪除購物車品項
   const deleCartItem = async cart_id => {
-    setIsScreenLoading(true);
+    setIsLoading(true);
     try {
       await axios.delete(`${BASE_URL}/v2/api/${API_PATH}/cart/${cart_id}`);
       //成功後刷新購物車
@@ -104,7 +100,7 @@ export default function CartPage() {
     } catch (error) {
       handleError(error, '發生錯誤，刪除購物車品項失敗');
     } finally {
-      setIsScreenLoading(false);
+      setIsLoading(false);
     }
   };
   // //移除全部購物車品項
@@ -286,9 +282,7 @@ export default function CartPage() {
                         Subtotal
                       </th>
                       <td className='text-end border-0 px-0 pt-4'>
-                        {formatPrice(
-                          carts.reduce((total, cart) => total + cart.total, 0)
-                        )}
+                        {formatPrice(subtotal)}
                       </td>
                     </tr>
                     {/* <tr>
@@ -306,19 +300,29 @@ export default function CartPage() {
                 </table>
                 <div className='d-flex justify-content-between mt-4'>
                   <p className='mb-0 h4 fw-bold'>Total</p>
-                  <p className='mb-0 h4 fw-bold'>
-                    {formatPrice(
-                      carts.reduce((total, cart) => total + cart.total, 0)
-                    )}
-                  </p>
+                  <p className='mb-0 h4 fw-bold'>{formatPrice(subtotal)}</p>
                 </div>
-                <Link
+                {/* <Link
                   to='/checkout-form'
                   disabled={carts?.length > 0 ? false : true}
                   className='btn btn-dark w-100 mt-4'
                 >
                   Checkout
-                </Link>
+                </Link> */}
+                {carts.length > 0 ? (
+                  // 有東西才能跳到結帳頁
+                  <button
+                    className='btn btn-dark w-100 mt-4'
+                    onClick={() => navigate('/checkout-form')}
+                  >
+                    Checkout
+                  </button>
+                ) : (
+                  // 空購物車就停用按鈕
+                  <button className='btn btn-dark w-100 mt-4' disabled>
+                    Checkout
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -444,7 +448,7 @@ export default function CartPage() {
         </div>
 
         {/* ScreenLoading */}
-        {isScreenLoading && (
+        {isLoading && (
           <div
             className='d-flex justify-content-center align-items-center'
             style={{

@@ -1,88 +1,86 @@
-import { Link } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
-import { useDispatch } from 'react-redux';
 import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useNavigate, Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import ReactLoading from 'react-loading';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import { pushMessage } from '../../redux/toastSlice';
-import { formatPrice } from '../../utils/format';
+import { pushMessage } from '@/redux/toastSlice';
+import { formatPrice } from '@/utils/format';
+import { formFields } from '@/utils/formFields';
 
 export default function CheckoutFormPage() {
+  // 常數、Router、Redux
   const BASE_URL = import.meta.env.VITE_BASE_URL;
-  // const API_PATH = import.meta.env.VITE_API_PATH;
-  const API_PATH = encodeURIComponent(import.meta.env.VITE_API_PATH);
-
+  const API_PATH = import.meta.env.VITE_API_PATH;
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
+  // state：carts + loading
+  const [carts, setCarts] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // ───────── render ─────────
+  const subtotal = carts.reduce((s, c) => s + c.total, 0);
+
+  // form setup：defaultValues 從 sessionStorage 拿
+  const saved = JSON.parse(sessionStorage.getItem('checkoutData') || '{}');
   const {
     register,
     handleSubmit,
-    formState: { errors },
     reset,
-  } = useForm();
+    formState: { errors },
+  } = useForm({
+    defaultValues: formFields.reduce(
+      (acc, f) => ({
+        ...acc,
+        [f.name]: saved[f.name] || '',
+      }),
+      {}
+    ),
+  });
 
-  const dispatch = useDispatch();
-
-  const [carts, setCarts] = useState([]);
-  const [isScreenLoading, setIsScreenLoading] = useState(false);
-
-  // 在 mount 時，如果 sessionStorage 有上次填的資料，就把欄位帶回來
+  // 載入購物車
   useEffect(() => {
-    const saved = sessionStorage.getItem('checkoutData');
-    if (saved) {
-      try {
-        const { user, message } = JSON.parse(saved);
-        // reset() 第二參數要 { keepErrors: true } 可省略
-        reset({ ...user, message });
-      } catch {
-        // JSON parse 錯誤就忽略
-      }
-    }
-  }, [reset]);
-
-  useEffect(() => {
-    // setIsScreenLoading(true);
-    //畫面渲染後初步載入購物車
     getCarts();
   }, []);
 
   //取得cart
   const getCarts = async () => {
-    setIsScreenLoading(true);
+    setIsLoading(true);
     try {
       const res = await axios.get(`${BASE_URL}/v2/api/${API_PATH}/cart`);
       setCarts(res.data.data.carts);
     } catch (error) {
       handleError(error, '發生錯誤，取得購物車失敗');
     } finally {
-      setIsScreenLoading(false);
+      setIsLoading(false);
     }
   };
 
-  //送出訂單 + Submit事件驅動
-  const onSubmit = handleSubmit(data => {
-    if (carts.length < 1) {
-      dispatch(pushMessage({ text: '您的購物車是空的', status: 'failed' }));
+  // mount 時把 sessionStorage 帶回表單
+  useEffect(() => {
+    if (saved && Object.keys(saved).length) {
+      // 只有 user/message 欄位
+      reset(
+        formFields.reduce(
+          (acc, f) => ({
+            ...acc,
+            [f.name]: saved[f.name] || '',
+          }),
+          {}
+        )
+      );
+    }
+  }, [reset]);
+
+  // onSubmit：驗證 → 存 sessionStorage → 跳 PaymentPage
+  const onSubmit = data => {
+    if (!carts.length) {
+      dispatch(pushMessage({ text: '購物車是空的', status: 'failed' }));
       return;
     }
-
-    const { message, ...user } = data; //data資料"解構"成message，剩下的打包一起變成user
-    // const userinfo = {
-    //   data: {
-    //     user: user,
-    //     message,
-    //   },
-    // };
-    // checkOut(userinfo);
-
-    // const formData = {
-    //   user,
-    //   message,
-    //   // carts,
-    // };
-
-    const total = carts.reduce((sum, c) => sum + c.total, 0);
+    // 準備 snapshot：user data + carts 快照 + total
+    const total = carts.reduce((s, c) => s + c.total, 0);
     const products = carts.map(c => ({
       id: c.id,
       title: c.product.title,
@@ -90,29 +88,11 @@ export default function CheckoutFormPage() {
       qty: c.qty,
       total: c.total,
     }));
-    const formData = { user, message, products, total };
-    //將 products（購物車內容）和計算好的 total 一併存進 sessionStorage，讓後續付款頁能直接讀到。
-    sessionStorage.setItem('checkoutData', JSON.stringify(formData)); //在 CheckoutFormPage 將要跳頁的資料儲存到 sessionStorage
+    const formData = { user: { ...data }, products, total };
+
+    sessionStorage.setItem('checkoutData', JSON.stringify(formData));
     navigate('/checkout-payment', { state: formData });
-
-    // reset(); // 提交成功後重設表單
-  });
-
-  // 送出訂單的部分轉到 CheckoutPaymentPage執行
-  // const checkOut = async orderData => {
-  //   setIsScreenLoading(true);
-  //   try {
-  //     await axios.post(`${BASE_URL}/v2/api/${API_PATH}/order`, orderData);
-  //     //成功後刷新購物車，等待下一位客人
-  //     getCarts();
-  //     reset(); // 提交成功後重設表單
-  //     dispatch(pushMessage({ text: '已送出訂單', status: 'success' }));
-  //   } catch (error) {
-  //     handleError(error, '發生錯誤，已送出訂單失敗');
-  //   } finally {
-  //     setIsScreenLoading(false);
-  //   }
-  // };
+  };
 
   // 錯誤處理共用函式、錯誤訊息統一處理，如有多筆資訊就'、'串接
   const handleError = (error, fallback = '操作失敗，請稍後再試') => {
@@ -128,14 +108,7 @@ export default function CheckoutFormPage() {
       <div className='row justify-content-center'>
         <div className='col-md-10'>
           <nav className='navbar navbar-expand-lg navbar-light px-0'>
-            {/* <Link className='navbar-brand' to={'/'}>
-              Morning Bean Café
-            </Link> */}
             <ul className='list-unstyled mb-0 ms-md-auto d-flex align-items-center justify-content-between justify-content-md-end w-100 mt-md-0 mt-4'>
-              {/* <li className='me-md-6 me-3 position-relative custom-step-line'>
-                <i className='fas fa-check-circle d-md-inline d-block text-center'></i>
-                <span className='text-nowrap'>Cart</span>
-              </li> */}
               <li className='me-md-6 me-3 position-relative custom-step-line'>
                 <i className='fas fa-check-circle d-md-inline d-block text-center'></i>
                 <span className='text-nowrap fw-bold'>Checkout-Form</span>
@@ -197,28 +170,22 @@ export default function CheckoutFormPage() {
                     Subtotal
                   </th>
                   <td className='text-end border-0 px-0 pt-4'>
-                    {formatPrice(
-                      carts.reduce((total, cart) => total + cart.total, 0)
-                    )}
+                    {formatPrice(subtotal)}
                   </td>
                 </tr>
               </tbody>
             </table>
             <div className='d-flex justify-content-between mt-4'>
               <p className='mb-0 h4 fw-bold'>Total</p>
-              <p className='mb-0 h4 fw-bold'>
-                {formatPrice(
-                  carts.reduce((total, cart) => total + cart.total, 0)
-                )}
-              </p>
+              <p className='mb-0 h4 fw-bold'>{formatPrice(subtotal)}</p>
             </div>
           </div>
         </div>
         <div className='col-md-6'>
           {/* orderFormTable */}
-          <form onSubmit={onSubmit}>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <p>Contact information</p>
-            <div className='mb-0'>
+            {/* <div className='mb-0'>
               <label htmlFor='contactMail' className='text-muted mb-0'>
                 Email
               </label>
@@ -240,7 +207,6 @@ export default function CheckoutFormPage() {
                 <p className='text-danger my-2'>{errors.email.message}</p>
               )}
             </div>
-            {/* <p className='mt-4'>Shipping address</p> */}
             <div className='mb-2'>
               <label htmlFor='name' className='text-muted mb-0'>
                 Name
@@ -303,7 +269,40 @@ export default function CheckoutFormPage() {
                 id='message'
                 placeholder='message ... '
               ></textarea>
-            </div>
+            </div> */}
+            {formFields.map(f => (
+              <div key={f.name} className='mb-3'>
+                <label htmlFor={f.name} className='form-label'>
+                  {f.label}
+                </label>
+                {f.type === 'textarea' ? (
+                  <textarea
+                    {...register(f.name, f.validation)}
+                    id={f.name}
+                    className={`form-control ${
+                      errors[f.name] ? 'is-invalid' : ''
+                    }`}
+                    placeholder={f.placeholder}
+                    rows={3}
+                  />
+                ) : (
+                  <input
+                    {...register(f.name, f.validation)}
+                    type={f.type}
+                    id={f.name}
+                    className={`form-control ${
+                      errors[f.name] ? 'is-invalid' : ''
+                    }`}
+                    placeholder={f.placeholder}
+                  />
+                )}
+                {errors[f.name] && (
+                  <div className='invalid-feedback'>
+                    {errors[f.name].message}
+                  </div>
+                )}
+              </div>
+            ))}
             <div className='d-flex flex-column-reverse flex-md-row mt-4 justify-content-between align-items-md-center align-items-end w-100'>
               <Link to='/cart' className='text-dark mt-md-0 mt-3'>
                 <i className='fas fa-chevron-left me-2'></i> Return to Shopping
@@ -312,9 +311,9 @@ export default function CheckoutFormPage() {
               <button
                 type='submit'
                 className='btn btn-dark py-3 px-7'
-                disabled={isScreenLoading}
+                disabled={isLoading}
               >
-                {isScreenLoading ? '處理中...' : 'Checkout-Payment'}
+                {isLoading ? '處理中...' : 'Checkout-Payment'}
               </button>
               {/* <Link to='/checkout-payment' className='btn btn-dark py-3 px-7'>
               Checkout-Payment
@@ -325,7 +324,7 @@ export default function CheckoutFormPage() {
       </div>
 
       {/* ScreenLoading */}
-      {isScreenLoading && (
+      {isLoading && (
         <div
           className='d-flex justify-content-center align-items-center'
           style={{
