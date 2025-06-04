@@ -1,3 +1,7 @@
+
+// ==========================
+// 首頁 Hero Banner 區塊
+// ==========================
 .hero-banner {
   min-height: 100vh;
   position: relative;
@@ -24,32 +28,16 @@
   }
 }
 
-// .map-section {
-//   background-color: $light;
-//   border-top: 1px solid rgba(0, 0, 0, 0.05);
-//   padding: 3rem 0;
 
-//   h4 {
-//     color: $primary;
-//     font-weight: bold;
-//   }
-
-//   .fa-map-marker-alt,
-//   .fa-clock,
-//   .fa-phone-alt {
-//     color: $primary;
-//   }
-
-//   img {
-//     max-height: 300px;
-//     object-fit: cover;
-//   }
-// }
-
+// ==========================
+// 精選產品區（可針對 .card 或 .product-card 命名）
+// ==========================
 // .card {
+//   border-radius: 1rem;
 //   border: none;
+//   box-shadow: 0 2px 8px rgba(60,60,60,0.08);
 //   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  
+//   /* ...其他卡片細節... */
 
 //   &:hover {
 //     transform: scale(1.02);
@@ -73,129 +61,60 @@
 //     line-height: 1.6;
 //   }
 // }
+.homepage-featured-section {
+  .card {
+    border-radius: 0;
+    border: none;
+    // 建議加 box-shadow 或 hover 效果
+    transition: box-shadow 0.3s;
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      // 其他 hover 特效
+      transform: scale(1.02);
+      transition: all 0.3s ease;
+    }
+    // .card-img-top {
+    //   border-radius: 0;
+    //   object-fit: cover;
+    //   // 建議高度統一
+    // }
 
+    .card-img-top {
+      border-radius: 0;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+    &:hover img {
+      transform: scale(1.05);
+    }
 
+    &-title {
+      font-weight: 700;
+    }
+
+    &-text {
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+  }
+}
 
 // ==========================
-// 首頁 Hero Banner 區塊
+// 優惠券區塊
 // ==========================
-// .homepage-hero-section {
-//   min-height: 100vh;
-//   width: 100vw;
-//   display: flex;
-//   align-items: center;
-//   position: relative;
-
-//   /* ...其他首頁 banner 樣式... */
-//   .hero-banner {
-//     // min-height: 100vh;
-//     // position: relative;
-
-//     position: absolute;
-//     top: 0; left: 0; right: 0; bottom: 0;
-//     width: 100%;
-//     height: 100%;
-//     // ... 其他背景設定
-//     z-index: -1;
-  
-//     .hero-banner-bg {
-//       background-size: cover;
-//       background-repeat: no-repeat;
-//       opacity: 0.1;
-//     }
-  
-//     h2 {
-//       font-size: 2rem;
-//       font-weight: bold;
-//     }
-  
-//     p {
-//       font-size: 1rem;
-//       color: $gray-600;
-//     }
-  
-//     .btn {
-//       padding-left: 2rem;
-//       padding-right: 2rem;
-//     }
-//   }
-// }
-// ✅ 保留於首頁，About 若要不同可自訂 .about-hero-section
-
-// ==========================
-// 精選產品卡片區
-// ==========================
-.card {
-  border-radius: 1rem;
-  border: none;
-  box-shadow: 0 2px 8px rgba(60,60,60,0.08);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  /* ...其他卡片細節... */
-
-  &:hover {
-    transform: scale(1.02);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    transition: all 0.3s ease;
-  }
-
-  img {
-    transition: transform 0.5s ease;
-  }
-  &:hover img {
-    transform: scale(1.05);
-  }
-
-  &-title {
-    font-weight: 700;
-  }
-
-  &-text {
-    font-size: 0.95rem;
-    line-height: 1.6;
+.homepage-cta-section {
+  padding: 3rem 0;
+  text-align: center;
+  .btn {
+    margin-top: 1rem;
   }
 }
 
 
 
 
-// ✅ 保留於首頁，如果 About 也用同類卡片可共用，否則不用搬
 
-// ==========================
-// 品牌故事／雙圖文介紹（需搬到 About）
-// ==========================
-.homepage-story-section {
-  background: #faf6f2;
-  padding: 4rem 0;
-}
-// ⚠️ 需搬遷到 _aboutpage.scss，並建議改名 .about-story-section
-
-.story-img {
-  width: 100%;
-  max-width: 480px;
-  border-radius: 1rem;
-  box-shadow: 0 2px 16px rgba(60,60,60,0.08);
-}
-// ⚠️ 需搬遷到 _aboutpage.scss，可改名 .about-story-img
-
-.story-text {
-  font-size: 1.25rem;
-  color: #6c757d;
-  margin-top: 2rem;
-}
-// ⚠️ 需搬遷到 _aboutpage.scss，可改名 .about-story-text
-
-.feature-section {
-  padding: 4rem 0 2rem 0;
-  background: #fff;
-}
-// ⚠️ 需搬遷到 _aboutpage.scss，建議改名 .about-feature-section
-
-.about-feature {
-  font-size: 1.125rem;
-  color: #333;
-  margin-bottom: 2rem;
-}
-// ⚠️ 需搬遷到 _aboutpage.scss，並建議改名 .about-feature
 
 // ==========================
 // 優惠券區塊

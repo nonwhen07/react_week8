@@ -1,6 +1,11 @@
+import { Link } from 'react-router-dom';
+
 export default function HeroBanner() {
   return (
-    <section className='hero-banner position-relative overflow-hidden'>
+    <section
+      className='homepage-hero-section position-relative overflow-hidden'
+      style={{ width: '100%', margin: 0, padding: 0 }}
+    >
       {/* 背景圖層 */}
       <div
         className='hero-banner-bg position-absolute'
@@ -17,7 +22,6 @@ export default function HeroBanner() {
           zIndex: -1,
         }}
       ></div>
-
       {/* 前景文字 */}
       <div
         className='container d-flex flex-column'

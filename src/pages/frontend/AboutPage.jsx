@@ -16,6 +16,38 @@ export default function AboutPage() {
             subtitle='在日常之中，感受手焙的溫度與真實。'
           />
         </section> */}
+        {/* Hero Banner 背景區塊 */}
+        <div
+          className='position-absolute'
+          style={{
+            top: 0,
+            bottom: 0,
+            left: 0,
+            right: 0,
+            backgroundImage:
+              'url(https://images.unsplash.com/photo-1480399129128-2066acb5009e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1950&q=80)',
+            backgroundPosition: 'center center',
+            opacity: 0.1,
+            zIndex: -1,
+          }}
+        ></div>
+        {/* Hero Banner 文字主題區塊 */}
+        <div
+          className='container d-flex flex-column'
+          style={{ minHeight: 'calc(100vh - 56px)' }}
+        >
+          <div className='row justify-content-center my-auto'>
+            <div className='col-md-4 text-center'>
+              <h2>讓每日咖啡，成為晨間儀式.</h2>
+              <p className='text-muted mb-0'>現磨手沖・手作甜點・舒適空間.</p>
+              <div className='d-flex justify-content-center'>
+                <Link className='btn btn-dark rounded-0 mt-6' to='/product'>
+                  查看菜單.
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
 
         {/* 2. 品牌故事區塊 */}
         <section className='about-story-section'>

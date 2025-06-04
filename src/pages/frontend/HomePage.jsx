@@ -2,7 +2,6 @@ import coffeeImg1 from '@/assets/product/經典手沖咖啡.png';
 import cakeImg1 from '@/assets/product/焙茶巴斯克蛋糕.png';
 import cakeImg2 from '@/assets/product/手工可麗露.png';
 
-import HeroBanner from '@/components/frontend/HeroBanner';
 import HomeCouponSection from '@/components/frontend/HomeCouponSection';
 import MapSection from '@/components/frontend/MapSection';
 
@@ -61,198 +60,122 @@ export default function HomePage() {
           </div>
         </div>
       </div>
-      <section className='homepage-hero-section'>
-        <div
-          className='position-absolute'
-          style={{
-            top: 0,
-            bottom: 0,
-            left: 0,
-            right: 0,
-            backgroundImage:
-              'url(https://images.unsplash.com/photo-1480399129128-2066acb5009e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1950&q=80)',
-            backgroundPosition: 'center center',
-            opacity: 0.1,
-            zIndex: -1,
-          }}
-        ></div>
-        <div
-          className='container d-flex flex-column'
-          style={{ minHeight: 'calc(100vh - 56px)' }}
-        >
-          <div className='row justify-content-center my-auto'>
-            <div className='col-md-4 text-center'>
-              <h2>讓每日咖啡，成為晨間儀式.</h2>
-              <p className='text-muted mb-0'>現磨手沖・手作甜點・舒適空間.</p>
-              <div className='d-flex justify-content-center'>
-                <Link className='btn btn-dark rounded-0 mt-6' to='/product'>
-                  查看菜單.
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-      {/* <section className='homepage-hero-section'>
-        <HeroBanner />
-      </section> */}
 
       {/* 精選產品區 */}
       {/* 「這區已快速完成，主圖＋Hover有感。回來時從邊框 /
       色彩切入，提升卡片精緻感。」 「AOS動感做出層次，未來加 delay +
       交錯感，讓每張卡片像有節奏進場。」 */}
-      <div className='container my-5'>
-        <div className='row mt-5'>
-          <div className='col-md-4 mt-md-4'>
-            <div className='card border-0 mb-4' data-aos='fade-up'>
-              <img
-                src={coffeeImg1}
-                className='card-img-top rounded-0'
-                alt='經典手沖咖啡.png'
-              />
-              <div className='card-body text-center'>
-                <h4 className='card-title'>經典手沖咖啡</h4>
-                <div className='d-flex justify-content-center'>
-                  <p className='card-text text-muted mb-0'>
-                    單品豆手沖，萃出晨光第一縷香氣。
-                    <br />
-                    每日現磨，讓咖啡香層層展開，陪你迎接每一天。
-                  </p>
+      <section className='homepage-featured-section'>
+        <div className='container my-5'>
+          <div className='row mt-5'>
+            <div className='col-md-4 mt-md-4'>
+              <div className='card border-0 mb-4' data-aos='fade-up'>
+                <img
+                  src={coffeeImg1}
+                  className='card-img-top rounded-0'
+                  alt='經典手沖咖啡.png'
+                />
+                <div className='card-body text-center'>
+                  <h4 className='card-title'>經典手沖咖啡</h4>
+                  <div className='d-flex justify-content-center'>
+                    <p className='card-text text-muted mb-0'>
+                      單品豆手沖，萃出晨光第一縷香氣。
+                      <br />
+                      每日現磨，讓咖啡香層層展開，陪你迎接每一天。
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div className='col-md-4 mt-md-4'>
-            <div className='card border-0 mb-4' data-aos='fade-up'>
-              <img
-                src={cakeImg1}
-                className='card-img-top rounded-0'
-                alt='焙茶巴斯克蛋糕.png'
-              />
-              <div className='card-body text-center'>
-                <h4 className='card-title'>焙茶巴斯克蛋糕</h4>
-                <div className='d-flex justify-content-center'>
-                  <p className='card-text text-muted mb-0'>
-                    日式焙茶遇上濃郁乳酪，
-                    <br />
-                    每一口都柔滑香濃，層層堆疊出溫潤茶香。
-                  </p>
+            <div className='col-md-4 mt-md-4'>
+              <div className='card border-0 mb-4' data-aos='fade-up'>
+                <img
+                  src={cakeImg1}
+                  className='card-img-top rounded-0'
+                  alt='焙茶巴斯克蛋糕.png'
+                />
+                <div className='card-body text-center'>
+                  <h4 className='card-title'>焙茶巴斯克蛋糕</h4>
+                  <div className='d-flex justify-content-center'>
+                    <p className='card-text text-muted mb-0'>
+                      日式焙茶遇上濃郁乳酪，
+                      <br />
+                      每一口都柔滑香濃，層層堆疊出溫潤茶香。
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div className='col-md-4 mt-md-4'>
-            <div className='card border-0 mb-4' data-aos='fade-up'>
-              <img
-                src={cakeImg2}
-                alt='手工可麗露.png'
-                className='card-img-top rounded-0'
-              />
-              <div className='card-body text-center'>
-                <h4 className='card-title'>手工可麗露</h4>
-                <div className='d-flex justify-content-center'>
-                  <p className='card-text text-muted mb-0'>
-                    焦糖酥脆的外衣，藏著濕潤香甜的柔軟內心。
-                    <br />
-                    每日手工現烤，只為最剛好的美味瞬間。
-                  </p>
+            <div className='col-md-4 mt-md-4'>
+              <div className='card border-0 mb-4' data-aos='fade-up'>
+                <img
+                  src={cakeImg2}
+                  alt='手工可麗露.png'
+                  className='card-img-top rounded-0'
+                />
+                <div className='card-body text-center'>
+                  <h4 className='card-title'>手工可麗露</h4>
+                  <div className='d-flex justify-content-center'>
+                    <p className='card-text text-muted mb-0'>
+                      焦糖酥脆的外衣，藏著濕潤香甜的柔軟內心。
+                      <br />
+                      每日手工現烤，只為最剛好的美味瞬間。
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
       {/* 首頁 CTA，跳轉about區 */}
-      <div className='container my-7 text-center'>
-        <h3>Morning Bean Café 的每一天</h3>
-        <p className='text-muted mt-3'>
-          我們每日嚴選豆種，只為帶給你晨間最香的一杯。
-          <br />
-          在這裡，享受屬於你的慢時光。
-        </p>
-        <Link to={'/about'} className='btn btn-outline-dark mt-3'>
-          了解我們
-        </Link>
-      </div>
+      <section className='homepage-cta-section'>
+        <div className='container my-7 text-center'>
+          <h3>Morning Bean Café 的每一天</h3>
+          <p className='text-muted mt-3'>
+            我們每日嚴選豆種，只為帶給你晨間最香的一杯。
+            <br />
+            在這裡，享受屬於你的慢時光。
+          </p>
+          <Link to={'/about'} className='btn btn-outline-dark mt-3'>
+            了解我們
+          </Link>
+        </div>
+      </section>
 
       {/* 優惠券區 */}
       <section className='homepage-homecoupon-section'>
         <HomeCouponSection />
       </section>
-      {/* <section className='container my-5'>
-        <h3 className='text-center mb-4'>限時優惠券</h3>
-        <div className='row'>
-          {homepageCoupons.map(coupon => (
-            <div className='col-md-4 mb-4' key={coupon.id}>
-              <div className='card h-100 text-center'>
-                <div className='card-body'>
-                  <h5 className='card-title'>{coupon.title}</h5>
-                  <p className='text-muted'>折扣：{coupon.percent}%</p>
-                  <p className='small'>
-                    截止：
-                    {new Date(coupon.due_date * 1000).toLocaleDateString()}
-                  </p>
-                  <Link to='/product' className='btn btn-outline-dark'>
-                    前往使用
-                  </Link>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section> */}
 
       {/* 門市資訊區 */}
-      {/* <section className='container my-6'>
-        <h4 className='text-center mb-4'>📍 門市資訊</h4>
-        <div className='row align-items-center'>
-          <div className='col-md-6 mb-3 mb-md-0'>
-            <img
-              src='/images/map-placeholder.png'
-              alt='地圖'
-              className='img-fluid rounded shadow-sm'
-            />
-          </div>
-          <div className='col-md-6'>
-            <h5 className='fw-bold'>Morning Bean Café — 台北永康店</h5>
-            <p className='mb-1'>
-              <i className='fas fa-map-marker-alt me-2'></i>台北市大安區永康街
-              45 號
-            </p>
-            <p className='mb-1'>
-              <i className='fas fa-clock me-2'></i>每日 10:00 - 19:00
-            </p>
-            <p className='mb-1'>
-              <i className='fas fa-phone-alt me-2'></i>(02) 1234-5678
-            </p>
-          </div>
-        </div>
-      </section> */}
       <section className='homepage-map-section'>
         <MapSection />
       </section>
 
       {/* Email 訂關區 */}
-      <section className='container my-5'>
-        <div className='bg-light py-4'>
-          <div className='container'>
-            <div className='d-flex flex-column flex-md-row justify-content-between align-items-md-center align-items-start'>
-              <p className='mb-0 fw-bold'>歡迎訂閱我們的電子報!</p>
-              <div className='input-group w-md-50 mt-md-0 mt-3'>
-                <input
-                  type='text'
-                  className='form-control rounded-0'
-                  placeholder=''
-                />
-                <div className='input-group-append'>
-                  <button
-                    className='btn btn-dark rounded-0'
-                    type='button'
-                    id='search'
-                  >
-                    Lorem ipsum
-                  </button>
+      <section className='homepage-newsletter-section'>
+        <div className='container my-5'>
+          <div className='bg-light py-4'>
+            <div className='container'>
+              <div className='d-flex flex-column flex-md-row justify-content-between align-items-md-center align-items-start'>
+                <p className='mb-0 fw-bold'>歡迎訂閱我們的電子報!</p>
+                <div className='input-group w-md-50 mt-md-0 mt-3'>
+                  <input
+                    type='text'
+                    className='form-control rounded-0'
+                    placeholder=''
+                  />
+                  <div className='input-group-append'>
+                    <button
+                      className='btn btn-dark rounded-0'
+                      type='button'
+                      id='search'
+                    >
+                      Lorem ipsum
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
