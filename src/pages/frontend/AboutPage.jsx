@@ -1,48 +1,121 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+// import HeroBanner from '@/components/frontend/HeroBanner';
+import MapSection from '@/components/frontend/MapSection';
+
 export default function AboutPage() {
   return (
     <>
       <div className='about-page'>
-        {/* Hero Banner */}
-        <section className='hero-banner text-white text-center d-flex align-items-center justify-content-center'>
-          <div className='hero-content'>
-            <h1 className='display-4 fw-bold'>
-              一杯咖啡的日常，一口麵包的幸福
-            </h1>
-            <p className='lead'>在日常之中，感受手焙的溫度與真實。</p>
+        {/* 1. Hero 區塊 */}
+        {/* <section className='about-hero-section'>
+          <HeroBanner
+            // 建議加 props，讓 About 用不同主標題/副標
+            title='一杯咖啡的日常，一口麵包的幸福'
+            subtitle='在日常之中，感受手焙的溫度與真實。'
+          />
+        </section> */}
+
+        {/* 2. 品牌故事區塊 */}
+        <section className='about-story-section'>
+          <div className='container'>
+            <h2 className='fw-bold text-center mb-4'>品牌故事</h2>
+            <div className='row align-items-center'>
+              <div className='col-lg-6 mb-4 mb-lg-0'>
+                <img
+                  src='/images/story.jpg'
+                  alt='品牌故事'
+                  className='about-story-img'
+                />
+              </div>
+              <div className='col-lg-6'>
+                <div className='about-story-text'>
+                  <p>
+                    手焙日和
+                    BakeDay，起源於對「每日溫柔生活節奏」的想像。我們相信，一杯好咖啡與一塊精緻甜點，能為日常帶來不一樣的能量。從選豆、烘焙到出杯，專注每一個細節，是我們的承諾。
+                  </p>
+                  <p>我們的故事，就像你的一天：樸實、溫暖、值得期待。</p>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
-        {/* 品牌故事 */}
-        <section className='container py-5'>
-          <div className='row align-items-center'>
-            <div className='col-lg-6 mb-4 mb-lg-0'>
-              <h2 className='fw-bold'>
-                從一間巷弄咖啡館，開始了一段溫柔革命。
-              </h2>
-              <p>
-                Morning Bean Café 起源於一個簡單的信念：
-                <strong>「讓每一天都值得用一杯好咖啡開始」</strong>。
-              </p>
-              <p>
-                我們相信，真正的好味道來自於時間與用心——不論是手工烘焙的麵包，或是每一杯現磨現沖的咖啡。
-              </p>
-              <p>我們的故事，就像你的一天：樸實、溫暖、值得期待。</p>
+        {/* 3. 雙圖文介紹/特色區塊 */}
+        <section className='about-feature-section'>
+          <div className='container'>
+            <div className='row'>
+              <div className='col-md-6'>
+                <img
+                  src='https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80'
+                  alt='品牌空間'
+                  className='about-feature about-story-img'
+                />
+              </div>
+              <div className='col-md-4 m-auto text-center'>
+                <h4 className='mt-4'>每日儀式感</h4>
+                <p className='about-feature text-muted'>
+                  以晨光為起點，讓一杯手沖成為早晨的儀式。我們提供舒適空間，陪伴每個期待展開的日子。
+                </p>
+              </div>
             </div>
-            <div className='col-lg-6'>
-              <img
-                src='/images/story.jpg'
-                alt='品牌故事'
-                className='img-fluid rounded shadow'
-              />
+            <div className='row flex-row-reverse justify-content-between mt-5'>
+              <div className='col-md-6'>
+                <img
+                  src='https://images.unsplash.com/photo-1517686469429-8bdb88b9f907?auto=format&fit=crop&w=1200&q=80'
+                  alt='烘焙過程'
+                  className='about-feature about-story-img'
+                />
+              </div>
+              <div className='col-md-4 m-auto text-center'>
+                <h4 className='mt-4'>手作與堅持</h4>
+                <p className='about-feature text-muted'>
+                  所有甜點皆為每日手作，從配方、選材到細膩製程，傳遞我們對品質的堅持與溫度。
+                </p>
+              </div>
             </div>
           </div>
         </section>
+        {/* 雙圖文介紹區塊（由首頁搬遷） */}
+        {/* <section className='py-7'>
+          <div className='container'>
+            <div className='row'>
+              <div className='col-md-6'>
+                <img
+                  src='https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80'
+                  alt='品牌空間'
+                  className='img-fluid rounded shadow-sm'
+                />
+              </div>
+              <div className='col-md-4 m-auto text-center'>
+                <h4 className='mt-4'>每日儀式感</h4>
+                <p className='text-muted'>
+                  以晨光為起點，讓一杯手沖成為早晨的儀式。我們提供舒適空間，陪伴每個期待展開的日子。
+                </p>
+              </div>
+            </div>
+
+            <div className='row flex-row-reverse justify-content-between mt-5'>
+              <div className='col-md-6'>
+                <img
+                  src='https://images.unsplash.com/photo-1517686469429-8bdb88b9f907?auto=format&fit=crop&w=1200&q=80'
+                  alt='烘焙過程'
+                  className='img-fluid rounded shadow-sm'
+                />
+              </div>
+              <div className='col-md-4 m-auto text-center'>
+                <h4 className='mt-4'>手作與堅持</h4>
+                <p className='text-muted'>
+                  所有甜點皆為每日手作，從配方、選材到細膩製程，傳遞我們對品質的堅持與溫度。
+                </p>
+              </div>
+            </div>
+          </div>
+        </section> */}
 
         {/* 嚴選原料與堅持 */}
-        <section className='bg-light py-5'>
+        <section className='about-ingredients-section bg-light py-5'>
           <div className='container'>
             <h2 className='text-center fw-bold mb-5'>嚴選原料與堅持</h2>
             <div className='row g-5'>
@@ -73,11 +146,16 @@ export default function AboutPage() {
         </section>
 
         {/* 呼籲區 CTA */}
-        <section className='cta-section text-center py-5 bg-dark text-white'>
+        <section className='about-cta-section text-center py-5 bg-dark text-white'>
           <h3 className='mb-4'>準備好感受一天的溫柔節奏了嗎？</h3>
           <Link to='/product' className='btn btn-outline-light btn-lg'>
             逛逛我們的精選商品
           </Link>
+        </section>
+
+        {/* 地圖區塊（由首頁搬遷） */}
+        <section className='py-7 bg-white'>
+          <MapSection />
         </section>
       </div>
     </>

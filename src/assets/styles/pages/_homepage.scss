@@ -1,8 +1,136 @@
+.hero-banner {
+  min-height: 100vh;
+  position: relative;
 
-.card {
-  border: none;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  .hero-banner-bg {
+    background-size: cover;
+    background-repeat: no-repeat;
+    opacity: 0.1;
+  }
+
+  h2 {
+    font-size: 2rem;
+    font-weight: bold;
+  }
+
+  p {
+    font-size: 1rem;
+    color: $gray-600;
+  }
+
+  .btn {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+// .map-section {
+//   background-color: $light;
+//   border-top: 1px solid rgba(0, 0, 0, 0.05);
+//   padding: 3rem 0;
+
+//   h4 {
+//     color: $primary;
+//     font-weight: bold;
+//   }
+
+//   .fa-map-marker-alt,
+//   .fa-clock,
+//   .fa-phone-alt {
+//     color: $primary;
+//   }
+
+//   img {
+//     max-height: 300px;
+//     object-fit: cover;
+//   }
+// }
+
+// .card {
+//   border: none;
+//   transition: transform 0.3s ease, box-shadow 0.3s ease;
   
+
+//   &:hover {
+//     transform: scale(1.02);
+//     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+//     transition: all 0.3s ease;
+//   }
+
+//   img {
+//     transition: transform 0.5s ease;
+//   }
+//   &:hover img {
+//     transform: scale(1.05);
+//   }
+
+//   &-title {
+//     font-weight: 700;
+//   }
+
+//   &-text {
+//     font-size: 0.95rem;
+//     line-height: 1.6;
+//   }
+// }
+
+
+
+// ==========================
+// 首頁 Hero Banner 區塊
+// ==========================
+// .homepage-hero-section {
+//   min-height: 100vh;
+//   width: 100vw;
+//   display: flex;
+//   align-items: center;
+//   position: relative;
+
+//   /* ...其他首頁 banner 樣式... */
+//   .hero-banner {
+//     // min-height: 100vh;
+//     // position: relative;
+
+//     position: absolute;
+//     top: 0; left: 0; right: 0; bottom: 0;
+//     width: 100%;
+//     height: 100%;
+//     // ... 其他背景設定
+//     z-index: -1;
+  
+//     .hero-banner-bg {
+//       background-size: cover;
+//       background-repeat: no-repeat;
+//       opacity: 0.1;
+//     }
+  
+//     h2 {
+//       font-size: 2rem;
+//       font-weight: bold;
+//     }
+  
+//     p {
+//       font-size: 1rem;
+//       color: $gray-600;
+//     }
+  
+//     .btn {
+//       padding-left: 2rem;
+//       padding-right: 2rem;
+//     }
+//   }
+// }
+// ✅ 保留於首頁，About 若要不同可自訂 .about-hero-section
+
+// ==========================
+// 精選產品卡片區
+// ==========================
+.card {
+  border-radius: 1rem;
+  border: none;
+  box-shadow: 0 2px 8px rgba(60,60,60,0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  /* ...其他卡片細節... */
 
   &:hover {
     transform: scale(1.02);
@@ -27,36 +155,110 @@
   }
 }
 
-.carousel-item {
-  transition: opacity 0.8s ease;
-  .my-5 {
-    font-style: italic;
-    color: #6c757d;
-  }
-  small {
-    font-weight: 600;
-    color: #a67c52; // 咖啡主色
-  }
-  img {
-    border: 2px solid #d4c0a1; // 咖啡色邊框
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  }
-}
 
-.store-banner {
-  height: 60vh;
-  background-size: cover;
-  background-position: center;
-  position: relative;
+
+
+// ✅ 保留於首頁，如果 About 也用同類卡片可共用，否則不用搬
+
+// ==========================
+// 品牌故事／雙圖文介紹（需搬到 About）
+// ==========================
+.homepage-story-section {
+  background: #faf6f2;
+  padding: 4rem 0;
 }
-.overlay-text {
-  position: absolute;
-  bottom: 20%;
-  left: 10%;
-  color: #fff;
-  background: rgba(0,0,0,0.4);
-  padding: 20px;
-  border-radius: 8px;
+// ⚠️ 需搬遷到 _aboutpage.scss，並建議改名 .about-story-section
+
+.story-img {
+  width: 100%;
+  max-width: 480px;
+  border-radius: 1rem;
+  box-shadow: 0 2px 16px rgba(60,60,60,0.08);
 }
+// ⚠️ 需搬遷到 _aboutpage.scss，可改名 .about-story-img
+
+.story-text {
+  font-size: 1.25rem;
+  color: #6c757d;
+  margin-top: 2rem;
+}
+// ⚠️ 需搬遷到 _aboutpage.scss，可改名 .about-story-text
+
+.feature-section {
+  padding: 4rem 0 2rem 0;
+  background: #fff;
+}
+// ⚠️ 需搬遷到 _aboutpage.scss，建議改名 .about-feature-section
+
+.about-feature {
+  font-size: 1.125rem;
+  color: #333;
+  margin-bottom: 2rem;
+}
+// ⚠️ 需搬遷到 _aboutpage.scss，並建議改名 .about-feature
+
+// ==========================
+// 優惠券區塊
+// ==========================
+.homepage-homecoupon-section {
+  margin: 3rem 0 2rem 0;
+}
+// ✅ 保留於首頁
+
+// ==========================
+// 地圖區塊 MapSection
+// ==========================
+.homepage-map-section {
+  background: #f2ebe5;
+  padding: 4rem 0 2rem 0;
+
+  .map-section {
+    background-color: $light;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 3rem 0;
+  
+    h4 {
+      color: $primary;
+      font-weight: bold;
+    }
+  
+    .fa-map-marker-alt,
+    .fa-clock,
+    .fa-phone-alt {
+      color: $primary;
+    }
+  
+    img {
+      max-height: 300px;
+      object-fit: cover;
+    }
+  }
+}
+// ✅ 保留於首頁
+// 若 About 也需地圖區塊，建議獨立 .about-map-section
+
+// ==========================
+// 電子報訂閱區塊
+// ==========================
+.email-subscribe-section {
+  background: #f8f9fa;
+  padding: 2rem 0;
+  border-radius: 1rem;
+  margin-bottom: 3rem;
+}
+// ✅ 保留於首頁
+
+// ==========================
+// 其他通用小工具/調整
+// ==========================
+.rounded-0 {
+  border-radius: 0 !important;
+}
+// ✅ 保留於首頁（如全站共用也可放 global）
+
+.mt-6 {
+  margin-top: 4rem !important;
+}
+// ✅ 保留於首頁（如全站共用也可放 global）
 
 

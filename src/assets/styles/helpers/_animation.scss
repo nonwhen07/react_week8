@@ -1,0 +1,15 @@
+.copied-highlight {
+  animation: glowCopy 0.8s ease-out;
+}
+
+@keyframes glowCopy {
+  0% {
+    box-shadow: 0 0 0 rgba(0, 255, 0, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 8px rgba(0, 255, 0, 0.9);
+  }
+  100% {
+    box-shadow: 0 0 0 rgba(0, 255, 0, 0);
+  }
+}

@@ -1,15 +1,176 @@
-.hero-banner {
-  background: url('/images/hero-banner.jpg') center center / cover no-repeat;
+.about-page {
+  .about-hero-banner {
+    background: url('/images/hero-banner.jpg') center center / cover no-repeat;
+    height: 60vh;
+    position: relative;
+  }
+
+  .about-hero-content {
+    background-color: rgba(0, 0, 0, 0.55);
+    padding: 2rem;
+    border-radius: 10px;
+  }
+
+  .about-cta-section {
+    background: linear-gradient(90deg, #5c3d2e, #8e5a3b);
+    animation: fadeInUp 1s ease-in-out both;
+  }
+}
+
+.carousel-item {
+  transition: opacity 0.8s ease;
+  .my-5 {
+    font-style: italic;
+    color: #6c757d;
+  }
+  small {
+    font-weight: 600;
+    color: #a67c52; // 咖啡主色
+  }
+  img {
+    border: 2px solid #d4c0a1; // 咖啡色邊框
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  }
+}
+
+.overlay-text {
+  position: absolute;
+  bottom: 20%;
+  left: 10%;
+  color: #fff;
+  background: rgba(0,0,0,0.4);
+  padding: 20px;
+  border-radius: 8px;
+}
+
+
+.store-banner {
   height: 60vh;
+  background-size: cover;
+  background-position: center;
   position: relative;
 }
 
-.hero-content {
-  background-color: rgba(0, 0, 0, 0.55);
-  padding: 2rem;
-  border-radius: 10px;
+
+
+
+
+
+
+// ==========================
+// About Hero Banner 區塊
+// ==========================
+.about-hero-section {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  position: relative;
+  // 可針對 About hero 加專屬背景/文字樣式
+  
+  .hero-banner {
+    min-height: 100vh;
+    position: relative;
+  
+    // .hero-banner-bg {
+    //   background-size: cover;
+    //   background-repeat: no-repeat;
+    //   opacity: 0.1;
+    // }
+    &-bg {
+      background-size: cover;
+      background-repeat: no-repeat;
+      opacity: 0.1;
+    }
+  
+    h2 {
+      font-size: 2rem;
+      font-weight: bold;
+    }
+  
+    p {
+      font-size: 1rem;
+      color: $gray-600;
+    }
+  
+    .btn {
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+  }
 }
 
-.cta-section {
-  background: linear-gradient(90deg, #5c3d2e, #8e5a3b);
+// ==========================
+// 品牌故事區塊
+// ==========================
+.about-story-section {
+  background: #faf6f2;
+  padding: 4rem 0;
+}
+
+.about-story-img {
+  width: 100%;
+  max-width: 480px;
+  border-radius: 1rem;
+  box-shadow: 0 2px 16px rgba(60,60,60,0.08);
+}
+
+.about-story-text {
+  font-size: 1.25rem;
+  color: #6c757d;
+  margin-top: 2rem;
+}
+
+// ==========================
+// 雙圖文介紹/特色區塊
+// ==========================
+.about-feature-section {
+  padding: 4rem 0 2rem 0;
+  background: #fff;
+}
+
+.about-feature {
+  font-size: 1.125rem;
+  color: #333;
+  margin-bottom: 2rem;
+}
+
+// ==========================
+// 嚴選原料區塊（如有，可再細分）
+// ==========================
+.about-ingredients-section {
+  background: #f9f7f2;
+  padding: 4rem 0;
+  border-radius: 1rem;
+}
+
+.about-ingredient-img {
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 12px rgba(60,60,60,0.06);
+  max-width: 400px;
+}
+
+// ==========================
+// About 地圖/門市區塊
+// ==========================
+.about-map-section {
+  background: #f2ebe5;
+  padding: 4rem 0 2rem 0;
+}
+
+// ==========================
+// About CTA 區塊
+// ==========================
+.about-cta-section {
+  padding: 3rem 0;
+  background: #222;
+  color: #fff;
+  border-radius: 1rem;
+  text-align: center;
+}
+
+// ==========================
+// 其他 About 專用小工具/調整
+// ==========================
+.about-rounded {
+  border-radius: 1rem;
 }

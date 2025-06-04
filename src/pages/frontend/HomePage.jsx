@@ -1,13 +1,21 @@
-import coffeeImg1 from '../../assets/product/經典手沖咖啡.png';
-import cakeImg1 from '../../assets/product/焙茶巴斯克蛋糕.png';
-import cakeImg2 from '../../assets/product/手工可麗露.png';
+import coffeeImg1 from '@/assets/product/經典手沖咖啡.png';
+import cakeImg1 from '@/assets/product/焙茶巴斯克蛋糕.png';
+import cakeImg2 from '@/assets/product/手工可麗露.png';
 
+import HeroBanner from '@/components/frontend/HeroBanner';
+import HomeCouponSection from '@/components/frontend/HomeCouponSection';
+import MapSection from '@/components/frontend/MapSection';
+
+import { useEffect } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import { useEffect } from 'react';
+
 import { Link } from 'react-router-dom';
 
 export default function HomePage() {
+  // const BASE_URL = import.meta.env.VITE_BASE_URL;
+  // const API_PATH = import.meta.env.VITE_API_PATH;
+
   useEffect(() => {
     AOS.init({ duration: 800, once: true });
     // const carouselElement = document.getElementById('storeShowcase');
@@ -21,6 +29,7 @@ export default function HomePage() {
 
   return (
     <div className='container-fluid'>
+      {/* Hero Banner 背景區塊 */}
       <div
         className='position-absolute'
         style={{
@@ -35,7 +44,7 @@ export default function HomePage() {
           zIndex: -1,
         }}
       ></div>
-      {/* Hero Banner 區塊 */}
+      {/* Hero Banner 文字主題區塊 */}
       <div
         className='container d-flex flex-column'
         style={{ minHeight: 'calc(100vh - 56px)' }}
@@ -48,16 +57,51 @@ export default function HomePage() {
               <Link className='btn btn-dark rounded-0 mt-6' to='/product'>
                 查看菜單.
               </Link>
-              {/* <button className='btn btn-dark rounded-0 mt-6'>查看菜單.</button> */}
             </div>
           </div>
         </div>
       </div>
+      <section className='homepage-hero-section'>
+        <div
+          className='position-absolute'
+          style={{
+            top: 0,
+            bottom: 0,
+            left: 0,
+            right: 0,
+            backgroundImage:
+              'url(https://images.unsplash.com/photo-1480399129128-2066acb5009e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1950&q=80)',
+            backgroundPosition: 'center center',
+            opacity: 0.1,
+            zIndex: -1,
+          }}
+        ></div>
+        <div
+          className='container d-flex flex-column'
+          style={{ minHeight: 'calc(100vh - 56px)' }}
+        >
+          <div className='row justify-content-center my-auto'>
+            <div className='col-md-4 text-center'>
+              <h2>讓每日咖啡，成為晨間儀式.</h2>
+              <p className='text-muted mb-0'>現磨手沖・手作甜點・舒適空間.</p>
+              <div className='d-flex justify-content-center'>
+                <Link className='btn btn-dark rounded-0 mt-6' to='/product'>
+                  查看菜單.
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      {/* <section className='homepage-hero-section'>
+        <HeroBanner />
+      </section> */}
+
       {/* 精選產品區 */}
       {/* 「這區已快速完成，主圖＋Hover有感。回來時從邊框 /
       色彩切入，提升卡片精緻感。」 「AOS動感做出層次，未來加 delay +
       交錯感，讓每張卡片像有節奏進場。」 */}
-      <div className='container'>
+      <div className='container my-5'>
         <div className='row mt-5'>
           <div className='col-md-4 mt-md-4'>
             <div className='card border-0 mb-4' data-aos='fade-up'>
@@ -119,123 +163,7 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* 3 */}
-      <div
-        id='storeShowcase'
-        className='carousel slide carousel-fade'
-        data-bs-ride='carousel'
-        data-bs-interval='5000'
-      >
-        <div className='carousel-inner'>
-          <div className='carousel-item active'>
-            <div
-              className='store-banner'
-              style={{
-                backgroundImage: 'url(./images/homepage/cafe_interior1.webp)',
-              }}
-            >
-              <div className='overlay-text'>
-                <h2>慢享生活・咖啡香氣與溫柔日光相伴1</h2>
-              </div>
-            </div>
-          </div>
-          <div className='carousel-item'>
-            <div
-              className='store-banner'
-              style={{
-                backgroundImage: 'url(./images/homepage/cafe_interior2.webp)',
-              }}
-            >
-              <div className='overlay-text'>
-                <h2>每個座位，都是屬於你的寧靜角落2</h2>
-              </div>
-            </div>
-          </div>
-          <div className='carousel-item'>
-            <div
-              className='store-banner'
-              style={{
-                backgroundImage: 'url(./images/homepage/cafe_interior3.webp)',
-              }}
-            >
-              <div className='overlay-text'>
-                <h2>每個座位，都是屬於你的寧靜角落3</h2>
-              </div>
-            </div>
-          </div>
-          <div className='carousel-item'>
-            <div
-              className='store-banner'
-              style={{
-                backgroundImage: 'url(./images/homepage/cafe_interior4.webp)',
-              }}
-            >
-              <div className='overlay-text'>
-                <h2>每個座位，都是屬於你的寧靜角落4</h2>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <a
-          className='carousel-control-prev'
-          href='#storeShowcase'
-          role='button'
-          data-bs-slide='prev'
-        >
-          <span
-            className='carousel-control-prev-icon'
-            aria-hidden='true'
-          ></span>
-        </a>
-        <a
-          className='carousel-control-next'
-          href='#storeShowcase'
-          role='button'
-          data-bs-slide='next'
-        >
-          <span
-            className='carousel-control-next-icon'
-            aria-hidden='true'
-          ></span>
-        </a>
-      </div>
-
-      {/* 4 */}
-      {/* <div className='container my-7'>
-        <div className='row'>
-          <div className='col-md-6'>
-            <img
-              src='https://images.unsplash.com/photo-1490312278390-ab64016e0aa9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1950&q=80'
-              alt=''
-              className='img-fluid'
-            />
-          </div>
-          <div className='col-md-4 m-auto text-center'>
-            <h4 className='mt-4'>Lorem ipsum</h4>
-            <p className='text-muted'>
-              Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
-              nonumy eirmod tempor invidunt ut labore et dolore magna.
-            </p>
-          </div>
-        </div>
-        <div className='row flex-row-reverse justify-content-between mt-4'>
-          <div className='col-md-6'>
-            <img
-              src='https://images.unsplash.com/photo-1490312278390-ab64016e0aa9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1950&q=80'
-              alt=''
-              className='img-fluid'
-            />
-          </div>
-          <div className='col-md-4 m-auto text-center'>
-            <h4 className='mt-4'>Lorem ipsum</h4>
-            <p className='text-muted'>
-              Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
-              nonumy eirmod tempor invidunt ut labore et dolore magna.
-            </p>
-          </div>
-        </div>
-      </div> */}
+      {/* 首頁 CTA，跳轉about區 */}
       <div className='container my-7 text-center'>
         <h3>Morning Bean Café 的每一天</h3>
         <p className='text-muted mt-3'>
@@ -247,30 +175,90 @@ export default function HomePage() {
           了解我們
         </Link>
       </div>
+
+      {/* 優惠券區 */}
+      <section className='homepage-homecoupon-section'>
+        <HomeCouponSection />
+      </section>
+      {/* <section className='container my-5'>
+        <h3 className='text-center mb-4'>限時優惠券</h3>
+        <div className='row'>
+          {homepageCoupons.map(coupon => (
+            <div className='col-md-4 mb-4' key={coupon.id}>
+              <div className='card h-100 text-center'>
+                <div className='card-body'>
+                  <h5 className='card-title'>{coupon.title}</h5>
+                  <p className='text-muted'>折扣：{coupon.percent}%</p>
+                  <p className='small'>
+                    截止：
+                    {new Date(coupon.due_date * 1000).toLocaleDateString()}
+                  </p>
+                  <Link to='/product' className='btn btn-outline-dark'>
+                    前往使用
+                  </Link>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section> */}
+
+      {/* 門市資訊區 */}
+      {/* <section className='container my-6'>
+        <h4 className='text-center mb-4'>📍 門市資訊</h4>
+        <div className='row align-items-center'>
+          <div className='col-md-6 mb-3 mb-md-0'>
+            <img
+              src='/images/map-placeholder.png'
+              alt='地圖'
+              className='img-fluid rounded shadow-sm'
+            />
+          </div>
+          <div className='col-md-6'>
+            <h5 className='fw-bold'>Morning Bean Café — 台北永康店</h5>
+            <p className='mb-1'>
+              <i className='fas fa-map-marker-alt me-2'></i>台北市大安區永康街
+              45 號
+            </p>
+            <p className='mb-1'>
+              <i className='fas fa-clock me-2'></i>每日 10:00 - 19:00
+            </p>
+            <p className='mb-1'>
+              <i className='fas fa-phone-alt me-2'></i>(02) 1234-5678
+            </p>
+          </div>
+        </div>
+      </section> */}
+      <section className='homepage-map-section'>
+        <MapSection />
+      </section>
+
       {/* Email 訂關區 */}
-      <div className='bg-light py-4'>
-        <div className='container'>
-          <div className='d-flex flex-column flex-md-row justify-content-between align-items-md-center align-items-start'>
-            <p className='mb-0 fw-bold'>歡迎訂閱我們的電子報!</p>
-            <div className='input-group w-md-50 mt-md-0 mt-3'>
-              <input
-                type='text'
-                className='form-control rounded-0'
-                placeholder=''
-              />
-              <div className='input-group-append'>
-                <button
-                  className='btn btn-dark rounded-0'
-                  type='button'
-                  id='search'
-                >
-                  Lorem ipsum
-                </button>
+      <section className='container my-5'>
+        <div className='bg-light py-4'>
+          <div className='container'>
+            <div className='d-flex flex-column flex-md-row justify-content-between align-items-md-center align-items-start'>
+              <p className='mb-0 fw-bold'>歡迎訂閱我們的電子報!</p>
+              <div className='input-group w-md-50 mt-md-0 mt-3'>
+                <input
+                  type='text'
+                  className='form-control rounded-0'
+                  placeholder=''
+                />
+                <div className='input-group-append'>
+                  <button
+                    className='btn btn-dark rounded-0'
+                    type='button'
+                    id='search'
+                  >
+                    Lorem ipsum
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </section>
     </div>
   );
 }
