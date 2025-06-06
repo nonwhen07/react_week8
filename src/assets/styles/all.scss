@@ -9,21 +9,36 @@
 // calc($spacer / 2)  // 若你目的是在 CSS 裡計算
 
 
+// @import "../../../node_modules/bootstrap/scss/functions";
+// @import "helpers/variables";
+// @import "../../../node_modules/bootstrap/scss/bootstrap";
+
+// @import './helpers/mixin.scss';
+// @import './helpers/toast.scss';
+// @import './helpers/variables.scss';
+// @import './helpers/custom.scss';
+// @import './helpers/animation.scss';
+
+// @import './pages/frontend';
+// @import './pages/backend';
+// @import './pages/homepage.scss';
+// @import './pages/productspage.scss';
+// @import './pages/aboutpage.scss';
+
 
 @import "../../../node_modules/bootstrap/scss/functions";
-@import "helpers/variables";
+@import "helpers/variables.scss";
+@import 'helpers/custom.scss';
 @import "../../../node_modules/bootstrap/scss/bootstrap";
-// @import "./layout/custom";
 
+@import 'helpers/mixin.scss';
+@import 'helpers/toast.scss';
+@import 'helpers/variables.scss';
+@import 'helpers/animation.scss';
 
-@import './helpers/mixin.scss';
-@import './helpers/toast.scss';
-@import './helpers/variables.scss';
-@import './helpers/custom.scss';
-@import './helpers/animation.scss';
-
-@import './pages/frontend';
-@import './pages/backend';
-@import './pages/homepage.scss';
-@import './pages/productspage.scss';
-@import './pages/aboutpage.scss';
+@import 'pages/frontend';
+@import 'pages/backend';
+@import 'pages/homepage.scss';
+@import 'pages/productspage.scss';
+@import 'pages/_detailpage.scss';
+@import 'pages/aboutpage.scss';

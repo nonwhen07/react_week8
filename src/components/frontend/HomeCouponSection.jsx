@@ -119,19 +119,10 @@ export default function HomeCouponSection() {
                     {new Date(coupon.due_date * 1000).toLocaleDateString()}
                   </p>
                   <div className='d-flex justify-content-center align-items-center mb-2'>
-                    {/* <code
-                      className={`me-2 p-1 px-2 border rounded ${
-                        copiedCode === coupon.code
-                          ? 'border-success text-success fw-bold'
-                          : 'border-muted text-muted'
-                      }`}
-                    >
-                      {coupon.code}
-                    </code> */}
                     <code
                       className={`me-2 p-1 px-2 border rounded ${
                         copiedCode === coupon.code
-                          ? 'border-success text-success fw-bold copied-highlight'
+                          ? 'border-success text-primary fw-bold copied-highlight'
                           : 'border-muted text-muted'
                       }`}
                     >
@@ -152,8 +143,8 @@ export default function HomeCouponSection() {
                     <button
                       className={`btn btn-sm ${
                         copiedCode === coupon.code
-                          ? 'btn-success'
-                          : 'btn-outline-secondary'
+                          ? 'btn-secondary text-primary'
+                          : 'btn-primary text-light'
                       }`}
                       onClick={() => handleCopy(coupon.code)}
                     >

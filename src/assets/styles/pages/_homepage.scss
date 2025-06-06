@@ -29,9 +29,10 @@
 // }
 
 .homepage-hero-section {
+  min-height: 500px; // 手機也能滿版
+  height: 100vh;     // 桌機滿版
+  max-height: 900px; // 避免超大螢幕拉太高
   position: relative;
-  width: 100vw;
-  min-height: 100vh;
   overflow: hidden;
 
   // 背景圖層
@@ -50,13 +51,14 @@
   //   animation: heroBgZoom 16s ease-in-out infinite alternate;
   // }
   .hero-bg {
-    position: absolute;
-    background-image: url('https://images.unsplash.com/photo-1480399129128-2066acb5009e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1950&q=80');
-    background-size: cover;
-    background-position: center center;
+    position: absolute; 
     inset: 0;               // 等價於 top:0; right:0; bottom:0; left:0;
     width: 100%;
     height: 100%;
+    background-image: url('https://images.unsplash.com/photo-1480399129128-2066acb5009e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1950&q=80');
+    background-size: cover;
+    background-position: center 40%;
+    background-repeat: no-repeat;
     opacity: 0.13;
     z-index: -1;
   }
@@ -148,52 +150,200 @@
 //   }
 // }
 .homepage-featured-section {
-  .card {
-    border-radius: 0;
-    border: none;
-    // 建議加 box-shadow 或 hover 效果
-    transition: box-shadow 0.3s;
-    &:hover {
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      // 其他 hover 特效
-      transform: scale(1.02);
-      transition: all 0.3s ease;
-    }
-    // .card-img-top {
-    //   border-radius: 0;
-    //   object-fit: cover;
-    //   // 建議高度統一
-    // }
+  padding: 40px 0 64px 0; // 區塊上下間距
+  background: #fcfaf6;
+}
 
-    .card-img-top {
-      border-radius: 0;
-      object-fit: cover;
-      transition: transform 0.5s ease;
-    }
-    &:hover img {
-      transform: scale(1.05);
-    }
+// Hover 動態特效
+.homepage-product-card {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  
+  background: #fff;
+  
+  // border: 1.5px solid transparent;
+  border: none;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  // transition: box-shadow 0.3s, transform 0.3s, border-color 0.3s;
+  transition: box-shadow 0.25s, transform 0.25s;
 
-    &-title {
-      font-weight: 700;
-    }
 
-    &-text {
-      font-size: 0.95rem;
-      line-height: 1.6;
-    }
+  .card-title {
+    position: relative;
+    padding-left: 1.5em;
+    margin-bottom: 1.5rem;
 
+    // 左側小圓點
+    &::before {
+      content: '';
+      display: inline-block;
+      position: absolute;
+      left: 25%;
+      top: 0.2em;
+      width: 0.7em;
+      height: 0.7em;
+      border-radius: 50%;
+      background: #b9885b; // 咖啡色系
+      transition: background 0.25s;
+    }
+    // underline => 底線滑動日後可以轉換成 coffee-smoke 圖檔的飄香顯示
+    &::after {
+      content: '';
+      display: block;
+      position: absolute;
+      left: 4em;
+      bottom: -0.3em;
+      width: 0;
+      height: 3px;
+      border-radius: 1.5px;
+      background: #b9885b;
+      transition: width 0.35s cubic-bezier(0.45,0.05,0.55,0.95);
+
+      // 底線滑動日後可以轉換成 coffee-smoke 圖檔的飄香顯示
+      // background: url('coffee-smoke.svg') left center/cover no-repeat;
+      // 或可加 gradient 疊合
+      // transition: width 0.35s, background-position 0.35s;
+      // 下方的hover/focus-within 須同步開寬度與位移
+    }
+  }
+
+  &:hover,
+  &:focus-within {
+    box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+    transform: translateY(-4px) scale(1.03);
+
+    .card-title::before {
+      background: #986f3c; // hover 咖啡更深色
+    }
+    .card-title::after {
+      width: 60%;
+    }
+  }
+
+
+
+  &:hover, &:focus-within {
+    transform: translateY(-8px) scale(1.025);
+    box-shadow: 0 10px 32px rgba(180,140,80,0.10);
+    border-color: #b9935a;
+    z-index: 2;
+  }
+
+  // 用::after符合小圓點設計在元素homepage-product-card 下方靜態顯示，
+  // 改用::before？要用定位！ ::before是預設在元素homepage-product-card前面
+  &::before { /* 底部小圓點分隔 */
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: 10px;
+    transform: translateX(-50%); //在left: 50%;後依然會有偏差這時候需要transform: translateX(-50%); 往左邊(-X%)推本身的50%面積來校正位置
+    display: block;
+    // margin: 0px auto 16px;
+    width: 40px;
+    height: 2px;
+    background: repeating-radial-gradient(circle at 4px 2px, #b9935a 0 2px, transparent 2px 8px);
+    border-radius: 6px;
+    opacity: .5;
   }
 }
+
+// 圖片偽元素漸層遮罩
+.homepage-product-img-wrap {
+  position: relative;
+  overflow: hidden;
+
+  &::after { /* 半透明遮罩 */
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02) 30%, rgba(185,147,90,0.13) 100%);
+    opacity: 0.82;
+    transition: opacity 0.3s;
+  }
+
+  .homepage-product-card:hover &::after {
+    opacity: 0.18;
+  }
+}
+
+.homepage-product-img {
+  width: 100%;
+  aspect-ratio: 4/3;
+  object-fit: cover;
+  border-radius: 8px;
+  transition: transform 0.45s cubic-bezier(.22,1,.36,1);
+  will-change: transform;
+  background: #f7f5f1; // 沒圖時底色
+  min-height: 160px;    // 防止內容抖動
+}
+.homepage-product-card:hover .homepage-product-img {
+  transform: scale(1.06);
+}
+
+
+@media (max-width: 768px) {
+  .homepage-featured-section {
+    padding: 28px 0 32px 0;
+  }
+  .homepage-product-img {
+    aspect-ratio: 1/1;
+  }
+}
+
 
 // ==========================
 // 優惠券區塊
 // ==========================
 .homepage-cta-section {
-  padding: 3rem 0;
-  text-align: center;
-  .btn {
-    margin-top: 1rem;
+  // 突破 container 寬度滿版設定
+  background: url('/images/homepage/cafe_interior2.webp') no-repeat center/cover;
+
+  position: relative;
+  padding: 14rem 0 5rem;
+  color: #fff;
+  overflow: hidden;
+
+  &::after {
+    // 遮罩（防文字跟背景撞色）
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(44, 31, 22, 0.34); // 深咖啡色遮罩
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .container {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    // 毛玻璃文字區
+    display: inline-block;
+    background: rgba(255,255,255,0.22);
+    border-radius: 1.2em;
+    padding: 2rem 2.5rem 1.2rem;
+    box-shadow: 0 8px 24px #0002;
+    backdrop-filter: blur(6px) saturate(1.15);
+  }
+
+  .cta-glass-wrap {
+    width: 100%;          // 讓它跟著 .container 的寬度跑，不超過
+    max-width: 800px;    // 避免外溢
+    margin: 0 auto;
+    background: rgba(255,255,255,0.22);
+    border-radius: 1.2em;
+    padding: 2.5rem 2rem 1.5rem;
+    box-shadow: 0 8px 24px #0002;
+    backdrop-filter: blur(6px) saturate(1.15);
+  }
+
+  h3, p {
+    color: #4C301C;
+    text-shadow: 0 3px 12px #fff7, 0 0px 2px #0004;
   }
 }
 
@@ -206,51 +356,226 @@
 // 優惠券區塊
 // ==========================
 .homepage-homecoupon-section {
-  margin: 3rem 0 2rem 0;
+  position: relative;
+  background: #fcfaf6;
+  padding-top: 2.5rem;
+  padding-bottom: 2.5rem;
+
+  h3 {
+    position: relative;
+    &::after {
+      content: '';
+      display: block;
+      margin: 0.8rem auto 0;
+      width: 60px; height: 4px;
+      border-radius: 2px;
+      background: linear-gradient(90deg, #b9885b 70%, transparent 100%);
+      opacity: 0.25;
+    }
+  }
+  .card {
+    border-radius: 1rem;
+    border: none;
+    box-shadow: 0 2px 14px rgba(185,136,91,0.08);
+    transition: transform 0.18s, box-shadow 0.18s;
+    &:hover {
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 6px 24px rgba(185,136,91,0.12);
+    }
+  }
+  code {
+    background: #fff4e0;
+    border-radius: 4px;
+    padding: 0.1em 0.5em;
+    font-weight: 500;
+    transition: background 0.18s;
+    &.copied-highlight {
+      background: #ffe0ac;
+    }
+  }
 }
-// ✅ 保留於首頁
+
+
 
 // ==========================
 // 地圖區塊 MapSection
 // ==========================
 .homepage-map-section {
+  // position: relative;
   background: #f2ebe5;
   padding: 4rem 0 2rem 0;
 
   .map-section {
-    background-color: $light;
-    border-top: 1px solid rgba(0, 0, 0, 0.05);
-    padding: 3rem 0;
+    position: relative;
+    background: #f7f3ed;
+    border-radius: 1.2rem;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.04);
+    padding: 2rem 1.5rem 2rem;
+
+    // 左上角咖啡豆
+    &::before {
+      content: '';
+      position: absolute;
+      top: -24px; left: -18px;
+      width: 52px; height: 52px;
+      background: url('/images/ui-elements/coffeebean.svg') no-repeat center/contain;
+      // opacity: 0.8;
+      z-index: 1;
+      pointer-events: none;
+    }
+    // 右下角飄香煙霧
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -18px; right: -20px;
+      width: 72px; height: 44px;
+      background: url('/images/ui-elements/coffee-steam.svg') no-repeat center/contain;
+      // opacity: 0.12;
+      z-index: 1;
+      pointer-events: none;
+    }
   
     h4 {
-      color: $primary;
-      font-weight: bold;
+      // position: relative;
+      margin-bottom: 2rem;
+      // &::before {
+      //   content: '';
+      //   display: inline-block;
+      //   width: 10px; height: 10px;
+      //   background: #b9885b;
+      //   border-radius: 50%;
+      //   margin-right: 0.5em;
+      //   vertical-align: middle;
+      // }
+    }
+    .map-section-img {
+      width: 90%;
+      max-width: 340px;
+      min-width: 220px;
+      aspect-ratio: 1/1; // 1:1 方形比例，自動維持正方形
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 1.2rem;
+      background: #fff4e6;
+      box-shadow: 0 2px 16px rgba(185,136,91,0.10);
+      overflow: hidden;
+  
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 1.2rem;
+        box-shadow: none;
+        background: transparent;
+      }
+    }
+
+    .map-section-info {
+      // position: absolute;
+      // top: 30%;
+      padding: 1.5rem 1rem;
+      background: #fff9f3b8; // 半透明米色
+      border-radius: 1rem;
+      box-shadow: 0 2px 10px rgba(185,136,91,0.05);
+  
+      h5 {
+        color: #5B3E35;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+      }
+      p {
+        color: #333;
+        font-size: 1rem;
+        i {
+          color: #D4A373;
+        }
+      }
+    }
+
+    .map-section-info h5::after {
+      content: '';
+      display: inline-block;
+      vertical-align: middle;
+      margin-left: 0.5em;
+      width: 22px; height: 18px;
+      background: url('/images/ui-elements/cake.svg') no-repeat center/contain;
+      // opacity: 0.22;
     }
   
-    .fa-map-marker-alt,
-    .fa-clock,
-    .fa-phone-alt {
-      color: $primary;
-    }
-  
-    img {
-      max-height: 300px;
-      object-fit: cover;
+    @media (max-width: 991.98px) {
+      .map-section-img,
+      .map-section-info {
+        max-width: 96vw;
+        width: 100%;
+        margin: 0 auto;
+      }
+      .map-section-info {
+        padding: 1rem 0.5rem;
+        margin-top: 1.5rem;
+      }
     }
   }
 }
-// ✅ 保留於首頁
-// 若 About 也需地圖區塊，建議獨立 .about-map-section
+
+
+
 
 // ==========================
 // 電子報訂閱區塊
 // ==========================
-.email-subscribe-section {
-  background: #f8f9fa;
-  padding: 2rem 0;
-  border-radius: 1rem;
-  margin-bottom: 3rem;
+// .email-subscribe-section {
+//   background: #f8f9fa;
+//   padding: 2rem 0;
+//   border-radius: 1rem;
+//   margin-bottom: 3rem;
+// }
+
+.homepage-newsletter-section {
+  position: relative;
+  background: #faf7f2;
+
+  .bg-light {
+    border-radius: 1.2rem;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.04);
+    position: relative;
+    overflow: hidden;
+  }
+
+  // 下方分界線（偽元素裝飾）
+  .bg-light::after {
+    content: '';
+    display: block;
+    position: absolute;
+    bottom: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 64px;
+    height: 6px;
+    border-radius: 3px;
+    background: linear-gradient(90deg, #b9885b 40%, transparent 100%);
+    opacity: 0.12;
+  }
+
+  // 訂閱按鈕動畫
+  .btn {
+    transition: box-shadow 0.22s, background 0.18s;
+    &:hover,
+    &:focus {
+      background: #b9885b;
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(185, 136, 91, 0.16);
+      border-color: #b9885b;
+    }
+  }
+
+  // input 聚焦效果
+  .form-control:focus {
+    border-color: #b9885b;
+    box-shadow: 0 0 0 1px #b9885b33;
+  }
 }
+
 // ✅ 保留於首頁
 
 // ==========================

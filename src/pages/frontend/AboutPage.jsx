@@ -109,42 +109,6 @@ export default function AboutPage() {
             </div>
           </div>
         </section>
-        {/* 雙圖文介紹區塊（由首頁搬遷） */}
-        {/* <section className='py-7'>
-          <div className='container'>
-            <div className='row'>
-              <div className='col-md-6'>
-                <img
-                  src='https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80'
-                  alt='品牌空間'
-                  className='img-fluid rounded shadow-sm'
-                />
-              </div>
-              <div className='col-md-4 m-auto text-center'>
-                <h4 className='mt-4'>每日儀式感</h4>
-                <p className='text-muted'>
-                  以晨光為起點，讓一杯手沖成為早晨的儀式。我們提供舒適空間，陪伴每個期待展開的日子。
-                </p>
-              </div>
-            </div>
-
-            <div className='row flex-row-reverse justify-content-between mt-5'>
-              <div className='col-md-6'>
-                <img
-                  src='https://images.unsplash.com/photo-1517686469429-8bdb88b9f907?auto=format&fit=crop&w=1200&q=80'
-                  alt='烘焙過程'
-                  className='img-fluid rounded shadow-sm'
-                />
-              </div>
-              <div className='col-md-4 m-auto text-center'>
-                <h4 className='mt-4'>手作與堅持</h4>
-                <p className='text-muted'>
-                  所有甜點皆為每日手作，從配方、選材到細膩製程，傳遞我們對品質的堅持與溫度。
-                </p>
-              </div>
-            </div>
-          </div>
-        </section> */}
 
         {/* 嚴選原料與堅持 */}
         <section className='about-ingredients-section bg-light py-5'>

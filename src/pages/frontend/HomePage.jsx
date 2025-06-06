@@ -104,12 +104,20 @@ export default function HomePage() {
           <div className='container my-5'>
             <div className='row mt-5'>
               <div className='col-md-4 mt-md-4'>
-                <div className='card border-0 mb-4' data-aos='fade-up'>
-                  <img
-                    src={coffeeImg1}
-                    className='card-img-top rounded-0'
-                    alt='經典手沖咖啡.png'
-                  />
+                <div
+                  className='homepage-product-card card mb-4'
+                  data-aos='fade-up'
+                  data-aos-delay='100'
+                >
+                  <div className='homepage-product-img-wrap position-relative'>
+                    <Link to={`/product/-OLxGFSBmzKjGgpIo_kv`}>
+                      <img
+                        src={coffeeImg1}
+                        className='homepage-product-img card-img-top rounded-0'
+                        alt='經典手沖咖啡.png'
+                      />
+                    </Link>
+                  </div>
                   <div className='card-body text-center'>
                     <h4 className='card-title'>經典手沖咖啡</h4>
                     <div className='d-flex justify-content-center'>
@@ -123,12 +131,20 @@ export default function HomePage() {
                 </div>
               </div>
               <div className='col-md-4 mt-md-4'>
-                <div className='card border-0 mb-4' data-aos='fade-up'>
-                  <img
-                    src={cakeImg1}
-                    className='card-img-top rounded-0'
-                    alt='焙茶巴斯克蛋糕.png'
-                  />
+                <div
+                  className='homepage-product-card card mb-4'
+                  data-aos='fade-up'
+                  data-aos-delay='200'
+                >
+                  <div className='homepage-product-img-wrap position-relative'>
+                    <Link to={`/product/-OLxMz88c0RS9wSBf6pr`}>
+                      <img
+                        src={cakeImg1}
+                        className='homepage-product-img card-img-top rounded-0'
+                        alt='焙茶巴斯克蛋糕.png'
+                      />
+                    </Link>
+                  </div>
                   <div className='card-body text-center'>
                     <h4 className='card-title'>焙茶巴斯克蛋糕</h4>
                     <div className='d-flex justify-content-center'>
@@ -142,12 +158,20 @@ export default function HomePage() {
                 </div>
               </div>
               <div className='col-md-4 mt-md-4'>
-                <div className='card border-0 mb-4' data-aos='fade-up'>
-                  <img
-                    src={cakeImg2}
-                    alt='手工可麗露.png'
-                    className='card-img-top rounded-0'
-                  />
+                <div
+                  className='homepage-product-card card mb-4'
+                  data-aos='fade-up'
+                  data-aos-delay='300'
+                >
+                  <div className='homepage-product-img-wrap position-relative'>
+                    <Link to={`/product/-OLxN-_PO1uWZVaM32AB`}>
+                      <img
+                        src={cakeImg2}
+                        alt='手工可麗露.png'
+                        className='homepage-product-img card-img-top rounded-0'
+                      />
+                    </Link>
+                  </div>
                   <div className='card-body text-center'>
                     <h4 className='card-title'>手工可麗露</h4>
                     <div className='d-flex justify-content-center'>
@@ -166,14 +190,14 @@ export default function HomePage() {
 
         {/* 首頁 CTA，跳轉about區 */}
         <section className='homepage-cta-section'>
-          <div className='container my-7 text-center'>
+          <div className='container my-7 text-center cta-glass-wrap'>
             <h3>Morning Bean Café 的每一天</h3>
-            <p className='text-muted mt-3'>
+            <p className='text-dark mt-3'>
               我們每日嚴選豆種，只為帶給你晨間最香的一杯。
               <br />
               在這裡，享受屬於你的慢時光。
             </p>
-            <Link to={'/about'} className='btn btn-outline-dark mt-3'>
+            <Link to='/about' className='btn btn-outline-dark mt-3'>
               了解我們
             </Link>
           </div>
@@ -191,7 +215,7 @@ export default function HomePage() {
 
         {/* Email 訂關區 */}
         <section className='homepage-newsletter-section'>
-          <div className='container my-5'>
+          <div className='container my-5 px-0'>
             <div className='bg-light py-4'>
               <div className='container'>
                 <div className='d-flex flex-column flex-md-row justify-content-between align-items-md-center align-items-start'>
