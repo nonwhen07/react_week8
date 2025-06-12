@@ -2,6 +2,7 @@ import coffeeImg1 from '@/assets/product/經典手沖咖啡.png';
 import cakeImg1 from '@/assets/product/焙茶巴斯克蛋糕.png';
 import cakeImg2 from '@/assets/product/手工可麗露.png';
 
+import HeroBanner from '@/components/frontend/HeroBanner';
 import HomeCouponSection from '@/components/frontend/HomeCouponSection';
 import MapSection from '@/components/frontend/MapSection';
 
@@ -28,7 +29,8 @@ export default function HomePage() {
 
   return (
     <>
-      <section className='homepage-hero-section position-relative'>
+      <HeroBanner />
+      {/* <section className='homepage-hero-section position-relative'>
         <div className='hero-bg'></div>
         <div
           className='container d-flex flex-column justify-content-center'
@@ -61,7 +63,7 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
       <div className='container-fluid'>
         {/* Hero Banner 背景區塊 */}
         {/* <div

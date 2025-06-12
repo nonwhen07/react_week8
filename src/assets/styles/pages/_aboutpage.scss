@@ -1,21 +1,17 @@
-.about-page {
-  .about-hero-banner {
-    background: url('/images/hero-banner.jpg') center center / cover no-repeat;
-    height: 60vh;
-    position: relative;
-  }
+// .about-page {
+//   // .about-hero-banner {
+//   //   background: url('/images/hero-banner.jpg') center center / cover no-repeat;
+//   //   height: 60vh;
+//   //   position: relative;
+//   // }
 
-  .about-hero-content {
-    background-color: rgba(0, 0, 0, 0.55);
-    padding: 2rem;
-    border-radius: 10px;
-  }
+//   // .about-hero-content {
+//   //   background-color: rgba(0, 0, 0, 0.55);
+//   //   padding: 2rem;
+//   //   border-radius: 10px;
+//   // }
 
-  .about-cta-section {
-    background: linear-gradient(90deg, #5c3d2e, #8e5a3b);
-    animation: fadeInUp 1s ease-in-out both;
-  }
-}
+// }
 
 .carousel-item {
   transition: opacity 0.8s ease;
@@ -60,44 +56,44 @@
 // ==========================
 // About Hero Banner 區塊
 // ==========================
-.about-hero-section {
-  min-height: 60vh;
-  display: flex;
-  align-items: center;
-  position: relative;
-  // 可針對 About hero 加專屬背景/文字樣式
+// .about-hero-section {
+//   min-height: 60vh;
+//   display: flex;
+//   align-items: center;
+//   position: relative;
+//   // 可針對 About hero 加專屬背景/文字樣式
   
-  .hero-banner {
-    min-height: 100vh;
-    position: relative;
+//   .hero-banner {
+//     min-height: 100vh;
+//     position: relative;
   
-    // .hero-banner-bg {
-    //   background-size: cover;
-    //   background-repeat: no-repeat;
-    //   opacity: 0.1;
-    // }
-    &-bg {
-      background-size: cover;
-      background-repeat: no-repeat;
-      opacity: 0.1;
-    }
+//     // .hero-banner-bg {
+//     //   background-size: cover;
+//     //   background-repeat: no-repeat;
+//     //   opacity: 0.1;
+//     // }
+//     &-bg {
+//       background-size: cover;
+//       background-repeat: no-repeat;
+//       opacity: 0.1;
+//     }
   
-    h2 {
-      font-size: 2rem;
-      font-weight: bold;
-    }
+//     h2 {
+//       font-size: 2rem;
+//       font-weight: bold;
+//     }
   
-    p {
-      font-size: 1rem;
-      color: $gray-600;
-    }
+//     p {
+//       font-size: 1rem;
+//       color: $gray-600;
+//     }
   
-    .btn {
-      padding-left: 2rem;
-      padding-right: 2rem;
-    }
-  }
-}
+//     .btn {
+//       padding-left: 2rem;
+//       padding-right: 2rem;
+//     }
+//   }
+// }
 
 // ==========================
 // 品牌故事區塊
@@ -278,6 +274,10 @@
 // ==========================
 // About CTA 區塊
 // ==========================
+.about-cta-section {
+  background: linear-gradient(90deg, #5c3d2e, #8e5a3b);
+  animation: fadeInUp 1s ease-in-out both;
+}
 .about-cta-section {
   padding: 3rem 0;
   background: #222;

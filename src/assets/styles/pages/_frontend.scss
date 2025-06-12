@@ -6,9 +6,20 @@
     padding: 1.5rem;
   }
   
+  // FrontendHeader 相關設定
   .frontend-header {
-    background-color: $primary-color;
-    color: $light-bg-color;
+    font-style: normal;
+    color: $secondary-text-color;
+    font-size: 1rem;
+
+    &:hover,
+    &.active {
+      font-style: italic;
+      font-weight: bold;
+      font-size: 1.1rem;
+      
+      color: $primary-color ;
+    }
   }
 
   .customer-modal-header {

@@ -19,7 +19,10 @@ export default function FrontLayout() {
       <div className='frontend-layout'>
         <Header />
         {/* 用 Bootstrap container 把寬度鎖起來，並加上上下 padding */}
-        <main className='container py-4'>
+        {/* <main className='container py-4'>
+          <Outlet />
+        </main> */}
+        <main className='p-0'>
           <Outlet />
         </main>
         <Footer />

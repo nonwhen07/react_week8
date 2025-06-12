@@ -2,20 +2,20 @@ import axios from 'axios';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { updateCartData } from '../../redux/cartSlice';
-import { logout } from '../../redux/authSlice';
-import { pushMessage } from '../../redux/toastSlice';
+import { updateCartData } from '@/redux/cartSlice';
+import { logout } from '@/redux/authSlice';
+import { pushMessage } from '@/redux/toastSlice';
 
 const routes = [
   { path: '/', name: 'Home' },
   { path: '/about', name: 'About' },
   { path: '/product', name: 'Product' },
   { path: '/favorite', name: 'Favorite' },
-  { path: '/orders', name: 'Orders' },
   { path: '/cart', name: 'Cart' },
+  { path: '/orders', name: 'Orders' },
 ];
 
-export default function Header() {
+export default function FrontendHeader() {
   const BASE_URL = import.meta.env.VITE_BASE_URL;
   const API_PATH = import.meta.env.VITE_API_PATH;
   const navigate = useNavigate();
@@ -53,74 +53,6 @@ export default function Header() {
 
   return (
     <>
-      {/* <div className='container d-flex flex-column'>
-        <nav className='navbar navbar-expand-lg navbar-light'>
-          <Link to='/' className='navbar-brand header-nav-brand'>
-            <span className='header-nav-logo-text'>Morning Bean Café</span>
-          </Link>
-          <button
-            className='navbar-toggler'
-            type='button'
-            data-bs-toggle='collapse'
-            data-bs-target='#navbarNavAltMarkup'
-            aria-controls='navbarNavAltMarkup'
-            aria-expanded='false'
-            aria-label='Toggle navigation'
-          >
-            <span className='navbar-toggler-icon'></span>
-          </button>
-          <div
-            className='collapse navbar-collapse justify-content-end'
-            id='navbarNavAltMarkup'
-          >
-            <div className='navbar-nav'>
-              {routes.map(route => (
-                <NavLink
-                  key={route.path}
-                  className='nav-item nav-link me-4'
-                  aria-current='page'
-                  to={route.path}
-                >
-                  {route.name === 'Cart' ? (
-                    <div className='position-relative'>
-                      <i className='fas fa-shopping-cart'></i>
-                      <span
-                        className='position-absolute badge text-bg-danger rounded-circle'
-                        style={{
-                          bottom: '12px',
-                          left: '12px',
-                        }}
-                      >
-                        {carts?.length}
-                      </span>
-                    </div>
-                  ) : (
-                    route.name
-                  )}
-                </NavLink>
-              ))}
-              {isLogin ? (
-                <>
-                  <NavLink to='/dashboard' className='nav-item nav-link me-4'>
-                    後台
-                  </NavLink>
-                  <button
-                    onClick={handleLogout}
-                    className='btn btn-link nav-item nav-link text-danger'
-                  >
-                    登出
-                  </button>
-                </>
-              ) : (
-                <NavLink to='/login' className='nav-item nav-link me-4'>
-                  登入
-                </NavLink>
-              )}
-            </div>
-          </div>
-        </nav>
-      </div> */}
-
       <header id='header' className='sticky-top'>
         <nav className='navbar navbar-expand-lg navbar-light bg-light'>
           <div className='container'>
@@ -149,14 +81,16 @@ export default function Header() {
                 {routes.map(route => (
                   <NavLink
                     key={route.path}
-                    className='nav-item nav-link me-4'
+                    className='nav-item nav-link me-4 frontend-header'
                     to={route.path}
                   >
                     {route.name === 'Cart' ? (
                       <div className='position-relative'>
                         <i className='fas fa-shopping-cart'></i>
                         <span
-                          className='position-absolute badge text-bg-danger rounded-circle'
+                          className={`position-absolute badge rounded-circle ${
+                            carts?.length ? 'text-bg-danger' : ''
+                          }`}
                           style={{ bottom: '12px', left: '12px' }}
                         >
                           {carts?.length}

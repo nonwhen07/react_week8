@@ -1,12 +1,15 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+import HeroBanner from '@/components/frontend/HeroBanner';
 // import HeroBanner from '@/components/frontend/HeroBanner';
 import MapSection from '@/components/frontend/MapSection';
 
 export default function AboutPage() {
   return (
     <>
+      {/* 1. Hero 區塊 */}
+      <HeroBanner />
       <div className='about-page'>
         {/* 1. Hero 區塊 */}
         {/* <section className='about-hero-section'>
@@ -17,7 +20,7 @@ export default function AboutPage() {
           />
         </section> */}
         {/* Hero Banner 背景區塊 */}
-        <div
+        {/* <div
           className='position-absolute'
           style={{
             top: 0,
@@ -30,9 +33,9 @@ export default function AboutPage() {
             opacity: 0.1,
             zIndex: -1,
           }}
-        ></div>
+        ></div> */}
         {/* Hero Banner 文字主題區塊 */}
-        <div
+        {/* <div
           className='container d-flex flex-column'
           style={{ minHeight: 'calc(100vh - 56px)' }}
         >
@@ -47,7 +50,7 @@ export default function AboutPage() {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* 2. 品牌故事區塊 */}
         <section className='about-story-section'>
@@ -150,7 +153,7 @@ export default function AboutPage() {
         </section>
 
         {/* 地圖區塊（由首頁搬遷） */}
-        <section className='py-7 bg-white'>
+        <section className='about-map-section'>
           <MapSection />
         </section>
       </div>
